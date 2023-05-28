@@ -123,11 +123,7 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
         let div = document.getElementById('supported-chains');
         div.textContent = JSON.stringify(data, null, 2);
         let div2 = document.getElementById('supported-chains-summary');
-        let chain_ids =  data.chains.map(x => x.chain_id);
-        let summary = {"num_chains": data.chains.length, "chain_ids": chain_ids}
-        // div2.textContent = JSON.stringify(summary, null, 2);
-        // div2.innerHTML = "num of chains supported: " + data.chains.length + "<br>" + "chain ids: " + "<code>"+chain_ids + "</code>";
-	div2.appendChild(makeTableElement(summary)); 
+	div2.appendChild(makeTableElement2(data.chains, ["chain_name", "chain_id"])); 
 	
     }).catch(error => {
         console.log("fetch error" + error);

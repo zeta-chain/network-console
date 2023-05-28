@@ -15,17 +15,6 @@ function makeTableElement(json) {
 
     // create table header
     var thead = document.createElement('thead');
-    // var headerRow = document.createElement('tr');
-
-    // var th1 = document.createElement('th');
-    // th1.textContent = "Field";
-    // headerRow.appendChild(th1);
-
-    // var th2 = document.createElement('th');
-    // th2.textContent = "Value";
-    // headerRow.appendChild(th2);
-
-    // thead.appendChild(headerRow);
     table.appendChild(thead);
 
     // create table body
