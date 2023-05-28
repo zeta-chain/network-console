@@ -216,19 +216,27 @@ async function system_contract() {
 // block results
 async function block_results() {
     try {
-	var p1 = await fetch(`${tmURL}/block`, {method: 'GET'});
-	var data = await p1.json();
-	var latest_block = data.result.block.header.height;
-	var p2 = await fetch(`${tmURL}/block_results?height=${latest_block}`, {method: 'GET'});
+	var block_height = document.getElementById('input-block-height').value;
+	var p2 = await fetch(`${tmURL}/block_results?height=${block_height}`, {method: 'GET'});
 	var data2 = await p2.json();
 	console.log(data2);
 	var div = document.getElementById('block-result');
 	div.textContent = JSON.stringify(data2, null, 2);
-	txs_length = data2.result.txs_results != null  ? data2.result.txs_results.length : 0;
-	var summary = {height: latest_block, num_txs: txs_length};
+	var txs_length = data2.result.txs_results  ? data2.result.txs_results.length : 0;
+	var begin_events = data2.result.begin_block_events ? data2.result.begin_block_events.length : 0;
+	var end_events = data2.result.end_block_events ? data2.result.end_block_events.length : 0;
+	var summary = {height: block_height, num_txs: txs_length, num_begin_events: begin_events, num_end_events: end_events};
 	console.log(summary);
 	var div2 = document.getElementById('block-result-summary');
 	div2.appendChild(makeTableElement(summary));
+	if (txs_length > 0) {
+	    for (let i=0; i<txs_length; i++) {
+		let tx = data2.result.txs_results[i];
+		
+	    }
+	}
+	
+
     }
     catch(error) {
 	console.log("fetch error" + error);
