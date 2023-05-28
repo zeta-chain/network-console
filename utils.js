@@ -1,3 +1,12 @@
+function base64ToUtf8(base64String) {
+    if (base64String == null) {
+	return "null";
+    }
+    const binaryString = atob(base64String);
+
+    return binaryString;
+}
+
 
 function toggleDropdown(dropdownId) {
     var dropdown = document.getElementById(dropdownId);

@@ -1,5 +1,6 @@
 var nodeURL = 'http://3.218.170.198:1317';
 var corsProxyURL = 'http://3.132.197.22:8088';
+var tmURL = 'http://localhost:26657';
 
 // Node info
 async function node_info(){
@@ -182,12 +183,8 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
         let div = document.getElementById('foreign-coins');
         div.textContent = JSON.stringify(data, null, 2);
 
-        // let amount = BigInt(data.supply[0].amount);
-        // let amountZeta = amount/BigInt(1e18); 
         let div2 = document.getElementById('foreign-coins-summary');
 	div2.appendChild(makeTableElement2(data.foreignCoins, ["zrc20_contract_address", "foreign_chain_id", "symbol", "coin_type"]));
-        // let summary = {"supply": addCommas((amountZeta).toString()), "denom": "ZETA"};
-        // div2.textContent = JSON.stringify(summary, null, 2);
     }).catch(error => {
         console.log("fetch error" + error);
     })
@@ -216,6 +213,87 @@ async function system_contract() {
     })
 }
 
+// block results
+async function block_results() {
+    try {
+	var p1 = await fetch(`${tmURL}/block`, {method: 'GET'});
+	var data = await p1.json();
+	var latest_block = data.result.block.header.height;
+	var p2 = await fetch(`${tmURL}/block_results?height=${latest_block}`, {method: 'GET'});
+	var data2 = await p2.json();
+	console.log(data2);
+	var div = document.getElementById('block-result');
+	div.textContent = JSON.stringify(data2, null, 2);
+	txs_length = data2.result.txs_results != null  ? data2.result.txs_results.length : 0;
+	var summary = {height: latest_block, num_txs: txs_length};
+	console.log(summary);
+	var div2 = document.getElementById('block-result-summary');
+	div2.appendChild(makeTableElement(summary));
+    }
+    catch(error) {
+	console.log("fetch error" + error);
+    }
+}
 
 node_info();
 system_contract();
+
+block_results();
+
+
+// ------------------------------------------------------------------------------
+// --------------   Aux functions -----------------------------------------------
+// ------------------------------------------------------------------------------
+
+async function latest_block() {
+    try {
+	var p1 = await fetch(`${tmURL}/block`, {method: 'GET'});
+	var data = await p1.json();
+	var latest_block = data.result.block.header.height;
+	var p2 = await fetch(`${tmURL}/block_results?height=${latest_block}`, {method: 'GET'});
+	var data2 = await p2.json();
+	console.log(data2);
+	var begin_block_events = data2.result.begin_block_events;
+	begin_block_events.forEach(function(event) {
+
+	    console.log(event.type);
+	    for (let i=0; i<event.attributes.length; i++) {
+		let key = base64ToUtf8(event.attributes[i].key);
+		let value = base64ToUtf8(event.attributes[i].value);
+		console.log(key + " " + value);
+	    }
+	    
+	});
+
+    } catch (error) {
+	console.log("Error " + error);
+    }
+}
+
+async function last_n_txs(ntx) {
+    const max_lookback_blocks = 1000;
+    try {
+	var p1 = await fetch(`${tmURL}/block`, {method: 'GET'});
+	var data = await p1.json();
+	console.log(data);
+	var latest_block = data.result.block.header.height;
+	console.log("latest_block "+latest_block);
+	for (let bn = latest_block; bn > latest_block-max_lookback_blocks && bn >=1 ; bn--) {
+	    var p2 = await fetch(`${tmURL}/block_results?height=${bn}`, {method: 'GET'});
+	    var data2 = await p2.json();
+	    // console.log(data2);
+	    var txs = data2.result.txs_results
+	    console.log("txs "+txs);
+	}
+    } catch (error) {
+	console.log("Error " + error);
+    }
+}
+
+// async function block_query() {
+//     var resource = "
+// }
+
+
+// last_n_txs(5);
+// latest_block();

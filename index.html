@@ -121,13 +121,25 @@
     <div class="item"> 
       <b>Foreign Coins: </b>
       <div id="foreign-coins-summary"> </div>
-        <!-- <pre id="Foreign coins addresses"></pre> -->
-        <button onclick="toggleDropdown('foreign-coins')">Raw JSON</button>
-        <pre id="foreign-coins" class="dropdown-content"></pre>
+      <!-- <pre id="Foreign coins addresses"></pre> -->
+      <button onclick="toggleDropdown('foreign-coins')">Raw JSON</button>
+      <pre id="foreign-coins" class="dropdown-content"></pre>
     </div>  
 
     <div id="zevm-widgets"></div>
-</div>
+  </div>
+
+
+  <h2 id="sec-blockchain-query">ZetaChain Blockchain Query</h2>
+  <div class="container">
+    <div class="item">
+      <b> Latest block result </b>
+      <div id="block-result-summary"></div>
+      <button onclick="toggleDropdown('block-result')">Raw JSON</button>
+      <pre id="block-result" class="dropdown-content"></pre>
+    </div>
+
+  </div>
 
 <script src="./utils.js">   </script>
 <script src="./athens3-dash.js"></script>
