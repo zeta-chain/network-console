@@ -1,5 +1,6 @@
-var nodeURL = 'http://3.218.170.198:1317';
+var nodeURL = 'http://46.4.15.110:1317';
 var corsProxyURL = 'http://3.132.197.22:8088';
+
 var tmURL = 'http://localhost:26657';
 
 // Node info
@@ -217,6 +218,7 @@ async function system_contract() {
 async function block_results() {
     try {
 	var block_height = document.getElementById('input-block-height').value;
+	// /block_results API
 	var p2 = await fetch(`${tmURL}/block_results?height=${block_height}`, {method: 'GET'});
 	var data2 = await p2.json();
 	console.log(data2);
@@ -232,11 +234,20 @@ async function block_results() {
 	if (txs_length > 0) {
 	    for (let i=0; i<txs_length; i++) {
 		let tx = data2.result.txs_results[i];
-		
+		console.log(`#{i}:`, tx);
 	    }
 	}
 	
+	// /block API:
+	var p3 = await fetch(`${tmURL}/block?height=${block_height}`, {method: 'GET'});
+	var data3 = await p3.json();
+	console.log(data3.result);
 
+	// txs API
+	var p4 = await fetch(`${nodeURL}/cosmos/tx/v1beta1/txs?events=tx.height%3D31521`, {method: 'GET'});
+	var data4 = await p4.json();
+	console.log(data4);
+	
     }
     catch(error) {
 	console.log("fetch error" + error);
