@@ -1,28 +1,66 @@
-function toggleDropdown(dropdownId) {
-    var dropdown = document.getElementById(dropdownId);
-    dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
-  }
+var nodeURL = 'http://3.218.170.198:1317';
+var corsProxyURL = 'http://3.132.197.22:8088';
+
+// Node info
+async function node_info(){
+    try {
+	var resource = "cosmos/base/tendermint/v1beta1/node_info";
+	var elemId = "node-info";
+	var syncing = true; 
+	var r1 = await fetch(`${corsProxyURL}/${nodeURL}/${resource}`, {
+	    method: 'GET',
+	});
+	resource = "cosmos/base/tendermint/v1beta1/syncing";
+	var r2 = await fetch(`${corsProxyURL}/${nodeURL}/${resource}`, {
+	    method: 'GET',
+	});	  
+	var data = await r1.json();
+	// console.log(data);
+	var data2 = await r2.json();
+	
+	
+	const div1 = document.getElementById(elemId);
+	div1.textContent = JSON.stringify(data, null, 2);
+	let summary = {
+	    cors_proxy_url: corsProxyURL,
+	    node_url: nodeURL,
+	    syncing: data2.syncing,
+	    network: data.default_node_info.network,
+	    moniker: data.default_node_info.moniker,
+	    zetacored_version: data.application_version.version,
+	}
+	let div2 = document.getElementById(`${elemId}-summary`);
+	// div2.textContent = JSON.stringify(makeTableElement(summary), null, 2);
+	div2.appendChild(makeTableElement(summary));
+    } catch (error) {
+	console.log('error', error);
+	throw error;
+    }
+}
+
 
 // Keygen widget
-fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/zeta-chain/crosschain/keygen', {
-    method: 'GET',
-}).then(response => {
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-}).then(data => {
-    const div1 = document.getElementById('current-keygen');
-    div1.textContent = JSON.stringify(data, null, 2);
-    let kg = data.Keygen; 
-    let summary = {status: kg.status, num_pubkeys: kg.granteePubkeys.length, block_num: kg.blockNumber}; 
-    let div2 = document.getElementById("keygen-summary");
-    // div2.textContent = JSON.stringify(summary, null, 2);
-    div2.appendChild(makeTableElement(summary));
-}).catch(error => {
-    console.log("fetch error" + error);
-})
-
+{
+    var resource = "zeta-chain/crosschain/keygen";
+    fetch(`${corsProxyURL}/${nodeURL}/${resource}`, {
+	method: 'GET',
+    }).then(response => {
+	if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+	}
+	return response.json();
+    }).then(data => {
+	const div1 = document.getElementById('current-keygen');
+	div1.textContent = JSON.stringify(data, null, 2);
+	let kg = data.Keygen; 
+	let summary = {status: kg.status, num_pubkeys: kg.granteePubkeys.length, block_num: kg.blockNumber}; 
+	let div2 = document.getElementById("keygen-summary");
+	// div2.textContent = JSON.stringify(summary, null, 2);
+	div2.appendChild(makeTableElement(summary));
+    }).catch(error => {
+	console.log("fetch error" + error);
+    })
+}
 
 // Network status widget
 fetch('http://3.132.197.22:8088/http://3.218.170.198:26657/status', {
@@ -157,7 +195,7 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
 
 
 // system contract
-{
+async function system_contract() {
     fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/zeta-chain/zetacore/fungible/system_contract', {
         method: 'GET',
     }).then(response => {
@@ -177,3 +215,7 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
         console.log("fetch error" + error);
     })
 }
+
+
+node_info();
+system_contract();

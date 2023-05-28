@@ -1,3 +1,10 @@
+
+function toggleDropdown(dropdownId) {
+    var dropdown = document.getElementById(dropdownId);
+    dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+  }
+
+
 // Function to add commas to a number string so "1234567" will
 // turn into "1,234,567"
 function addCommas(numberString) {
