@@ -60,12 +60,35 @@
 
 </div>
 
+<h2>Cross Chain Module</h2>
+<div class="container">
+    <div class="item">
+        <b>Supported Chains</b>
+        <pre id="supported-chains-summary"></pre>
+        <button onclick="toggleDropdown('supported-chains')">Raw JSON</button>
+        <pre id="supported-chains" class="dropdown-content"></pre>
+    </div>
+</div>
+
 <h2>zEVM/Fungible Module</h2>
 
 <div class="container">
-    <div id="zevm-widgets"></div>
-    
+    <!-- system contract section -->
+    <div class="item"> 
+        <b>System Contract: </b>
+        <pre id="system-contract"></pre>
+        <!-- <button onclick="toggleDropdown('system-contract')">Raw JSON</button> -->
+        <!-- <pre id="system-contract" class="dropdown-content"></pre> -->
+    </div>        
 
+    <div class="item"> 
+        <b>Foreign Coins: </b>
+        <!-- <pre id="Foreign coins addresses"></pre> -->
+        <button onclick="toggleDropdown('foreign-coins')">Raw JSON</button>
+        <pre id="foreign-coins" class="dropdown-content"></pre>
+    </div>  
+
+    <div id="zevm-widgets"></div>
 </div>
 
 <script src="./utils.js">   </script>

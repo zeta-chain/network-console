@@ -109,3 +109,48 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
         console.log("fetch error" + error);
     })
 }
+
+// supported chains
+{
+    fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/zeta-chain/observer/supportedChains', {
+        method: 'GET',
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    }).then(data => {
+        let div = document.getElementById('supported-chains');
+        div.textContent = JSON.stringify(data, null, 2);
+        let div2 = document.getElementById('supported-chains-summary');
+        let chain_ids =  data.chains.map(x => x.chain_id);
+        let summary = {"num_chains": data.chains.length, "chain_ids": chain_ids}
+        div2.textContent = JSON.stringify(summary, null, 2);
+    }).catch(error => {
+        console.log("fetch error" + error);
+    })
+}
+
+
+// foreign coins
+{
+    fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/zeta-chain/zetacore/fungible/foreign_coins', {
+        method: 'GET',
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    }).then(data => {
+        let div = document.getElementById('foreign-coins');
+        div.textContent = JSON.stringify(data, null, 2);
+
+        // let amount = BigInt(data.supply[0].amount);
+        // let amountZeta = amount/BigInt(1e18); 
+        // let div2 = document.getElementById('supply-summary');
+        // let summary = {"supply": addCommas((amountZeta).toString()), "denom": "ZETA"};
+        // div2.textContent = JSON.stringify(summary, null, 2);
+    }).catch(error => {
+        console.log("fetch error" + error);
+    })
+}
