@@ -4,8 +4,11 @@
     <title>Console</title>
     <!-- <link rel="stylesheet" href="css/style.css"> -->
     <style>
+      body {
+	  font-family: sans-serif;
+      }
         /* CSS for the pull-down section */
-        .dropdown-content {
+      .dropdown-content {
           display: none;
           /* position: absolute; */
           background-color: #f9f9f9;
@@ -13,34 +16,34 @@
           box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
           padding: 12px 16px;
           z-index: 1;
-        }
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-        }
+      }
+      .container {
+          display: flex;
+          flex-wrap: wrap;
+      }
 
-        .item {
-            flex-basis: 50%; /* Divide container into two equal-width columns */
-            box-sizing: border-box;
-            padding: 10px;
-        }
-	table {
-	    width: 80%;
-	    border-collapse: collapse;
-	    background-color: #f9f9f9;
-	    font-family: monospace;
-	}
+      .item {
+          flex-basis: 50%; /* Divide container into two equal-width columns */
+          box-sizing: border-box;
+          padding: 10px;
+      }
+      table {
+	  width: 80%;
+	  border-collapse: collapse;
+	  background-color: #f9f9f9;
+	  font-family: monospace;
+      }
 
-	table, th, td {
-	    border: 1px solid #ddd;
-	    padding: 2px;
-	    text-align: left;
-	}
+      table, th, td {
+	  border: 1px solid #ddd;
+	  padding: 2px;
+	  text-align: left;
+      }
 
-	th {
-	    background-color: #f2f2f2;
-	    color: black;
-	}
+      th {
+	  background-color: #f2f2f2;
+	  color: black;
+      }
     </style>
 </head>
 
@@ -99,7 +102,8 @@
     </div>        
 
     <div class="item"> 
-        <b>Foreign Coins: </b>
+      <b>Foreign Coins: </b>
+      <div id="foreign-coins-summary"> </div>
         <!-- <pre id="Foreign coins addresses"></pre> -->
         <button onclick="toggleDropdown('foreign-coins')">Raw JSON</button>
         <pre id="foreign-coins" class="dropdown-content"></pre>

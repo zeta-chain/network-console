@@ -36,12 +36,9 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:26657/status', {
     let div = document.getElementById('block');
     div.innerHTML = JSON.stringify(data.result, null, 2);
     let div2 = document.getElementById('block-summary');
-    // div2.textContent = 'Block Height: ' + data.result.sync_info.latest_block_height;
-    let utcString = data.result.sync_info.latest_block_time;
-    let utcDate = new Date(utcString);
-    // div2.textContent += "\n" + "Latest block timestamp: " + utcDate.toLocaleString();
-    let summary = {"block height": data.result.sync_info.latest_block_height, "block timestamp": utcDate.toLocaleString()};
-    // div2.textContent = JSON.stringify(summary, null, 2);
+    let summary = {"block height": data.result.sync_info.latest_block_height,
+		   "block timestamp": utcToLocal(data.result.sync_info.latest_block_time),
+		   "earliest block timestamp": utcToLocal(data.result.sync_info.earliest_block_time)};
     div2.appendChild(makeTableElement(summary));
 }).catch(error => {
     console.log("fetch error" + error);
@@ -63,7 +60,6 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
     let amountZeta = amount/BigInt(1e18); 
     let div2 = document.getElementById('supply-summary');
     let summary = {"supply": addCommas((amountZeta).toString()), "denom": "ZETA"};
-    // div2.textContent = JSON.stringify(summary, null, 2);
     div2.appendChild(makeTableElement(summary));
 }).catch(error => {
     console.log("fetch error" + error);
@@ -154,7 +150,8 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
 
         // let amount = BigInt(data.supply[0].amount);
         // let amountZeta = amount/BigInt(1e18); 
-        // let div2 = document.getElementById('supply-summary');
+        let div2 = document.getElementById('foreign-coins-summary');
+	div2.appendChild(makeTableElement2(data.foreignCoins, ["zrc20_contract_address", "foreign_chain_id", "symbol", "coin_type"]));
         // let summary = {"supply": addCommas((amountZeta).toString()), "denom": "ZETA"};
         // div2.textContent = JSON.stringify(summary, null, 2);
     }).catch(error => {
