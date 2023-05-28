@@ -17,7 +17,8 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/zeta-chain/crosschain/
     let kg = data.Keygen; 
     let summary = {status: kg.status, num_pubkeys: kg.granteePubkeys.length, block_num: kg.blockNumber}; 
     let div2 = document.getElementById("keygen-summary");
-    div2.textContent = JSON.stringify(summary, null, 2);
+    // div2.textContent = JSON.stringify(summary, null, 2);
+    div2.appendChild(makeTableElement(summary));
 }).catch(error => {
     console.log("fetch error" + error);
 })
@@ -40,7 +41,8 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:26657/status', {
     let utcDate = new Date(utcString);
     // div2.textContent += "\n" + "Latest block timestamp: " + utcDate.toLocaleString();
     let summary = {"block height": data.result.sync_info.latest_block_height, "block timestamp": utcDate.toLocaleString()};
-    div2.textContent = JSON.stringify(summary, null, 2);
+    // div2.textContent = JSON.stringify(summary, null, 2);
+    div2.appendChild(makeTableElement(summary));
 }).catch(error => {
     console.log("fetch error" + error);
 })
@@ -61,7 +63,8 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
     let amountZeta = amount/BigInt(1e18); 
     let div2 = document.getElementById('supply-summary');
     let summary = {"supply": addCommas((amountZeta).toString()), "denom": "ZETA"};
-    div2.textContent = JSON.stringify(summary, null, 2);
+    // div2.textContent = JSON.stringify(summary, null, 2);
+    div2.appendChild(makeTableElement(summary));
 }).catch(error => {
     console.log("fetch error" + error);
 })
@@ -75,7 +78,7 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
     var header = document.createElement("b");
     header.textContent = "Validators";
     divElement.appendChild(header);
-    var summaryPre = document.createElement("pre");
+    var summaryPre = document.createElement("div");
     divElement.appendChild(summaryPre);
     var button = document.createElement("button");
     button.textContent = "Raw JSON"; 
@@ -104,7 +107,8 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
             }
         }
         var summary = {"num_validators": data.validators.length, "num_jailed": jailed, "jailed_monikers": jailed_monikers};
-        summaryPre.textContent = JSON.stringify(summary, null, 2);
+        // summaryPre.textContent = JSON.stringify(summary, null, 2);
+	summaryPre.appendChild(makeTableElement(summary));
     }).catch(error => {
         console.log("fetch error" + error);
     })
@@ -126,7 +130,9 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
         let chain_ids =  data.chains.map(x => x.chain_id);
         let summary = {"num_chains": data.chains.length, "chain_ids": chain_ids}
         // div2.textContent = JSON.stringify(summary, null, 2);
-        div2.innerHTML = "num of chains supported: " + data.chains.length + "<br>" + "chain ids: " + "<code>"+chain_ids + "</code>";
+        // div2.innerHTML = "num of chains supported: " + data.chains.length + "<br>" + "chain ids: " + "<code>"+chain_ids + "</code>";
+	div2.appendChild(makeTableElement(summary)); 
+	
     }).catch(error => {
         console.log("fetch error" + error);
     })
