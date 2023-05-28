@@ -14,14 +14,25 @@
           padding: 12px 16px;
           z-index: 1;
         }
-      </style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .item {
+            flex-basis: 50%; /* Divide container into two equal-width columns */
+            box-sizing: border-box;
+            padding: 10px;
+        }
+    </style>
 </head>
 
 <body>
 <h1>Snippets</h1>
 <h2>Athens3 Network status</h2>
 
-<div>
+<div class="container">
+<div class="item">
     <b>Athens3 status:</b>
     <pre id="block-summary"></pre>
     <button onclick="toggleDropdown('block')">Raw JSON</button>
@@ -31,21 +42,31 @@
 
 <div id="tss-address">  </div>
 
-<div>
+<div class="item">
     <b>Current Keygen from zetacore: </b>
     <pre id="keygen-summary"></pre>
     <button onclick="toggleDropdown('current-keygen')">Raw JSON</button>
     <pre id="current-keygen" class="dropdown-content"></pre>
 </div>
 
-<div>
+<div class="item">
     <b>ZETA Supply: </b>
     <pre id="supply-summary"></pre>
     <button onclick="toggleDropdown('supply')">Raw JSON</button>
     <pre id="supply" class="dropdown-content"></pre>
 </div>
 
-<div id="widgets"></div>
+<div id="network-widgets"></div>
+
+</div>
+
+<h2>zEVM/Fungible Module</h2>
+
+<div class="container">
+    <div id="zevm-widgets"></div>
+    
+
+</div>
 
 <script src="./utils.js">   </script>
 <script src="./athens3-dash.js"></script>

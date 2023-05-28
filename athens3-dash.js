@@ -69,7 +69,8 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
 // validators
 {
     var divElement = document.createElement("div");
-    var widgets = document.getElementById("widgets");
+    divElement.classList = "item";
+    var widgets = document.getElementById("network-widgets");
     widgets.appendChild(divElement);
     var header = document.createElement("b");
     header.textContent = "Validators";
