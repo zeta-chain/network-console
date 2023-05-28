@@ -154,3 +154,26 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
         console.log("fetch error" + error);
     })
 }
+
+
+// system contract
+{
+    fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/zeta-chain/zetacore/fungible/system_contract', {
+        method: 'GET',
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    }).then(data => {
+        let div = document.getElementById('system-contract');
+        div.textContent = JSON.stringify(data, null, 2);
+
+        let div2 = document.getElementById('system-contract-summary');
+	div2.appendChild(makeTableElement(data.SystemContract));
+        // let summary = {"supply": addCommas((amountZeta).toString()), "denom": "ZETA"};
+        // div2.textContent = JSON.stringify(summary, null, 2);
+    }).catch(error => {
+        console.log("fetch error" + error);
+    })
+}
