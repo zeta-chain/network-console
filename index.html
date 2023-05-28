@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -49,59 +50,66 @@
 
 <body>
   <h1>Athens3 Widgets</h1>
-  
+
+  <ul>
+    <li><a href="#sec-node-info">Node info</a></li>
+    <li><a href="#sec-network-status">Network status</a></li>
+    <li><a href="#sec-cross-chain-module">Cross-Chain module</a></li>
+    <li><a href="#sec-fungible-module">Fungible module</a></li>
+    <li><a href="#sec-blockchain-query">Query</a></li>
+  </ul>
+
+  <h2 id="sec-node-info">Node info</h2>
   <div class="item">
-    <h2>Node info</h2>
     <p>All the information on this page comes from this zetacored node: </p>
     <pre id="node-info-summary"></pre>
     <button onclick="toggleDropdown('node-info')">Raw JSON</button>
     <pre id="node-info" class="dropdown-content">    </pre>
   </div>
   
-<h2>Athens3 Network status</h2>
-
-<div class="container">
-<div class="item">
-    <b>Athens3 status:</b>
-    <pre id="block-summary"></pre>
-    <button onclick="toggleDropdown('block')">Raw JSON</button>
-    <pre id="block" class="dropdown-content">    </pre>
-</div>
-
-
-<div id="tss-address">  </div>
-
-<div class="item">
-    <b>Current Keygen from zetacore: </b>
-    <pre id="keygen-summary"></pre>
-    <button onclick="toggleDropdown('current-keygen')">Raw JSON</button>
-    <pre id="current-keygen" class="dropdown-content"></pre>
-</div>
-
-<div class="item">
-    <b>ZETA Supply: </b>
-    <pre id="supply-summary"></pre>
-    <button onclick="toggleDropdown('supply')">Raw JSON</button>
-    <pre id="supply" class="dropdown-content"></pre>
-</div>
-
-<div id="network-widgets"></div>
-
-</div>
-
-<h2>Cross Chain Module</h2>
-<div class="container">
+  <h2 id="sec-network-status">Athens3 Network status</h2>
+  <div class="container">
     <div class="item">
-        <b>Supported Chains</b>
-        <div id="supported-chains-summary"></div>
-        <button onclick="toggleDropdown('supported-chains')">Raw JSON</button>
-        <pre id="supported-chains" class="dropdown-content"></pre>
+      <b>Athens3 status:</b>
+      <pre id="block-summary"></pre>
+      <button onclick="toggleDropdown('block')">Raw JSON</button>
+      <pre id="block" class="dropdown-content">    </pre>
     </div>
-</div>
 
-<h2>zEVM/Fungible Module</h2>
 
-<div class="container">
+    <div id="tss-address">  </div>
+
+    <div class="item">
+      <b>Current Keygen from zetacore: </b>
+      <pre id="keygen-summary"></pre>
+      <button onclick="toggleDropdown('current-keygen')">Raw JSON</button>
+      <pre id="current-keygen" class="dropdown-content"></pre>
+    </div>
+
+    <div class="item">
+      <b>ZETA Supply: </b>
+      <pre id="supply-summary"></pre>
+      <button onclick="toggleDropdown('supply')">Raw JSON</button>
+      <pre id="supply" class="dropdown-content"></pre>
+    </div>
+
+    <div id="network-widgets"></div>
+
+  </div>
+
+  <h2 id="sec-cross-chain-module">Cross Chain Module</h2>
+  <div class="container">
+    <div class="item">
+      <b>Supported Chains</b>
+      <div id="supported-chains-summary"></div>
+      <button onclick="toggleDropdown('supported-chains')">Raw JSON</button>
+      <pre id="supported-chains" class="dropdown-content"></pre>
+    </div>
+  </div>
+
+  <h2 id="sec-fungible-module">zEVM/Fungible Module</h2>
+
+  <div class="container">
     <!-- system contract section -->
     <div class="item"> 
       <b>System Contract: </b>
