@@ -114,3 +114,89 @@ function utcToLocal(utcString) {
     let utcDate = new Date(utcString);
     return utcDate.toLocaleString();
 }
+
+
+// tx_resp is JSON array of tx_responses
+// tx is JSON array of tx
+function txResponsesToTable(tx_resp) {
+    if (tx_resp.length == 0) {
+	console.log("error: tx.length == 0",  tx.length);
+	return;
+    }
+
+    // create a table
+    var table = document.createElement('table');
+
+    // create table header
+    var thead = document.createElement('thead');
+    var headerRow = document.createElement('tr');
+    let fields = ["tx_hash", "code", "log"];
+    fields.forEach(header => {
+	var th = document.createElement('th');
+	th.textContent = header;
+	headerRow.appendChild(th);
+    });
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // create table body
+    var tbody = document.createElement('tbody');
+
+    for (var i = 0; i < tx_resp.length; i++) {
+	var tr = document.createElement('tr');
+	var row = {};
+	let tx = tx_resp[i].tx;
+	let msg_type = tx["body"].messages[0]["msgs"][0]["@type"];
+	let txhash = tx_resp[i].txhash;
+	row["tx_hash"] = `${txhash}<br>${msg_type}`
+	row["code"] = tx_resp[i].code;
+	var raw_log = tx_resp[i].raw_log;
+	// console.log(JSON.parse(raw_log));
+	try {
+	    var log = JSON.parse(raw_log);
+	    row["log"] = JSON.stringify(log, null, 2);
+	} catch (e) {
+	    row["log"] = raw_log;
+	}
+
+	let div = document.createElement('div');
+	div.classList = "tooltip";
+	div.appendChild(document.createTextNode("hover"));
+	var span = document.createElement('pre');
+	span.classList = "tooltiptext";
+	span.textContent = row["log"];
+	div.appendChild(span);
+
+	
+	row["log"] = div.outerHTML;
+	// row["log"] = tx_resp[i].raw_log;
+	fields.forEach( field => {
+	    var td = document.createElement('td');
+	    td.innerHTML = row[field];
+	    tr.appendChild(td);
+	});
+	tbody.appendChild(tr);
+    }
+
+    // iterate over the JSON object
+    // jsonArray.forEach( row => {
+    // 	// console.log("row", row);
+    // 	// create a row for each field
+    // 	var tr = document.createElement('tr');
+
+    // 	fields.forEach( field => {
+    // 	    var td = document.createElement('td');
+    // 	    td.textContent = row[field];
+    // 	    tr.appendChild(td);
+    // 	});
+    // 	table.appendChild(tr);
+    // });
+
+    // append the body to the table
+    table.appendChild(tbody);
+
+    // append the table to the body of the page
+    return table;     
+
+}

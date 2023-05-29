@@ -29,6 +29,7 @@
           padding: 10px;
       }
       table {
+	  max-width: 900px;
 	  width: 80%;
 	  border-collapse: collapse;
 	  background-color: #f9f9f9;
@@ -45,10 +46,41 @@
 	  background-color: #f2f2f2;
 	  color: black;
       }
+      .tooltip {
+	  position: relative;
+	  display: block;
+	  cursor: pointer;
+      }
+
+      .tooltip .tooltiptext {
+	  visibility: hidden;
+	  /* width: 600px; */
+	  background-color: #555;
+	  color: #fff;
+	  border-radius: 6px;
+	  padding: 5px 0;
+
+	  /* Position the tooltip */
+	  position: absolute;
+	  z-index: 1;
+	  top: 125%; 
+	  left: 0%;
+	  margin-left: -300px;
+	  opacity: 0;
+	  transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltiptext {
+	  visibility: visible;
+	  opacity: 1;
+      }
+
+      
     </style>
 </head>
 
 <body>
+  <div id="outer-div"> 
   <h1>Athens3 Widgets</h1>
 
   <ul>
@@ -131,15 +163,20 @@
 
 
   <h2 id="sec-blockchain-query">ZetaChain Blockchain Query</h2>
+  <label for="input-block-height">Block height: </label>
+  <input type="text" id="input-block-height" value="31521">
   <div class="container">
     <div class="item">
-      <b> Block result </b>  <input type="text" id="input-block-height" value="31521">
+      <b> Block result </b> 
       <div id="block-result-summary"></div>
       <div id="txs-result-summary"></div>
       <button onclick="toggleDropdown('block-result')">Raw JSON</button>
+      <button onclick="toggleDropdown('txs-result')">Txs</button>
       <pre id="block-result" class="dropdown-content"></pre>
+      <div id="txs-result" class="dropdown-content"></div>
     </div>
 
+  </div>
   </div>
 
 <script src="./utils.js">   </script>

@@ -231,25 +231,25 @@ async function block_results() {
 	console.log(summary);
 	var div2 = document.getElementById('block-result-summary');
 	div2.appendChild(makeTableElement(summary));
-	if (txs_length > 0) {
-	    for (let i=0; i<txs_length; i++) {
-		let tx = data2.result.txs_results[i];
-		console.log(`#{i}:`, tx);
-	    }
-	}
+	// if (txs_length > 0) {
+	//     for (let i=0; i<txs_length; i++) {
+	// 	let tx = data2.result.txs_results[i];
+	// 	console.log(`#{i}:`, tx);
+	//     }
+	// }
 	
 	// /block API:
-	var p3 = await fetch(`${tmURL}/block?height=${block_height}`, {method: 'GET'});
-	var data3 = await p3.json();
-	console.log(data3.result);
+	// var p3 = await fetch(`${tmURL}/block?height=${block_height}`, {method: 'GET'});
+	// var data3 = await p3.json();
+	// console.log(data3.result);
 
 	// txs API
 	var p4 = await fetch(`${nodeURL}/cosmos/tx/v1beta1/txs?events=tx.height%3D31521`, {method: 'GET'});
 	var data4 = await p4.json();
 	console.log(data4);
-	
-    }
-    catch(error) {
+	div3 = document.getElementById('txs-result');
+	div3.appendChild(txResponsesToTable(data4.tx_responses, data4.txs));
+    } catch(error) {
 	console.log("fetch error" + error);
     }
 }
