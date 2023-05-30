@@ -1,7 +1,7 @@
 var nodeURL = 'http://46.4.15.110:1317';
 var corsProxyURL = 'http://3.132.197.22:8088';
 
-var tmURL = 'http://localhost:26657';
+var tmURL = 'http://46.4.15.110:26657';
 
 // Node info
 async function node_info(){
@@ -42,27 +42,43 @@ async function node_info(){
 
 
 // Keygen widget
-{
-    var resource = "zeta-chain/crosschain/keygen";
-    fetch(`${corsProxyURL}/${nodeURL}/${resource}`, {
-	method: 'GET',
-    }).then(response => {
-	if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-	}
-	return response.json();
-    }).then(data => {
+async function keygen() {
+    try {
+	var resource = "zeta-chain/crosschain/keygen";
+	var p1 = await fetch(`${nodeURL}/${resource}`, {
+	    method: 'GET',
+	});
+	let data = await p1.json();
 	const div1 = document.getElementById('current-keygen');
 	div1.textContent = JSON.stringify(data, null, 2);
-	let kg = data.Keygen; 
-	let summary = {status: kg.status, num_pubkeys: kg.granteePubkeys.length, block_num: kg.blockNumber}; 
-	let div2 = document.getElementById("keygen-summary");
-	// div2.textContent = JSON.stringify(summary, null, 2);
-	div2.appendChild(makeTableElement(summary));
-    }).catch(error => {
-	console.log("fetch error" + error);
-    })
+	let kg = data.Keygen;
+
+	resource = "zeta-chain/crosschain/TSS";
+	var p2 = await fetch(`${nodeURL}/${resource}`, {
+	    method: 'GET',
+	});
+	data2 = await p2.json();
+	const div2 = document.getElementById('current-tss');
+	div2.textContent = JSON.stringify(data2, null, 2);
+
+	resource = "zeta-chain/zetacore/crosschain/get_tss_address";
+	var p3 = await fetch(`${nodeURL}/${resource}`, {
+	    method: 'GET',
+	});
+	data3 = await p3.json();
+
+	let summary = {status: kg.status, num_pubkeys: kg.granteePubkeys.length, block_num: kg.blockNumber, tss_pubkey: data2.TSS.tss_pubkey,
+		       tss_address_eth: data3.eth, tss_address_btc: data3.btc}; 
+	let div3 = document.getElementById("keygen-summary");
+
+	div3.appendChild(makeTableElement(summary));
+    } catch (error) {
+	console.log('error', error);
+	throw error;
+    }
 }
+
+keygen(); 
 
 // Network status widget
 fetch('http://3.132.197.22:8088/http://3.218.170.198:26657/status', {
@@ -290,7 +306,7 @@ async function latest_block() {
 }
 
 async function last_txs(ntx, msg_type) {
-    const max_lookback_blocks = 10;
+    const max_lookback_blocks = 2;
     try {
 	var p1 = await fetch(`${tmURL}/block`, {method: 'GET'});
 	var data = await p1.json();
@@ -298,7 +314,9 @@ async function last_txs(ntx, msg_type) {
 	var latest_block = data.result.block.header.height;
 	console.log("latest_block "+latest_block);
 	for (let bn = latest_block; bn > latest_block-max_lookback_blocks && bn >=1 ; bn--) {
-	    var p1 = await fetch(`${nodeURL}/cosmos/tx/v1beta1/txs?events=tx.height%3D${bn}`, {method: 'GET'});
+	    let ep = `${nodeURL}/cosmos/tx/v1beta1/txs?events=tx.height%3D${bn}`;
+	    // console.log(ep);
+	    var p1 = await fetch(ep, {method: 'GET'});
 	    var data1 = await p1.json();
 	    
 	    // var data2 = await p2.json();
