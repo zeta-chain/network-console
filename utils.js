@@ -153,20 +153,22 @@ function txResponsesToTable(tx_resp) {
 	row["code"] = tx_resp[i].code;
 	var raw_log = tx_resp[i].raw_log;
 	// console.log(JSON.parse(raw_log));
+	var log_elm; 
 	try {
 	    var log = JSON.parse(raw_log);
-	    row["log"] = JSON.stringify(log, null, 2);
+	    log_elm = document.createElement('pre');
+	    log_elm.textContent = JSON.stringify(log, null, 2);
 	} catch (e) {
-	    row["log"] = raw_log;
+	    log_elm = document.createElement('div');
+	    log_elm.textContent = raw_log;
 	}
 
 	let div = document.createElement('div');
 	div.classList = "tooltip";
 	div.appendChild(document.createTextNode("hover"));
-	var span = document.createElement('pre');
-	span.classList = "tooltiptext";
-	span.textContent = row["log"];
-	div.appendChild(span);
+	// span.classList = "tooltiptext";
+	log_elm.classList = "tooltiptext";
+	div.appendChild(log_elm);
 
 	
 	row["log"] = div.outerHTML;

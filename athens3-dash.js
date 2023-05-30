@@ -244,7 +244,7 @@ async function block_results() {
 	// console.log(data3.result);
 
 	// txs API
-	var p4 = await fetch(`${nodeURL}/cosmos/tx/v1beta1/txs?events=tx.height%3D31521`, {method: 'GET'});
+	var p4 = await fetch(`${nodeURL}/cosmos/tx/v1beta1/txs?events=tx.height%3D${block_height}`, {method: 'GET'});
 	var data4 = await p4.json();
 	console.log(data4);
 	div3 = document.getElementById('txs-result');
@@ -257,7 +257,7 @@ async function block_results() {
 node_info();
 system_contract();
 
-block_results();
+// block_results();
 
 
 // ------------------------------------------------------------------------------
@@ -289,8 +289,8 @@ async function latest_block() {
     }
 }
 
-async function last_n_txs(ntx) {
-    const max_lookback_blocks = 1000;
+async function last_txs(ntx, msg_type) {
+    const max_lookback_blocks = 10;
     try {
 	var p1 = await fetch(`${tmURL}/block`, {method: 'GET'});
 	var data = await p1.json();
@@ -298,11 +298,13 @@ async function last_n_txs(ntx) {
 	var latest_block = data.result.block.header.height;
 	console.log("latest_block "+latest_block);
 	for (let bn = latest_block; bn > latest_block-max_lookback_blocks && bn >=1 ; bn--) {
-	    var p2 = await fetch(`${tmURL}/block_results?height=${bn}`, {method: 'GET'});
-	    var data2 = await p2.json();
+	    var p1 = await fetch(`${nodeURL}/cosmos/tx/v1beta1/txs?events=tx.height%3D${bn}`, {method: 'GET'});
+	    var data1 = await p1.json();
+	    
+	    // var data2 = await p2.json();
 	    // console.log(data2);
-	    var txs = data2.result.txs_results
-	    console.log("txs "+txs);
+	    var txs = data1.tx_responses;
+	    console.log(`block ${bn}`, txs);
 	}
     } catch (error) {
 	console.log("Error " + error);
@@ -314,5 +316,5 @@ async function last_n_txs(ntx) {
 // }
 
 
-// last_n_txs(5);
+last_txs(5);
 // latest_block();
