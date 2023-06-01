@@ -1,5 +1,5 @@
 var nodeURL = 'http://46.4.15.110:1317';
-var corsProxyURL = 'http://3.132.197.22:8088';
+// var corsProxyURL = 'http://3.132.197.22:8088';
 
 var tmURL = 'http://46.4.15.110:26657';
 
@@ -9,11 +9,11 @@ async function node_info(){
 	var resource = "cosmos/base/tendermint/v1beta1/node_info";
 	var elemId = "node-info";
 	var syncing = true; 
-	var r1 = await fetch(`${corsProxyURL}/${nodeURL}/${resource}`, {
+	var r1 = await fetch(`${nodeURL}/${resource}`, {
 	    method: 'GET',
 	});
 	resource = "cosmos/base/tendermint/v1beta1/syncing";
-	var r2 = await fetch(`${corsProxyURL}/${nodeURL}/${resource}`, {
+	var r2 = await fetch(`${nodeURL}/${resource}`, {
 	    method: 'GET',
 	});	  
 	var data = await r1.json();
@@ -24,7 +24,7 @@ async function node_info(){
 	const div1 = document.getElementById(elemId);
 	div1.textContent = JSON.stringify(data, null, 2);
 	let summary = {
-	    cors_proxy_url: corsProxyURL,
+	    // cors_proxy_url: corsProxyURL,
 	    node_url: nodeURL,
 	    syncing: data2.syncing,
 	    network: data.default_node_info.network,
@@ -81,7 +81,7 @@ async function keygen() {
 keygen(); 
 
 // Network status widget
-fetch('http://3.132.197.22:8088/http://3.218.170.198:26657/status', {
+fetch(`${tmURL}/status`, {
     method: 'GET',
 }).then(response => {
     if (!response.ok) {
@@ -101,7 +101,7 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:26657/status', {
 })
 
 // supply widget
-fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/supply', {
+fetch(`${nodeURL}/cosmos/bank/v1beta1/supply`, {
     method: 'GET',
 }).then(response => {
     if (!response.ok) {
@@ -140,7 +140,7 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
     detailPre.id = "validators-dropdown";
     divElement.appendChild(detailPre);
     detailPre.classList = "dropdown-content";
-    fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/staking/v1beta1/validators', {
+    fetch(`${nodeURL}/cosmos/staking/v1beta1/validators`, {
         method: 'GET',
     }).then(response => {
         if (!response.ok) {
@@ -168,7 +168,7 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
 
 // supported chains
 {
-    fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/zeta-chain/observer/supportedChains', {
+    fetch(`${nodeURL}/zeta-chain/observer/supportedChains`, {
         method: 'GET',
     }).then(response => {
         if (!response.ok) {
@@ -189,7 +189,7 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
 
 // foreign coins
 {
-    fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/zeta-chain/zetacore/fungible/foreign_coins', {
+    fetch(`${nodeURL}/zeta-chain/zetacore/fungible/foreign_coins`, {
         method: 'GET',
     }).then(response => {
         if (!response.ok) {
@@ -210,7 +210,7 @@ fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/cosmos/bank/v1beta1/su
 
 // system contract
 async function system_contract() {
-    fetch('http://3.132.197.22:8088/http://3.218.170.198:1317/zeta-chain/zetacore/fungible/system_contract', {
+    fetch(`${nodeURL}/zeta-chain/zetacore/fungible/system_contract`, {
         method: 'GET',
     }).then(response => {
         if (!response.ok) {
