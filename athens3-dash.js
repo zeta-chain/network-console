@@ -121,6 +121,22 @@ fetch(`${nodeURL}/cosmos/bank/v1beta1/supply`, {
     console.log("fetch error" + error);
 })
 
+async function upgrade_plan() {
+    try {
+	resource = "/cosmos/upgrade/v1beta1/current_plan";
+	var p1 = await fetch(`${nodeURL}/${resource}`, { method: 'GET', });
+	data = await p1.json();
+	const div1 = document.getElementById('upgrade-plan');
+	div1.textContent = JSON.stringify(data, null, 2);
+	let summary = {plan: data.plan.name, height: data.height, time: utcToLocal(data.time)};
+	let div2 = document.getElementById("upgrade-plan-summary");
+	div2.appendChild(makeTableElement(summary));
+    } catch (error) {
+	console.log('error', error);
+    }
+}
+upgrade_plan();
+
 // validators
 {
     var divElement = document.createElement("div");
