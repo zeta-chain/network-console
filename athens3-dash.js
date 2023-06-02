@@ -352,3 +352,15 @@ async function last_txs(ntx, msg_type) {
 
 last_txs(5);
 // latest_block();
+
+
+
+/// -----------------  Non API utilities ---------------------
+
+function translateAddress() {
+    let addr = document.getElementById('address-transition-input').value;
+    // let div = document.getElementById('address-transition-output');
+    if (len(addr) == 42 && addr.slice(0,2) == "0x") { // hex
+	
+    }
+}

@@ -134,6 +134,12 @@
       <pre id="upgrade-plan" class="dropdown-content"></pre>
     </div>
 
+    <div class="item">
+      <b>Address translation: </b>
+      <input type="text" id="address-translation-input" placeholder="Enter address">
+      <button onclick="translateAddress()">Translate</button>
+      <pre id="address-translation-output"></pre>
+    </div>
 
     <div id="network-widgets"></div>
 
@@ -190,7 +196,8 @@
   </div>
   </div>
 
-<script src="./utils.js">   </script>
+<script src="./bech32.js"></script>  
+<script src="./utils.js"></script>
 <script src="./athens3-dash.js"></script>
 
 </body> 
