@@ -7,6 +7,14 @@ function base64ToUtf8(base64String) {
     return binaryString;
 }
 
+function parseHexString(hexString) {
+  var bytes = [];
+  for (var i = 0; i < hexString.length; i += 2) {
+    bytes.push(parseInt(hexString.substring(i, i + 2), 16));
+  }
+  return bytes;
+}
+
 
 function toggleDropdown(dropdownId) {
     var dropdown = document.getElementById(dropdownId);

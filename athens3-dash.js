@@ -358,9 +358,20 @@ last_txs(5);
 /// -----------------  Non API utilities ---------------------
 
 function translateAddress() {
-    let addr = document.getElementById('address-transition-input').value;
-    // let div = document.getElementById('address-transition-output');
-    if (len(addr) == 42 && addr.slice(0,2) == "0x") { // hex
-	
+    let addr = document.getElementById('address-translation-input').value;
+    // test case
+//   "hex_addr": "0x6dA30bFA65E85a16b05bCE3846339ed2BC746316",
+//   "zeta_addr": "zeta1dk3sh7n9apdpdvzmecuyvvu76278gcck2jmfcf"
+    var summary = {};
+    if (addr.length == 42 && addr.slice(0,2) == "0x") { // hex
+	let data = parseHexString(addr.slice(2,42));
+	let output  = encode("zeta", convertbits(data, 8, 5, true));
+	summary = {hex_addr: addr, zeta_addr: output};
+    } else if (addr.length == 43 && addr.slice(0,5) == "zeta1") {
+	let data = decode("zeta", addr.slice(5,43));
     }
+	
+
+    let pre = document.getElementById('address-translation-output');
+    pre.textContent = JSON.stringify(summary, null, 2);
 }
