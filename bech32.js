@@ -18,6 +18,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+
+// Modified Jun, 2023 by @brewmaster012
+
+
 var CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 var GENERATOR = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
 
@@ -152,3 +156,6 @@ function convertbits (data, frombits, tobits, pad) {
   }
   return ret;
 }
+
+
+export {encodings, encode, decode, convertbits};

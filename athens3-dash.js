@@ -1,3 +1,6 @@
+import {decode, encode, convertbits, encodings} from './bech32.js';
+
+
 var nodeURL = 'http://46.4.15.110:1317';
 // var corsProxyURL = 'http://3.132.197.22:8088';
 
@@ -57,7 +60,7 @@ async function keygen() {
 	var p2 = await fetch(`${nodeURL}/${resource}`, {
 	    method: 'GET',
 	});
-	data2 = await p2.json();
+	let data2 = await p2.json();
 	const div2 = document.getElementById('current-tss');
 	div2.textContent = JSON.stringify(data2, null, 2);
 
@@ -65,16 +68,16 @@ async function keygen() {
 	var p3 = await fetch(`${nodeURL}/${resource}`, {
 	    method: 'GET',
 	});
-	data3 = await p3.json();
+	let data3 = await p3.json();
 
 	let summary = {status: kg.status, num_pubkeys: kg.granteePubkeys.length, block_num: kg.blockNumber, tss_pubkey: data2.TSS.tss_pubkey,
 		       tss_address_eth: data3.eth, tss_address_btc: data3.btc}; 
 	let div3 = document.getElementById("keygen-summary");
 
-	div3.appendChild(makeTableElement(summary));
+	div3.replaceChildren(makeTableElement(summary));
     } catch (error) {
 	console.log('error', error);
-	throw error;
+	// throw error;
     }
 }
 
@@ -123,11 +126,14 @@ fetch(`${nodeURL}/cosmos/bank/v1beta1/supply`, {
 
 async function upgrade_plan() {
     try {
-	resource = "/cosmos/upgrade/v1beta1/current_plan";
+	var resource = "/cosmos/upgrade/v1beta1/current_plan";
 	var p1 = await fetch(`${nodeURL}/${resource}`, { method: 'GET', });
-	data = await p1.json();
+	let data = await p1.json();
 	const div1 = document.getElementById('upgrade-plan');
 	div1.textContent = JSON.stringify(data, null, 2);
+	if (data.plan == null) {
+	    return;
+	}
 	let summary = {plan: data.plan.name, height: data.height, time: utcToLocal(data.time)};
 	let div2 = document.getElementById("upgrade-plan-summary");
 	div2.appendChild(makeTableElement(summary));
@@ -378,5 +384,7 @@ function translateAddress() {
 	
 
     let pre = document.getElementById('address-translation-output');
-    pre.textContent = JSON.stringify(summary, null, 2);
+    pre.replaceChildren(makeTableElement(summary));
 }
+
+document.getElementById('button-translate-address').addEventListener('click', translateAddress);

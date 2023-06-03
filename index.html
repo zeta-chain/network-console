@@ -135,9 +135,10 @@
     </div>
 
     <div class="item">
-      <b>Address translation: </b>
+      <b>Address translation: </b> <br>
+      <p>Given a HEX address like 0xdeadbeef or zeta address like zeta1xxxx, this widget will translate it to the other format.</p>
       <input type="text" id="address-translation-input" placeholder="Enter address" size="50">
-      <button onclick="translateAddress()">Translate</button>
+      <button id="button-translate-address">Translate</button>
       <pre id="address-translation-output"></pre>
     </div>
 
@@ -197,9 +198,9 @@
   </div>
   
 <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
-<script src="./bech32.js"></script>  
+<!-- <script src="./bech32.js"></script>   -->
 <script src="./utils.js"></script>
-<script src="./athens3-dash.js"></script>
+<script type="module" src="athens3-dash.js"></script>
 
 
 </body> 
