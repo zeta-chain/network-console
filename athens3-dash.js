@@ -361,14 +361,19 @@ function translateAddress() {
     let addr = document.getElementById('address-translation-input').value;
     // test case
 //   "hex_addr": "0x6dA30bFA65E85a16b05bCE3846339ed2BC746316",
-//   "zeta_addr": "zeta1dk3sh7n9apdpdvzmecuyvvu76278gcck2jmfcf"
+//   "zeta_addr": "zeta1dk3sh7n9apdpdvzmecuyvvu76278gcck2jmfcg"
     var summary = {};
     if (addr.length == 42 && addr.slice(0,2) == "0x") { // hex
 	let data = parseHexString(addr.slice(2,42));
-	let output  = encode("zeta", convertbits(data, 8, 5, true));
+	let output  = encode("zeta", convertbits(data, 8, 5, true), encodings.BECH32);
 	summary = {hex_addr: addr, zeta_addr: output};
     } else if (addr.length == 43 && addr.slice(0,5) == "zeta1") {
-	let data = decode("zeta", addr.slice(5,43));
+	let d = decode(addr, encodings.BECH32);
+	console.log(d);
+	let output = int8ArrayToHex(convertbits(d.data, 5, 8, false))
+	summary = {hex_addr: output, zeta_addr: addr};
+    } else {
+	summary = {error: "invalid input"};
     }
 	
 

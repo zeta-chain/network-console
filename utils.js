@@ -1,3 +1,5 @@
+// const Web3 = require('web3');
+
 function base64ToUtf8(base64String) {
     if (base64String == null) {
 	return "null";
@@ -209,4 +211,24 @@ function txResponsesToTable(tx_resp) {
     // append the table to the body of the page
     return table;     
 
+}
+
+
+
+// array of int8 (length 20) to hex string (eth address format)
+function int8ArrayToHex(array) {
+    if (array.length != 20) {
+	console.log("error: array.length != 20", array.length);
+	return;
+    }
+    let hexString = array.map(num => {
+	let hex = num.toString(16);
+	if (hex.length < 2) {
+            hex = '0' + hex;
+	}
+	return hex;
+    }).join('');
+
+    hexString = '0x' + hexString;
+    return Web3.utils.toChecksumAddress(hexString);
 }

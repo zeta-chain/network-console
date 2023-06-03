@@ -26,11 +26,6 @@ const encodings = {
   BECH32M: "bech32m",
 };
 
-module.exports = {
-  decode: decode,
-  encode: encode,
-  encodings: encodings,
-};
 
 function getEncodingConst (enc) {
   if (enc == encodings.BECH32) {
