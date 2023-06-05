@@ -71,7 +71,17 @@ async function keygen() {
 	});
 	let data3 = await p3.json();
 
-	let summary = {status: kg.status, num_pubkeys: kg.granteePubkeys.length, block_num: kg.blockNumber, tss_pubkey: data2.TSS.tss_pubkey,
+	let pkBech32 = data2.TSS.tss_pubkey;
+	let pkDecoded = decode(pkBech32, "bech32");
+	console.log(pkDecoded);
+	let pkDecodedBytes = convertbits(pkDecoded.data, 5, 8, false);
+	console.log("pkDecoded", pkDecodedBytes);
+	let pkDecodedHex = int8ArrayToHexRelaxed(pkDecodedBytes);
+	console.log("pkDecoded hex",pkDecodedHex);
+	
+	let summary = {status: kg.status, num_pubkeys: kg.granteePubkeys.length, block_num: kg.blockNumber,
+		       tss_pubkey: data2.TSS.tss_pubkey,
+		       tss_pubkey_hex: pkDecodedHex,
 		       tss_address_eth: data3.eth, tss_address_btc: data3.btc}; 
 	let div3 = document.getElementById("keygen-summary");
 

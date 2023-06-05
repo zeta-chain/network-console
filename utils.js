@@ -232,3 +232,18 @@ function int8ArrayToHex(array) {
     hexString = '0x' + hexString;
     return Web3.utils.toChecksumAddress(hexString);
 }
+
+// array of int8 (length any) to hex string 
+function int8ArrayToHexRelaxed(array) {
+
+    let hexString = array.map(num => {
+	let hex = num.toString(16);
+	if (hex.length < 2) {
+            hex = '0' + hex;
+	}
+	return hex;
+    }).join('');
+
+    hexString = '0x' + hexString;
+    return hexString;
+}
