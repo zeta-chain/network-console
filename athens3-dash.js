@@ -398,9 +398,12 @@ async function zetaclients_versions() {
 	console.log(div);
 
 	let fetchPromises = [];
+	let p2pPromises = [];
 	for (let i=0; i<IPs.length; i++) {
 	    fetchPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/version`, {method: 'GET'}));
+	    p2pPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
 	}
+
 
 	let table = document.createElement('table');
 
@@ -414,6 +417,9 @@ async function zetaclients_versions() {
 	let th2 = document.createElement('th');
 	th2.innerText = "Version";
 	headRow.appendChild(th2);
+	let th3 = document.createElement('th');
+	th3.innerText = "P2P Peer ID";
+	headRow.appendChild(th3);
 	
 	div.appendChild(table);
 
@@ -425,7 +431,11 @@ async function zetaclients_versions() {
 	    tr.appendChild(td1);
 	    let td2 = document.createElement('td');
 	    td2.id = `zetaclients-version-${i}`;
+	    let td3 = document.createElement('td');
+	    td3.id = `zetaclients-peerid-${i}`;
 	    tr.appendChild(td2);
+	    tr.appendChild(td3);
+	    
 	}
 
 	for (let i=0; i<IPs.length; i++) {
@@ -435,9 +445,17 @@ async function zetaclients_versions() {
 		continue;
 	    }
 	    let data = await p1.text();
-	    console.log(data);
 	    let td = document.getElementById(`zetaclients-version-${i}`);
 	    td.innerText = data;
+
+	    let p2 = await p2pPromises[i];
+	    if (!p2.ok) {
+		console.log("Error " + p2.status);
+		continue;
+	    }
+	    let data2 = await p2.text();
+	    let td2 = document.getElementById(`zetaclients-peerid-${i}`);
+	    td2.innerText = data2;
 	}
     } catch (error) {
 	console.log("Error " + error);
