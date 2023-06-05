@@ -393,15 +393,18 @@ document.getElementById('button-translate-address').addEventListener('click', tr
 // ---------------- zetaclients ------------------------------
 async function zetaclients_versions() {
     let IPs = ["52.42.64.63", "150.136.176.81", "202.8.10.137"]
+    let ipAPI = "http://ip-api.com/json";
     try {
 	let div = document.getElementById('zetaclients-summary');
 	console.log(div);
 
 	let fetchPromises = [];
 	let p2pPromises = [];
+	let geoPromises = [];
 	for (let i=0; i<IPs.length; i++) {
 	    fetchPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/version`, {method: 'GET'}));
 	    p2pPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
+	    geoPromises.push(fetch(`${ipAPI}/${IPs[i]}`, {method: 'GET'}));
 	}
 
 
@@ -420,6 +423,12 @@ async function zetaclients_versions() {
 	let th3 = document.createElement('th');
 	th3.innerText = "P2P Peer ID";
 	headRow.appendChild(th3);
+	let th4 = document.createElement('th');
+	th4.innerText = "Geolocation";
+	headRow.appendChild(th4);
+	let th5 = document.createElement('th');
+	th5.innerText = "Org";
+	headRow.appendChild(th5);
 	
 	div.appendChild(table);
 
@@ -428,14 +437,19 @@ async function zetaclients_versions() {
 	    table.appendChild(tr);
 	    let td1 = document.createElement('td');
 	    td1.innerText = IPs[i];
-	    tr.appendChild(td1);
 	    let td2 = document.createElement('td');
 	    td2.id = `zetaclients-version-${i}`;
 	    let td3 = document.createElement('td');
 	    td3.id = `zetaclients-peerid-${i}`;
+	    let td4 = document.createElement('td');
+	    td4.id = `zetaclients-geolocation-${i}`;
+	    let td5 = document.createElement('td');
+	    td5.id = `zetaclients-org-${i}`;
+	    tr.appendChild(td1);
 	    tr.appendChild(td2);
 	    tr.appendChild(td3);
-	    
+	    tr.appendChild(td4);
+	    tr.appendChild(td5);
 	}
 
 	for (let i=0; i<IPs.length; i++) {
@@ -456,6 +470,18 @@ async function zetaclients_versions() {
 	    let data2 = await p2.text();
 	    let td2 = document.getElementById(`zetaclients-peerid-${i}`);
 	    td2.innerText = data2;
+
+	    let p3 = await geoPromises[i];
+	    if (!p3.ok) {
+		console.log("Error " + p3.status);
+		continue;
+	    }
+	    let data3 = await p3.json();
+	    let td3 = document.getElementById(`zetaclients-geolocation-${i}`);
+	    td3.innerText = `${data3.city}, ${data3.country}`;
+	    let td4 = document.getElementById(`zetaclients-org-${i}`);
+	    td4.innerText = data3.org;
+	    
 	}
     } catch (error) {
 	console.log("Error " + error);
