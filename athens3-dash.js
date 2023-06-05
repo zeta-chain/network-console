@@ -3,6 +3,7 @@ import {decode, encode, convertbits, encodings} from './bech32.js';
 
 var nodeURL = 'http://46.4.15.110:1317';
 var corsProxyURL = 'http://3.132.197.22:8088';
+var checkURL = 'http://46.4.15.110:8888';
 
 var tmURL = 'http://46.4.15.110:26657';
 
@@ -401,10 +402,12 @@ async function zetaclients_versions() {
 	let fetchPromises = [];
 	let p2pPromises = [];
 	let geoPromises = [];
+	let checkPromises = [];
 	for (let i=0; i<IPs.length; i++) {
 	    fetchPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/version`, {method: 'GET'}));
 	    p2pPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
 	    geoPromises.push(fetch(`${ipAPI}/${IPs[i]}`, {method: 'GET'}));
+	    checkPromises.push(fetch(`${checkURL}/check?ip=${IPs[i]}`, {method: 'GET'}));
 	}
 
 
@@ -429,6 +432,10 @@ async function zetaclients_versions() {
 	let th5 = document.createElement('th');
 	th5.innerText = "Org";
 	headRow.appendChild(th5);
+	let th6 = document.createElement('th');
+	th6.innerText = "Check P2P";
+	headRow.appendChild(th6);
+
 	
 	div.appendChild(table);
 
@@ -445,11 +452,14 @@ async function zetaclients_versions() {
 	    td4.id = `zetaclients-geolocation-${i}`;
 	    let td5 = document.createElement('td');
 	    td5.id = `zetaclients-org-${i}`;
+	    let td6 = document.createElement('td');
+	    td6.id = `zetaclients-check-${i}`;
 	    tr.appendChild(td1);
 	    tr.appendChild(td2);
 	    tr.appendChild(td3);
 	    tr.appendChild(td4);
 	    tr.appendChild(td5);
+	    tr.appendChild(td6);
 	}
 
 	for (let i=0; i<IPs.length; i++) {
@@ -481,7 +491,17 @@ async function zetaclients_versions() {
 	    td3.innerText = `${data3.city}, ${data3.country}`;
 	    let td4 = document.getElementById(`zetaclients-org-${i}`);
 	    td4.innerText = data3.org;
+
+	    let p4 = await checkPromises[i];
+	    if (!p4.ok) {
+		console.log("Error " + p4.status);
+		continue;
+	    }
+	    let data4 = await p4.text();
+	    let td5 = document.getElementById(`zetaclients-check-${i}`);
+	    td5.innerText = data4;
 	    
+
 	}
     } catch (error) {
 	console.log("Error " + error);
