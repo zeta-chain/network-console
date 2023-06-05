@@ -2,7 +2,7 @@ import {decode, encode, convertbits, encodings} from './bech32.js';
 
 
 var nodeURL = 'http://46.4.15.110:1317';
-// var corsProxyURL = 'http://3.132.197.22:8088';
+var corsProxyURL = 'http://3.132.197.22:8088';
 
 var tmURL = 'http://46.4.15.110:26657';
 
@@ -388,3 +388,60 @@ function translateAddress() {
 }
 
 document.getElementById('button-translate-address').addEventListener('click', translateAddress);
+
+
+// ---------------- zetaclients ------------------------------
+async function zetaclients_versions() {
+    let IPs = ["52.42.64.63", "150.136.176.81", "202.8.10.137"]
+    try {
+	let div = document.getElementById('zetaclients-summary');
+	console.log(div);
+
+	let fetchPromises = [];
+	for (let i=0; i<IPs.length; i++) {
+	    fetchPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/version`, {method: 'GET'}));
+	}
+
+	let table = document.createElement('table');
+
+	let thead = document.createElement('thead');
+	table.replaceChildren(thead);
+	let headRow = document.createElement('tr');
+	thead.replaceChildren(headRow);
+	let th1 = document.createElement('th');
+	th1.innerText = "IP";
+	headRow.appendChild(th1);
+	let th2 = document.createElement('th');
+	th2.innerText = "Version";
+	headRow.appendChild(th2);
+	
+	div.appendChild(table);
+
+	for (let i=0; i<IPs.length; i++) {
+	    let tr = document.createElement('tr');
+	    table.appendChild(tr);
+	    let td1 = document.createElement('td');
+	    td1.innerText = IPs[i];
+	    tr.appendChild(td1);
+	    let td2 = document.createElement('td');
+	    td2.id = `zetaclients-version-${i}`;
+	    tr.appendChild(td2);
+	}
+
+	for (let i=0; i<IPs.length; i++) {
+	    let p1 = await fetchPromises[i];
+	    if (!p1.ok) {
+		console.log("Error " + p1.status);
+		continue;
+	    }
+	    let data = await p1.text();
+	    console.log(data);
+	    let td = document.getElementById(`zetaclients-version-${i}`);
+	    td.innerText = data;
+	}
+    } catch (error) {
+	console.log("Error " + error);
+    }
+}
+
+zetaclients_versions();
