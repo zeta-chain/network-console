@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head> 
+    <meta charset="utf-8">
+    <title>Cross Chain Module</title>
+    <link rel="stylesheet" href="./main.css">
+  </head>
+  <body>
+
+    <h2 id="sec-cross-chain-module">Cross Chain Module</h2>
+    <div class="container">
+      <div class="item">
+	<b>Supported Chains</b>
+	<div id="supported-chains-summary"></div>
+	<button onclick="toggleDropdown('supported-chains')">Raw JSON</button>
+	<pre id="supported-chains" class="dropdown-content"></pre>
+      </div>
+
+      <div class="item">
+	<b>Pending Outbound Queues</b>
+	<div id="pending-outbound-queues-summary"></div>
+	<button onclick="toggleDropdown('pending-outbound-queues')">Raw JSON</button>
+	<pre id="pending-outbound-queues" class="dropdown-content"></pre>
+      </div>
+    </div>
+
+
+    <script src="./common.js"></script>
+    <script src="./utils.js"></script>
+    <script src="./crosschain.js"></script>
+  </body>
+</html>

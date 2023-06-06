@@ -3,101 +3,30 @@
 
 <head>
     <title>Console</title>
-    <!-- <link rel="stylesheet" href="css/style.css"> -->
-    <style>
-      body {
-	  font-family: sans-serif;
-      }
-        /* CSS for the pull-down section */
-      .dropdown-content {
-          display: none;
-          /* position: absolute; */
-          background-color: #f9f9f9;
-          min-width: 160px;
-          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-          padding: 12px 16px;
-          z-index: 1;
-      }
-      .container {
-          display: flex;
-          flex-wrap: wrap;
-      }
-
-      .item {
-          flex-basis: 50%; /* Divide container into two equal-width columns */
-          box-sizing: border-box;
-          padding: 10px;
-      }
-      table {
-	  max-width: 900px;
-	  width: 80%;
-	  border-collapse: collapse;
-	  background-color: #f9f9f9;
-	  font-family: monospace;
-      }
-
-      table, th, td {
-	  border: 1px solid #ddd;
-	  padding: 2px;
-	  text-align: left;
-      }
-
-      th {
-	  background-color: #f2f2f2;
-	  color: black;
-      }
-      .tooltip {
-	  position: relative;
-	  display: block;
-	  cursor: pointer;
-      }
-
-      .tooltip .tooltiptext {
-	  visibility: hidden;
-	  /* width: 600px; */
-	  background-color: #555;
-	  color: #fff;
-	  border-radius: 6px;
-	  padding: 5px 0;
-
-	  /* Position the tooltip */
-	  position: absolute;
-	  z-index: 1;
-	  top: 125%; 
-	  left: 0%;
-	  margin-left: -300px;
-	  opacity: 0;
-	  transition: opacity 0.3s;
-      }
-
-      .tooltip:hover .tooltiptext {
-	  visibility: visible;
-	  opacity: 1;
-      }
-
-      
-    </style>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    
 </head>
 
 <body>
-  <div id="outer-div"> 
-  <h1>Athens3 Widgets</h1>
+  <div id="links" style="text-align: center;font-size: 20px;display: flex;justify-content: space-between;">
+    <span class="flexible-filler"></span>
+    <a href="./zevm.html">zEVM</a>  <span class="flexible-filler"></span>
+    <a href="./zetaclients.html">ZetaClients</a>  <span class="flexible-filler"></span>
+    <a href="./crosschain.html">Cross-Chain Module</a>
+    <span class="flexible-filler"></span>
 
-  <ul>
-    <li><a href="#sec-node-info">Node info</a></li>
-    <li><a href="#sec-network-status">Network status</a></li>
-    <li><a href="#sec-cross-chain-module">Cross-Chain module</a></li>
-    <li><a href="#sec-fungible-module">Fungible module</a></li>
-    <li><a href="#sec-blockchain-query">Query</a></li>
-  </ul>
-
-  <h2 id="sec-zetaclients">ZetaClients</h2>
-  <div class="container">
-    <div class="item">
-      <b> ZetaClient Version </b>
-      <div id="zetaclients-summary"></div>
-    </div>
   </div>
+  <div id="outer-div"> 
+
+  <!-- <ul> -->
+  <!--   <li><a href="#sec-node-info">Node info</a></li> -->
+  <!--   <li><a href="#sec-network-status">Network status</a></li> -->
+  <!--   <li><a href="#sec-cross-chain-module">Cross-Chain module</a></li> -->
+  <!--   <li><a href="#sec-fungible-module">Fungible module</a></li> -->
+  <!--   <li><a href="#sec-blockchain-query">Query</a></li> -->
+  <!-- </ul> -->
+
+
 
 
   <h2 id="sec-node-info">Node info</h2>
@@ -156,44 +85,6 @@
 
   </div>
 
-  <h2 id="sec-cross-chain-module">Cross Chain Module</h2>
-  <div class="container">
-    <div class="item">
-      <b>Supported Chains</b>
-      <div id="supported-chains-summary"></div>
-      <button onclick="toggleDropdown('supported-chains')">Raw JSON</button>
-      <pre id="supported-chains" class="dropdown-content"></pre>
-    </div>
-
-    <div class="item">
-      <b>Pending Outbound Queues</b>
-      <div id="pending-outbound-queues-summary"></div>
-      <button onclick="toggleDropdown('pending-outbound-queues')">Raw JSON</button>
-      <pre id="pending-outbound-queues" class="dropdown-content"></pre>
-    </div>
-  </div>
-
-  <h2 id="sec-fungible-module">zEVM/Fungible Module</h2>
-
-  <div class="container">
-    <!-- system contract section -->
-    <div class="item"> 
-      <b>System Contract: </b>
-      <div id="system-contract-summary"></div>
-      <button onclick="toggleDropdown('system-contract')">Raw JSON</button>
-      <pre id="system-contract" class="dropdown-content"></pre>
-    </div>        
-
-    <div class="item"> 
-      <b>Foreign Coins: </b>
-      <div id="foreign-coins-summary"> </div>
-      <!-- <pre id="Foreign coins addresses"></pre> -->
-      <button onclick="toggleDropdown('foreign-coins')">Raw JSON</button>
-      <pre id="foreign-coins" class="dropdown-content"></pre>
-    </div>  
-
-    <div id="zevm-widgets"></div>
-  </div>
 
 
   <h2 id="sec-blockchain-query">ZetaChain Blockchain Query</h2>
@@ -202,7 +93,7 @@
 
   <div class="container">
     <div class="item">
-      <b> Block result </b> <button onclick="block_results()"> Go </button>
+      <b> Block result </b> <button id="button-block-results">Go</button>
       <div id="block-result-summary"></div>
       <div id="txs-result-summary"></div>
       <button onclick="toggleDropdown('block-result')">Raw JSON</button>
@@ -217,6 +108,7 @@
   
 <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
 <!-- <script src="./bech32.js"></script>   -->
+<script src="./common.js"></script>
 <script src="./utils.js"></script>
 <script type="module" src="athens3-dash.js"></script>
 

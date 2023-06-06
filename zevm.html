@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head> 
+    <meta charset="utf-8">
+    <title>zEVM</title>
+    <link rel="stylesheet" href="./main.css">
+  </head>
+  <body>
+    <h1>zEVM</h1>
+
+    <h2 id="sec-fungible-module">zEVM/Fungible Module</h2>
+
+    <div class="container">
+      <div class="item"> 
+	<b>System Contract: </b>
+	<div id="system-contract-summary"></div>
+	<button onclick="toggleDropdown('system-contract')">Raw JSON</button>
+	<pre id="system-contract" class="dropdown-content"></pre>
+      </div>        
+
+      <div class="item"> 
+	<b>Foreign Coins: </b>
+	<div id="foreign-coins-summary"> </div>
+	<!-- <pre id="Foreign coins addresses"></pre> -->
+	<button onclick="toggleDropdown('foreign-coins')">Raw JSON</button>
+	<pre id="foreign-coins" class="dropdown-content"></pre>
+      </div>  
+
+      <div class="item">
+	<b>SystemContract status:</b>
+	<div id="system-contract-status"></div>
+      </div>
+
+      <div class="item">
+	<b>Gas Prices By ChainID:</b>
+	<div id="gas-prices"></div>
+      </div>
+
+      <div class="item">
+	<b>Gas/Zeta Pool By ChainID:</b>
+	<div id="gas-zeta-pool"></div>
+      </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script src="./common.js"></script>
+    <script src="./utils.js"></script>
+    <script src="./zevm.js"></script>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+body {
+    font-family: sans-serif;
+}
+/* for headers */
+.links-container {
+  display: flex;
+  justify-content: space-between;
+}
+.flexible-filler {
+  flex-grow: 1;
+}
+/* CSS for the pull-down section */
+.dropdown-content {
+    display: none;
+    /* position: absolute; */
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+}
+.container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.item {
+    flex-basis: 50%; /* Divide container into two equal-width columns */
+    box-sizing: border-box;
+    padding: 10px;
+}
+table {
+    max-width: 900px;
+    width: 80%;
+    border-collapse: collapse;
+    background-color: #f9f9f9;
+    font-family: monospace;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+    padding: 2px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: black;
+}
+.tooltip {
+    position: relative;
+    display: block;
+    cursor: pointer;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    /* width: 600px; */
+    background-color: #555;
+    color: #fff;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 125%; 
+    left: 0%;
+    margin-left: -300px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
