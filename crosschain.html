@@ -14,6 +14,7 @@
       <a href="./crosschain.html">Cross-Chain Module</a>
       <span class="flexible-filler"></span>
     </div>
+    
     <h2 id="sec-cross-chain-module">Cross Chain Module</h2>
     <div class="container">
       <div class="item">
@@ -35,14 +36,21 @@
 	<div id="external-contract-addresses-summary"></div>
 	<button onclick="toggleDropdown('external-contract-addresses')">Raw JSON</button>
 	<pre id="external-contract-addresses" class="dropdown-content"></pre>
+
+	<button id="validate contracts">Validate Contracts</button>
+      </div>
+      <div>
+	<b>Console</b><br>
+	<textarea  id="console" cols="100" rows="40"></textarea>
       </div>
 
 
     </div>
 
+
     
 
-
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script src="./common.js"></script>
     <script src="./utils.js"></script>
     <script src="./crosschain.js"></script>
