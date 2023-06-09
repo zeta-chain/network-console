@@ -112,51 +112,64 @@
 	    let data2 = await p2.json();
 	    let tssAddr = data2.eth;
 	    console.log("tssAddr", tssAddr);
-	    appendMessage(`tssAddr = ${tssAddr}`);
+	    // appendMessage(`tssAddr = ${tssAddr}`);
 
 	    let web3 = new Web3(RPCByChainID[chain_id]);
 	    let connectorContract = new web3.eth.Contract(connectorABI, connectorAddr);
 	    console.log("connectorContract", connectorContract);
 	    let res = await connectorContract.methods.tssAddress().call();
 	    console.log("connectorContract.tssAddress()", res);
-	    appendMessage(`connectorContract.tssAddress() = ${res}`);
+	    // appendMessage(`connectorContract.tssAddress() = ${res}`);
 	    if (res == tssAddr) {
-		appendMessage(`OK: TSS address match;`);
+		appendMessage(`OK: Connector: TSS address match;`);
 	    } else {
-		appendMessage(`ERROR: TSS address mismatch;`);
+		appendMessage(`ERROR: Connector: TSS address mismatch;`);
 	    }
 
 	    let res2 = await connectorContract.methods.zetaToken().call();
-	    appendMessage(`connectorContract.zetaToken() = ${res2}`);
-	    appendMessage(`zetaTokenAddr = ${zetaTokenAddr}`);
+	    // appendMessage(`connectorContract.zetaToken() = ${res2}`);
+	    // appendMessage(`zetaTokenAddr = ${zetaTokenAddr}`);
 	    if (res2.toLowerCase() == zetaTokenAddr.toLowerCase()) {
-		appendMessage(`OK: zetaToken address match;`);
+		appendMessage(`OK: Connector: zetaToken address match;`);
 	    } else {
-		appendMessage(`ERROR: zetaToken address mismatch;`);
+		appendMessage(`ERROR: Connector: zetaToken address mismatch;`);
+	    }
+
+	    try {
+		let erc20CustodyContract = new web3.eth.Contract(erc20CustodyABI, erc20CustodyAddr);
+		let res3 = await erc20CustodyContract.methods.TSSAddress().call();
+		// appendMessage(`erc20CustodyContract.TSSAddress() = ${res3}`);
+		// appendMessage(`tssAddr = ${tssAddr}`);
+		if (res3.toLowerCase() == tssAddr.toLowerCase()) {
+		    appendMessage(`OK: ERC20Custody:TSS address match;`);
+		} else {
+		    appendMessage(`ERROR: ERC20Custody: TSS address mismatch;`);
+		}
+	    } catch (error) {
+		console.log('error', error);
 	    }
 
 	    try {
 		let zetaTokenContract = new web3.eth.Contract(zetaTokenABI, zetaTokenAddr);
 		let res3 = await zetaTokenContract.methods.connectorAddress().call();
-		appendMessage(`zetaTokenContract.connectorAddress() = ${res3}`);
-		appendMessage(`connectorAddr = ${connectorAddr}`);
+		// appendMessage(`zetaTokenContract.connectorAddress() = ${res3}`);
+		// appendMessage(`connectorAddr = ${connectorAddr}`);
 		if (res3.toLowerCase() == connectorAddr.toLowerCase()) {
-		    appendMessage(`OK: connector address match;`);
+		    appendMessage(`OK: ZetaToken: connector address match;`);
 		} else {
-		    appendMessage(`ERROR: connector address mismatch;`);
+		    appendMessage(`ERROR: ZetaToken: connector address mismatch;`);
 		}
 
 		let res4 = await zetaTokenContract.methods.tssAddress().call();
-		appendMessage(`zetaTokenContract.tssAddress() = ${res4}`);
-		appendMessage(`tssAddr = ${tssAddr}`);
+		// appendMessage(`zetaTokenContract.tssAddress() = ${res4}`);
+		// appendMessage(`tssAddr = ${tssAddr}`);
 		if (res4.toLowerCase() == tssAddr.toLowerCase()) {
-		    appendMessage(`OK: TSS address match;`);
+		    appendMessage(`OK: ZetaToken: TSS address match;`);
 		} else {
-		    appendMessage(`ERROR: TSS address mismatch;`);
+		    appendMessage(`ERROR: ZetaToken: TSS address mismatch;`);
 		}
 	    } catch (error) {
 		console.log('error', error);
-
 	    }
 	    appendMessage(``);
 	    
