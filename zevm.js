@@ -2,23 +2,31 @@
 
     var web3 = new Web3(`${evmURL}`);
     console.log(web3);
+    let fromWei = web3.utils.fromWei;
+    var wzetaAddress; 
 
-
-    var SystemContractABI; 
+    var SystemContractABI;
+    var UniswapV2PairABI;
     async function read_abis() {
 	try {
 	    let p1 = await fetch('abi/SystemContract.json');
 	    let data1 = await p1.json();
 	    SystemContractABI = data1.abi;
 	    console.log("set SystemContractABI", SystemContractABI);
+
+	    let p2 = await fetch('abi/UniswapV2Pair.json');
+	    let data2 = await p2.json();
+	    UniswapV2PairABI = data2.abi;
+	    console.log("set UniswapV2PairABI", UniswapV2PairABI);
 	} catch (err) {
 	    console.log(err);
 	}
     }
-    read_abis();
+    await read_abis();
 
 
     // foreign coins
+    var zrc20s = {}; // key: contract address, value: coin info (from foreign_coins RPC)
     async function foreign_coins(){
 	fetch(`${nodeURL}/zeta-chain/zetacore/fungible/foreign_coins`, {
             method: 'GET',
@@ -28,25 +36,21 @@
             }
             return response.json();
 	}).then(data => {
-	    // let resource = "zeta-chain/zetacore/crosschain/get_tss_address";
-	    // let p1 = await fetch(`${nodeURL}/${resource}`, { method: 'GET'	});
-	    // let data2 = await p1.json();
-	    // data2.eth
             let div = document.getElementById('foreign-coins');
             div.textContent = JSON.stringify(data, null, 2);
-
             let div2 = document.getElementById('foreign-coins-summary');
 	    div2.appendChild(makeTableElement2(data.foreignCoins, ["zrc20_contract_address", "foreign_chain_id", "symbol", "coin_type"]));
-
+	    
 	    data.foreignCoins.forEach( (coin) => {
-		
+		zrc20s[coin.zrc20_contract_address] = coin
 	    })
             
 	}).catch(error => {
 	    console.log("fetch error" + error);
 	})
     }
-    foreign_coins();
+    await foreign_coins();
+    console.log("zrc20s", zrc20s);
 
     var SystemContractAddress; 
     // system contract
@@ -83,13 +87,13 @@
 	summary.uniswapv2_router02_address = p3;
 	let p4 = await sys.methods.wZetaContractAddress().call();
 	summary.wzeta_contract_address = p4;
+	wzetaAddress = p4;
 	let p5 = await sys.methods.zetaConnectorZEVMAddress().call();
 	summary.zeta_connector_zevm_address = p5;
 	
-	
 	div.appendChild(makeTableElement(summary));
     }
-    system_contract_status();
+    await system_contract_status();
 
     var chainIDs = [5, 97, 80001];
     async function gas_price() {
@@ -106,13 +110,56 @@
 
     async function gas_zeta_pool_address() {
 	let summary = {};
+
+	let pool = [];
+	pool.zrc20AddressToSymbol = function(addr) {
+	    if (addr == wzetaAddress) {
+		return "wZETA";
+	    }
+	    let coin = zrc20s[addr];
+	    if (coin) {
+		return coin.symbol;
+	    }
+	    return addr;
+	}
 	for (let i = 0; i<chainIDs.length; i++) {
 	    let p1 = await sys.methods.gasZetaPoolByChainId(chainIDs[i]).call();
 	    console.log("gas zeta pool address", p1);
-	    summary[chainIDs[i]] = p1;
+	    pool[i] = {};
+	    pool[i].chain_id = chainIDs[i];
+	    pool[i].pair_address = p1;
+
+	    // query the pairs
+	    let pairContract = new web3.eth.Contract(UniswapV2PairABI, p1);
+	    let p2 = await pairContract.methods.getReserves().call();
+	    console.log("gas zeta pool reserves", p2);
+	    // reserves[i] = p2;
+	    reserve0 = Number(fromWei(p2[0]));
+	    reserve1 = Number(fromWei(p2[1]));
+
+	    let p3 = await pairContract.methods.token0().call();
+	    console.log("gas zeta pool token0", p3);
+	    pool[i].reserve0 = `${reserve0.toFixed(2)} ${pool.zrc20AddressToSymbol(p3)}`; 
+	    let p4 = await pairContract.methods.token1().call();
+	    pool[i].reserve1 = `${reserve1.toFixed(2)} ${pool.zrc20AddressToSymbol(p4)}`;
+	    console.log("gas zeta pool token1", p4);
+	    if (p3 == wzetaAddress) {
+		pool[i].gas_asset = pool[i].reserve1;
+		pool[i].wzeta = pool[i].reserve0;
+		pool[i].ratio = (reserve1/reserve0).toFixed(2);
+	    } else {
+		pool[i].gas_asset = pool[i].reserve0;
+		pool[i].wzeta = pool[i].reserve1;
+		pool[i].ratio = (reserve0/reserve1).toFixed(2);
+	    }
+	    
 	}
+	console.log("reserves", pool);
 	let div = document.getElementById('gas-zeta-pool');
-	div.appendChild(makeTableElement(summary));
+	div.appendChild(makeTableElement2(pool, ["pair_address", "gas_asset", "wzeta", "ratio"]));
+
+
+
     }
     gas_zeta_pool_address();
 
