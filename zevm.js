@@ -136,8 +136,8 @@
 	    let p2 = await pairContract.methods.getReserves().call();
 	    console.log("gas zeta pool reserves", p2);
 	    // reserves[i] = p2;
-	    reserve0 = Number(fromWei(p2[0]));
-	    reserve1 = Number(fromWei(p2[1]));
+	    let reserve0 = Number(fromWei(p2[0]));
+	    let reserve1 = Number(fromWei(p2[1]));
 
 	    let p3 = await pairContract.methods.token0().call();
 	    console.log("gas zeta pool token0", p3);
@@ -163,7 +163,7 @@
 
 
     }
-    await Promise.all([coin_promise, sys_promise])
+    await Promise.all([coin_promise, sys_promise]);
     gas_zeta_pool_address();
 
 })();
