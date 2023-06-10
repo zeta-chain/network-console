@@ -42,12 +42,12 @@
 	    div2.appendChild(makeTableElement2(data.foreignCoins, ["zrc20_contract_address", "foreign_chain_id", "symbol", "coin_type"]));
 	    
 	    data.foreignCoins.forEach( (coin) => {
-		zrc20s[coin.zrc20_contract_address] = coin
-	    })
+		zrc20s[coin.zrc20_contract_address] = coin;
+	    });
             
 	}).catch(error => {
 	    console.log("fetch error" + error);
-	})
+	});
     }
     let coin_promise = foreign_coins();
 
@@ -57,7 +57,7 @@
     async function system_contract() {
 	let p1 = await fetch(`${nodeURL}/zeta-chain/zetacore/fungible/system_contract`, {
             method: 'GET',
-	})
+	});
 	let data = await p1.json();
 	let div = document.getElementById('system-contract');
 	div.textContent = JSON.stringify(data, null, 2);
@@ -114,7 +114,7 @@
 	let summary = {};
 
 	let pool = [];
-	pool.zrc20AddressToSymbol = function(addr) {
+	function zrc20AddressToSymbol(addr) {
 	    if (addr == wzetaAddress) {
 		return "wZETA";
 	    }
@@ -123,7 +123,7 @@
 		return coin.symbol;
 	    }
 	    return addr;
-	}
+	};
 	for (let i = 0; i<chainIDs.length; i++) {
 	    let p1 = await sys.methods.gasZetaPoolByChainId(chainIDs[i]).call();
 	    console.log("gas zeta pool address", p1);
@@ -141,9 +141,9 @@
 
 	    let p3 = await pairContract.methods.token0().call();
 	    console.log("gas zeta pool token0", p3);
-	    pool[i].reserve0 = `${reserve0.toFixed(2)} ${pool.zrc20AddressToSymbol(p3)}`; 
+	    pool[i].reserve0 = `${reserve0.toFixed(2)} ${zrc20AddressToSymbol(p3)}`; 
 	    let p4 = await pairContract.methods.token1().call();
-	    pool[i].reserve1 = `${reserve1.toFixed(2)} ${pool.zrc20AddressToSymbol(p4)}`;
+	    pool[i].reserve1 = `${reserve1.toFixed(2)} ${zrc20AddressToSymbol(p4)}`;
 	    console.log("gas zeta pool token1", p4);
 	    if (p3 == wzetaAddress) {
 		pool[i].gas_asset = pool[i].reserve1;
