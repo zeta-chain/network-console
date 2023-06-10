@@ -49,8 +49,8 @@
 	    console.log("fetch error" + error);
 	})
     }
-    await foreign_coins();
-    console.log("zrc20s", zrc20s);
+    let coin_promise = foreign_coins();
+
 
     var SystemContractAddress; 
     // system contract
@@ -93,8 +93,9 @@
 	
 	div.appendChild(makeTableElement(summary));
     }
-    await system_contract_status();
+    let sys_promise = system_contract_status();
 
+    
     var chainIDs = [5, 97, 80001];
     async function gas_price() {
 	let summary = {};
@@ -107,6 +108,7 @@
 	div.appendChild(makeTableElement(summary));
     }
     gas_price();
+
 
     async function gas_zeta_pool_address() {
 	let summary = {};
@@ -161,6 +163,7 @@
 
 
     }
+    await Promise.all([coin_promise, sys_promise])
     gas_zeta_pool_address();
 
 })();
