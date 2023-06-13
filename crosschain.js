@@ -60,14 +60,29 @@
 	    let p2 = await fetch(`${nodeURL}/${resource}`, { method: 'GET', });
 	    let data2 = await p2.json();
 	    let pending = data2.pending_nonces;
-	    pending = pending.filter( (x) => x.tss == TSS);
+	    pending = pending.filter( (x) => (x.tss == TSS && x.chain_id != "7001") );
 	    console.log("PENDING", pending);
+
+	    let p = []; 
+	    for (let i = 0; i < pending.length; i++) {
+		let chainID = pending[i].chain_id;
+		let resource = `${nodeURL}/zeta-chain/crosschain/cctxPending?chainId=${chainID}&pagination.limit=1`;
+		p[i] = await fetch(resource, {method: 'GET'});
+		if (p[i].ok) {
+		    let data = await p[i].json();
+		    console.log("data", data);
+		    if (data.CrossChainTx.length > 0)
+			pending[i].first_pending_cctx = data.CrossChainTx[0].index; 
+		}
+	    }
+	    
+	    
 
 	    let pre = document.getElementById("pending-outbound-queues");
 	    pre.textContent = JSON.stringify(data2, null, 2);
 
 	    let div = document.getElementById("pending-outbound-queues-summary");
-	    div.appendChild(makeTableElement2(pending, ["chain_id", "nonce_low", "nonce_high"]));
+	    div.appendChild(makeTableElement2(pending, ["chain_id", "nonce_low", "nonce_high", "first_pending_cctx"]));
 	    
 	} catch (error) {
 	    console.log('error', error);
