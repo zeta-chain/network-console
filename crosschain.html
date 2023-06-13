@@ -37,13 +37,24 @@
 	<button onclick="toggleDropdown('external-contract-addresses')">Raw JSON</button>
 	<pre id="external-contract-addresses" class="dropdown-content"></pre>
 
-	<button id="validate contracts">Validate Contracts</button>
+
       </div>
       <div>
-	<b>Console</b><br>
-	<textarea  id="console" cols="80" rows="20" style="font-family: monospace;"></textarea>
+	<p> <b>Console</b><br>
+	<button id="validate-contracts">Validate Contracts</button></p>
+	<textarea  id="console" cols="80" rows="10" style="font-family: monospace;"></textarea>
       </div>
+      <div>
+	<b>Debug CCTX</b><br>
+	<p> 
+	  <input id="input-debug-cctx" type="text" size="80" value="0x598fdd00ef3e0c62f65b388095c7e1f87795908da002962e0a27a2113e10ce32"></input>
+	  <button id="button-debug-cctx">Analyze</button>
+	  <button id="button-cctx-json" onclick="toggleDropdown('cctx-json')">CCTX JSON</button>
+	</p>
 
+	<pre id="cctx-json" class="dropdown-content"></pre>
+	<textarea  id="console-debug-cctx" cols="80" rows="20" style="font-family: monospace;"></textarea>	
+      </div>
 
     </div>
 

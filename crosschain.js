@@ -184,13 +184,127 @@
 	await validateContracts(97);
 	await validateContracts(80001);
     }
-    validate();
+    document.getElementById("validate-contracts").onclick = validate;
+    // validate();
 
 
-    function appendMessage(message) {
-	var textbox = document.getElementById("console");
+    function appendMessage(message, consoleID="console") {
+	var textbox = document.getElementById(consoleID);
 	textbox.value += message + "\n";
     }
-    
+
+    function clearConsole(consoleID="console") {
+	var textbox = document.getElementById(consoleID);
+	textbox.value = "";
+    }
+
+    async function cctxByHash(hash) {
+	let resource = `zeta-chain/crosschain/cctx/${hash}`;
+	let p1 = await fetch(`${nodeURL}/${resource}`, {method: 'GET'});
+	let data = await p1.json();
+	return data;
+    }
+
+
+    async function debugCCTX() {
+	function append(message) {
+	    appendMessage(message, "console-debug-cctx");
+	}
+	clearConsole("console-debug-cctx");
+	let input = document.getElementById("input-debug-cctx").value;
+	if (input.length != 66) {
+	    append("ERROR: input.length != 66");
+	    return;
+	}
+	append("Querying CCTX by hash...");
+	let cctx = await cctxByHash(input)
+	let pre = document.getElementById("cctx-json");
+	pre.innerText = JSON.stringify(cctx, null, 2)
+	append(`OK: CCTX ${input} obtained`);
+	// debug session
+	const status = cctx.CrossChainTx.cctx_status
+	if (status.status == "OutboundMined") {
+	    append("OK: CCTX status is OutboundMined");
+	} else if (status.status == "PendingOutbound") {
+	    append("PENDING: CCTX status is PendingOutbound");
+	    append("  Is it OK to be in PENDING at this time?");
+	    
+	    const finalizedBlock = cctx.CrossChainTx.inbound_tx_params.inbound_tx_finalized_zeta_height;
+	    append("    inTx finalized at Zeta block " + finalizedBlock);
+
+	    let currentBlock = await getCurrentBlock();
+	    append(`    current block is ${currentBlock}`);
+	    const passedBlocks = currentBlock - finalizedBlock;
+	    append(`    ${passedBlocks} blocks has passed; roughly ${passedBlocks * 5} seconds`);
+	    if (passedBlocks > 100) {
+		append("    ERROR: CCTX has been in PendingOutbound for too long");
+	    } else {
+		append("    OK: CCTX has been in PendingOutbound for a reasonable time; please wait.");
+	    }
+	    append(`  Why was it in PENDING for so long?`);
+	    append(`    Has outbound tx been keysigned and broadcasted? Checking txtracker...`);
+	    const outParams = cctx.CrossChainTx.outbound_tx_params;
+	    const curOutParam = outParams[outParams.length - 1];
+	    console.log(curOutParam);
+	    const outChainID = curOutParam.receiver_chainId;
+	    const outNonce = curOutParam.outbound_tx_tss_nonce;
+	    console.log("outChainID", outChainID);
+	    console.log("outNonce", outNonce);
+	    let txtracker = await getTxTracker(outChainID, outNonce);
+	    if (txtracker == 404) {
+		append("    ERROR: txtracker not found");
+		append("");
+		append("This likely suggest that keysign failure and no outbound tx has been signed/broadcasted");
+	    } else {
+		txhash = txtracker.outTxTracker.hash_list[0].tx_hash;
+		chainId = outChainID;
+		append("    OK: txtracker found: ");
+		append(`      txhash: ${txtracker.outTxTracker.hash_list[0].tx_hash}`);
+		append(`    verifying this txhash on external chain...`);
+		const rpcEndpoint = RPCByChainID[chainId];
+		const payload = {
+		    jsonrpc: '2.0',
+		    id: 1,
+		    method: 'eth_getTransactionReceipt',
+		    params: [txhash],
+		};
+		const p2 = await fetch(rpcEndpoint, {
+		    method: 'POST',
+		    headers: {
+			'Content-Type': 'application/json',
+		    },
+		    body: JSON.stringify(payload),
+		});
+		if (p2.status != 200) {
+		    append(`    ERROR: RPC call failed: code ${p2.status}`);
+		    return;
+		}
+		const data2 = await p2.json();
+		append(`      OK: found txhash receipt on external chain`);
+		append("");
+		append("Diagnosis: Failure to observe and report outbound tx on external chain");
+	    }
+
+	}
+    }
+    document.getElementById("button-debug-cctx").addEventListener("click", debugCCTX);
+
+
+    async function getCurrentBlock() {
+	let resource = `zeta-chain/crosschain/lastZetaHeight`;
+	let p1 = await fetch(`${nodeURL}/${resource}`, {method: 'GET'});
+	let data = await p1.json();
+	return data.Height;
+    }
+
+    async function getTxTracker(chainId, nonce) {
+	let resource = `zeta-chain/crosschain/outTxTracker/${chainId}/${nonce}`;
+	let p1 = await fetch(`${nodeURL}/${resource}`, {method: 'GET'});
+	if (p1.status == 404) {
+	    return 404;
+	}
+	let data = await p1.json();
+	return data;
+    }
     
 })();
