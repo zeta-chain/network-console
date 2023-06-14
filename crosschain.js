@@ -232,14 +232,25 @@
 	    return;
 	}
 	append("Querying CCTX by hash...");
-	let cctx = await cctxByHash(input)
+	let cctx = await cctxByHash(input);
 	let pre = document.getElementById("cctx-json");
-	pre.innerText = JSON.stringify(cctx, null, 2)
-	append(`OK: CCTX ${input} obtained`);
+	pre.innerText = JSON.stringify(cctx, null, 2);
+	append(`OK: found CCTX ${input}`);
+	append(`Checking CCTX status...`);
 	// debug session
-	const status = cctx.CrossChainTx.cctx_status
+	const status = cctx.CrossChainTx.cctx_status;
+	const outParams = cctx.CrossChainTx.outbound_tx_params;
+	const curOutParam = outParams[outParams.length - 1];
+	console.log(curOutParam);
+	const cc = cctx.CrossChainTx; 
+
 	if (status.status == "OutboundMined") {
 	    append("OK: CCTX status is OutboundMined");
+	    append("  Checking outbound tx confirmation votes...");
+	    // const ballotIndex = await getOutTxBallot(cc.index, curOutParam., outBlockHeight, amount, chainId, nonce, coinType); 
+	} else if (status.status == "Aborted") {
+	    append("OK: CCTX status is Aborted");
+	    append(`  Aborted reason: ${status.status_message}`);
 	} else if (status.status == "PendingOutbound") {
 	    append("PENDING: CCTX status is PendingOutbound");
 	    append("  Is it OK to be in PENDING at this time?");
@@ -258,9 +269,6 @@
 	    }
 	    append(`  Why was it in PENDING for so long?`);
 	    append(`    Has outbound tx been keysigned and broadcasted? Checking txtracker...`);
-	    const outParams = cctx.CrossChainTx.outbound_tx_params;
-	    const curOutParam = outParams[outParams.length - 1];
-	    console.log(curOutParam);
 	    const outChainID = curOutParam.receiver_chainId;
 	    const outNonce = curOutParam.outbound_tx_tss_nonce;
 	    console.log("outChainID", outChainID);
@@ -271,38 +279,50 @@
 		append("");
 		append("This likely suggest that keysign failure and no outbound tx has been signed/broadcasted");
 	    } else {
-		txhash = txtracker.outTxTracker.hash_list[0].tx_hash;
-		chainId = outChainID;
+		const txhash = txtracker.outTxTracker.hash_list[0].tx_hash;
+		const chainId = outChainID;
 		append("    OK: txtracker found: ");
 		append(`      txhash: ${txtracker.outTxTracker.hash_list[0].tx_hash}`);
 		append(`    verifying this txhash on external chain...`);
-		const rpcEndpoint = RPCByChainID[chainId];
-		const payload = {
-		    jsonrpc: '2.0',
-		    id: 1,
-		    method: 'eth_getTransactionReceipt',
-		    params: [txhash],
-		};
-		const p2 = await fetch(rpcEndpoint, {
-		    method: 'POST',
-		    headers: {
-			'Content-Type': 'application/json',
-		    },
-		    body: JSON.stringify(payload),
-		});
-		if (p2.status != 200) {
-		    append(`    ERROR: RPC call failed: code ${p2.status}`);
-		    return;
+		const receipt = getReceipt(chainId, txhash); 
+		if (receipt) {
+		    append(`      OK: found txhash receipt on external chain`);
+		    append("");
+		    append("Diagnosis: Failure to observe and report outbound tx on external chain");
+		} else {
+		    append(`      ERROR: cannot find txhash`);
+		    append("");
+		    append(`Diagnosis: txtrack may have contained invalid txhash; check ${txhash} on chain ${chainId} manually to verify`);
 		}
-		const data2 = await p2.json();
-		append(`      OK: found txhash receipt on external chain`);
-		append("");
-		append("Diagnosis: Failure to observe and report outbound tx on external chain");
+
 	    }
 
 	}
     }
     document.getElementById("button-debug-cctx").addEventListener("click", debugCCTX);
+
+    async function getReceipt(chainId, txhash) {
+	const rpcEndpoint = RPCByChainID[chainId];
+	const payload = {
+	    jsonrpc: '2.0',
+	    id: 1,
+	    method: 'eth_getTransactionReceipt',
+	    params: [txhash],
+	};
+	const p2 = await fetch(rpcEndpoint, {
+	    method: 'POST',
+	    headers: {
+		'Content-Type': 'application/json',
+	    },
+	    body: JSON.stringify(payload),
+	});
+	if (p2.status != 200) {
+	    console.log(`ERROR: status ${p2.status}; wanted 200`); 
+	    return null;
+	}
+	const data2 = await p2.json();
+	return data2; 
+    }
 
 
     async function getCurrentBlock() {
@@ -320,6 +340,71 @@
 	}
 	let data = await p1.json();
 	return data;
+    }
+
+// type OutTxDigestRequest struct {
+// 	SendHash       string `json:"sendHash"`
+// 	OutTxHash      string `json:"outTxHash"`
+// 	OutBlockHeight uint64 `json:"outBlockHeight"`
+// 	Amount         string `json:"amount"`
+// 	ChainID        int64  `json:"chainID"`
+// 	Nonce          uint64 `json:"nonce"`
+// 	CoinType       string `json:"coinType"`
+// }
+    async function getOutTxBallot(sendHash, outTxHash, outBlockHeight, amount, chainId, nonce, coinType) {
+	let endpoint = `${corsProxyURL}/${hashServerURL}/out_tx_digest`;
+	const payload = {
+	    method: "hash.OutTxDigest",
+	    params: [{
+		sendHash: sendHash,
+		outTxHash: outTxHash,
+		outBlockHeight: outBlockHeight,
+		amount: amount,
+		chainID: chainId,
+		nonce: nonce,
+		coinType: coinType,
+	    }],
+	    id: "1",
+	};
+	let p1 = await fetch(endpoint, {
+	    method: 'POST',
+	    headers: {
+		'Content-Type': 'application/json',
+	    },
+	    body: JSON.stringify(payload)
+	});
+	if (!p1.ok) {
+	    console.log("p1 not ok");
+	    return null;
+	}
+	let data = await p1.json();
+	if (data.error) {
+	    console.log("data.error", data.error);
+	    return null;
+	}
+	return data.result.digest;
+    }
+    let d = await getOutTxBallot("0x598fdd00ef3e0c62f65b388095c7e1f87795908da002962e0a27a2113e10ce32",
+				 "0xb8c8707dc8e90673dcde2c4799a2c0d35acc1b43a8b3f93c9d9661b715cac193",
+				 30635730,
+				 "0",
+				 97,
+				 0, 
+				 "Zeta");
+    const expectedHash = "0x3bc920a14e8fa9885a0940c084dd5c921c191d81bf018e7e7ed9cf342e0008bc"; 
+    if (d != expectedHash) {
+	console.log(`ballot test: hash mismatch: wanted ${expectedHash}; got ${d}`);
+    } else{
+	console.log("OK: ballot test: hash match");
+    }
+
+    async function getOutTxBallotFromCctx(cctx) {
+	const sendHash = cctx.Crosschain.index; 
+	for (let i=0; i< cctx.CrossChainTx.outbound_tx_params.length; i++) {
+	    const outTxParam = cctx.CrossChainTx.outbound_tx_params[i];
+	    const txhash = outTxParam.outbound_tx_hash;
+	    
+	}
     }
     
 })();
