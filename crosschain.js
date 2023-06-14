@@ -247,7 +247,13 @@
 	if (status.status == "OutboundMined") {
 	    append("OK: CCTX status is OutboundMined");
 	    append("  Checking outbound tx confirmation votes...");
-	    // const ballotIndex = await getOutTxBallot(cc.index, curOutParam., outBlockHeight, amount, chainId, nonce, coinType); 
+	    const txhash = curOutParam.outbound_tx_hash;
+	    const chainID = curOutParam.receiver_chainId;
+	    const receipt = await getReceipt(chainID, txhash);
+	    append("  txhash: " + txhash);
+	    append("  chainID: " + chainID);
+	    append("  receipt: " + JSON.stringify(receipt, null, 2));
+	    // const ballotIndex = await getOutTxBallot(cc.index, curOutParam.outbound_tx_hash, outBlockHeight, amount, chainId, nonce, coinType); 
 	} else if (status.status == "Aborted") {
 	    append("OK: CCTX status is Aborted");
 	    append(`  Aborted reason: ${status.status_message}`);
@@ -287,6 +293,14 @@
 		const receipt = getReceipt(chainId, txhash); 
 		if (receipt) {
 		    append(`      OK: found txhash receipt on external chain`);
+		    append(`      Getting the outtx confirmation ballot...`);
+		    const ballotIndex = await getOutTxBallot(cc.index, curOutParam.outbound_tx_tss_nonce, curOutParam.outbound_tx_params.outbound_tx_amount, chainId, curOutParam.outbound_tx_params.outbound_tx_nonce, curOutParam.outbound_tx_params.outbound_tx_coin_type);
+		    if (ballotIndex == 404) {
+			append(`      ERROR: ballot not found`);
+		    } else {
+			append(`      OK: ballot found: ${ballotIndex}`);
+		    }
+			
 		    append("");
 		    append("Diagnosis: Failure to observe and report outbound tx on external chain");
 		} else {
@@ -316,6 +330,10 @@
 	    },
 	    body: JSON.stringify(payload),
 	});
+	if (!p2.ok) {
+	    console.log(`ERROR: fetch is not ok`);
+	    return null;
+	}
 	if (p2.status != 200) {
 	    console.log(`ERROR: status ${p2.status}; wanted 200`); 
 	    return null;
@@ -323,6 +341,7 @@
 	const data2 = await p2.json();
 	return data2; 
     }
+    console.log("receipt", await getReceipt(97, "0xc5e9a96c0534dec3d12806e43fa5cf597816a5933cfb4644ce81e3dc501899e7"));
 
 
     async function getCurrentBlock() {
@@ -384,6 +403,7 @@
 	}
 	return data.result.digest;
     }
+    // self test
     let d = await getOutTxBallot("0x598fdd00ef3e0c62f65b388095c7e1f87795908da002962e0a27a2113e10ce32",
 				 "0xb8c8707dc8e90673dcde2c4799a2c0d35acc1b43a8b3f93c9d9661b715cac193",
 				 30635730,
