@@ -188,10 +188,10 @@ async function gasPriceHeartBeats() {
 	}
 	console.log(blockNums);
 	if (badClientIndexes.length == 0) {
-	    appendMessage(`  chainid ${chainId} no bad clients; `);
-	    appendMessage(`  maximum latency is ${latestBlock-Math.min(...blockNums)}`);
-	    appendMessage(`  minimum latency is ${latestBlock-Math.max(...blockNums)}`);
+	    appendMessage(`  OK: chainid ${chainId} no bad clients; `);
 	}
+	appendMessage(`  maximum latency is ${latestBlock-Math.min(...blockNums)}`);
+	appendMessage(`  minimum latency is ${latestBlock-Math.max(...blockNums)}`);
 
     }
 }
