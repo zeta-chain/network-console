@@ -107,6 +107,16 @@ async function zetaclients_versions() {
 	    let td2 = document.getElementById(`zetaclients-peerid-${i}`);
 	    td2.innerText = data2;
 
+	    let p4 = await checkPromises[i];
+	    if (!p4.ok) {
+		console.log("Error " + p4.status);
+		continue;
+	    }
+	    let data4 = await p4.text();
+	    let td5 = document.getElementById(`zetaclients-check-${i}`);
+	    td5.innerText = data4;
+	    
+
 	    let p3 = await geoPromises[i];
 	    if (!p3.ok) {
 		console.log("Error " + p3.status);
@@ -118,16 +128,6 @@ async function zetaclients_versions() {
 	    let td4 = document.getElementById(`zetaclients-org-${i}`);
 	    td4.innerText = data3.org;
 
-	    let p4 = await checkPromises[i];
-	    if (!p4.ok) {
-		console.log("Error " + p4.status);
-		continue;
-	    }
-	    let data4 = await p4.text();
-	    let td5 = document.getElementById(`zetaclients-check-${i}`);
-	    td5.innerText = data4;
-	    
-
 	}
     } catch (error) {
 	console.log("Error " + error);
@@ -135,3 +135,23 @@ async function zetaclients_versions() {
 }
 
 zetaclients_versions();
+
+
+// render a table showing gas price updates from zetaclients
+async function gasPriceHeartBeats() {
+    const chainIds = [5, 97, 80001];
+    for (let i=0; i<chainIds.length; i++) {
+	const chainId = chainIds[i];
+	const resource = `zeta-chain/crosschain/gasPrice/${chainId}`;
+	const url = `${nodeURL}/${resource}`;
+	let p = await fetch(url, {method: 'GET'});
+	if (!p.ok) {
+	    console.log("Error " + p.status);
+	    continue;
+	}
+	let data = await p.json();
+	console.log(data.GasPrice.block_nums);
+    }
+}
+
+gasPriceHeartBeats();

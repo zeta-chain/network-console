@@ -5,3 +5,8 @@ var checkURL = 'http://46.4.15.110:8888'; // remote server that tests port 6668 
 var tmURL = 'http://46.4.15.110:26657';
 var hashServerURL = 'http://46.4.15.110:9001';
 
+var RPCByChainID = {
+    5: "https://rpc.ankr.com/eth_goerli",
+    97: "https://data-seed-prebsc-1-s1.binance.org:8545",
+    80001: "https://rpc-mumbai.maticvigil.com",
+};
