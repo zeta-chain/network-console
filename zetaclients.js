@@ -139,6 +139,16 @@ zetaclients_versions();
 
 // render a table showing gas price updates from zetaclients
 async function gasPriceHeartBeats() {
+    function appendMessage(msg) {
+	let textarea = document.getElementById('console-gas-price-heart-beats');
+	textarea.value += msg + "\n";
+    }
+    const bodyForBlockNumber = {
+	"jsonrpc": "2.0",
+	"method": "eth_blockNumber",
+	"params": [],
+	"id": 1
+    };
     const chainIds = [5, 97, 80001];
     for (let i=0; i<chainIds.length; i++) {
 	const chainId = chainIds[i];
@@ -151,7 +161,40 @@ async function gasPriceHeartBeats() {
 	}
 	let data = await p.json();
 	console.log(data.GasPrice.block_nums);
+	let evmRPC = RPCByChainID[chainId];
+	let p2 = await fetch(evmRPC, {
+	    method: 'POST',
+	    body: JSON.stringify(bodyForBlockNumber),
+	    headers: { 'Content-Type': 'application/json' }
+	});
+	if (!p2.ok) {
+	    console.log("Error " + p2.status);
+	    continue;
+	}
+	let data2 = await p2.json();
+	const latestBlock = parseInt(data2.result, 16);
+        console.log(`chainid ${chainId} latest block ${latestBlock}; `);
+	appendMessage(`chainid ${chainId} latest block ${latestBlock}; analyzing reports from zetaclients...`);
+
+	const blockNums = [];
+	const badClientIndexes = [];
+	for (let i = 0; i < data.GasPrice.block_nums.length; i++) {
+	    const blockNum = parseInt(data.GasPrice.block_nums[i], 10);
+	    blockNums.push(blockNum);
+	    const blockDiff = latestBlock - blockNum;
+	    if (blockDiff > 100) {
+		badClientIndexes.push(i);
+	    }
+	}
+	console.log(blockNums);
+	if (badClientIndexes.length == 0) {
+	    appendMessage(`  chainid ${chainId} no bad clients; `);
+	    appendMessage(`  maximum latency is ${latestBlock-Math.min(...blockNums)}`);
+	    appendMessage(`  minimum latency is ${latestBlock-Math.max(...blockNums)}`);
+	}
+
     }
 }
 
 gasPriceHeartBeats();
+
