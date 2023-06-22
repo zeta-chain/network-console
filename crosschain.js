@@ -220,6 +220,25 @@
 	return data;
     }
 
+    // intxHash => cctx index
+    async function inTxHashToCCTXIndex(intxHash) {
+	let resource = `zeta-chain/crosschain/inTxHashToCctx/${intxHash}`;
+	let p1 = await fetch(`${nodeURL}/${resource}`, {method: 'GET'});
+	if (!p1.ok) {
+	    return null;
+	}
+	let data = await p1.json();
+	return data;
+    }
+    document.getElementById("input-debug-intx").onchange = async function() {
+	let intxHash = document.getElementById("input-debug-intx").value;
+	const cctxIndex = await inTxHashToCCTXIndex(intxHash);
+	console.log("cctxIndex", cctxIndex);
+	if (cctxIndex) {
+	    document.getElementById("input-debug-cctx").value = cctxIndex.inTxHashToCctx.cctx_index;
+	}
+    };
+    document.getElementById("button-debug-intx").onclick = document.getElementById("input-debug-intx").onchange;
 
     async function debugCCTX() {
 	function append(message) {
