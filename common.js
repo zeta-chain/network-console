@@ -11,3 +11,7 @@ var RPCByChainID = {
     80001: "https://rpc-mumbai.maticvigil.com",
     18332: "https://blockstream.info/testnet/api", 
 };
+
+if (window.location.protocol === 'https:') {
+    alert('HTTPS does not work; force your browser to use HTTP instead.');
+}
