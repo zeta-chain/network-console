@@ -1,3 +1,5 @@
+import {decode, encode, convertbits, encodings} from './bech32.js';
+
 // ---------------- zetaclients ------------------------------
 async function zetaclients_versions() {
     let IPs = ["52.42.64.63", "150.136.176.81", "202.8.10.137",
@@ -136,6 +138,31 @@ async function zetaclients_versions() {
 
 zetaclients_versions();
 
+// from zeta1xxxx => moniker in the validators list
+async function getMonikerFromAccountAddress(address) {
+    // turn zeta1xxx into zetavaloper1xxx
+    const d = decode(address, "bech32");
+    if (!d) {
+	return null;
+    }
+    const a = convertbits(d.data, 5, 8, false);
+    const valAddress = encode("zetavaloper", convertbits(a, 8, 5, true), "bech32");
+    console.log(valAddress);
+    
+    const resource = `cosmos/staking/v1beta1/validators/${valAddress}`;
+    const url = `${nodeURL}/${resource}`;
+    let p = await fetch(url, {method: 'GET'});
+    if (!p.ok) {
+	console.log("Error " + p.status);
+	return null;
+	}
+    let data = await p.json();
+    console.log(data);
+    return data.validator.description.moniker;
+}
+
+getMonikerFromAccountAddress("zeta1ggqzjf5726uu7xc6pfwg00lny79w6t3a3utpw5");
+
 
 // render a table showing gas price updates from zetaclients
 async function gasPriceHeartBeats() {
@@ -180,6 +207,7 @@ async function gasPriceHeartBeats() {
 		const blockNum = parseInt(data.GasPrice.block_nums[index], 10);
 		const blockDiff = latestBlock - blockNum;
 		appendMessage(`    client ${data.GasPrice.signers[index]} is ${blockDiff} blocks behind; `);
+		appendMessage(`    likely to be validator with moniker "${await getMonikerFromAccountAddress(data.GasPrice.signers[index])}"`);
 	    }
 	}
 	appendMessage(`  maximum latency is ${latestBlock-Math.min(...blockNums)}`);
