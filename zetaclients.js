@@ -143,13 +143,8 @@ async function gasPriceHeartBeats() {
 	let textarea = document.getElementById('console-gas-price-heart-beats');
 	textarea.value += msg + "\n";
     }
-    const bodyForBlockNumber = {
-	"jsonrpc": "2.0",
-	"method": "eth_blockNumber",
-	"params": [],
-	"id": 1
-    };
-    const chainIds = [5, 97, 80001];
+
+    const chainIds = [5, 97, 80001, 18332];
     for (let i=0; i<chainIds.length; i++) {
 	const chainId = chainIds[i];
 	const resource = `zeta-chain/crosschain/gasPrice/${chainId}`;
@@ -161,18 +156,7 @@ async function gasPriceHeartBeats() {
 	}
 	let data = await p.json();
 	console.log(data.GasPrice.block_nums);
-	let evmRPC = RPCByChainID[chainId];
-	let p2 = await fetch(evmRPC, {
-	    method: 'POST',
-	    body: JSON.stringify(bodyForBlockNumber),
-	    headers: { 'Content-Type': 'application/json' }
-	});
-	if (!p2.ok) {
-	    console.log("Error " + p2.status);
-	    continue;
-	}
-	let data2 = await p2.json();
-	const latestBlock = parseInt(data2.result, 16);
+        const latestBlock = await getLatestBlockNumber(chainId);
         console.log(`chainid ${chainId} latest block ${latestBlock}; `);
 	appendMessage(`chainid ${chainId} latest block ${latestBlock}; analyzing reports from zetaclients...`);
 
@@ -197,4 +181,43 @@ async function gasPriceHeartBeats() {
 }
 
 gasPriceHeartBeats();
+
+async function getLatestBlockNumber(chainId) {
+    const bodyForBlockNumber = {
+	"jsonrpc": "2.0",
+	"method": "eth_blockNumber",
+	"params": [],
+	"id": 1
+    };
+    if (chainId != 18332) {
+    	let evmRPC = RPCByChainID[chainId];
+	let p2 = await fetch(evmRPC, {
+	    method: 'POST',
+	    body: JSON.stringify(bodyForBlockNumber),
+	    headers: { 'Content-Type': 'application/json' }
+	});
+	if (!p2.ok) {
+	    console.log("Error " + p2.status);
+	    return null;
+	}
+	let data2 = await p2.json();
+	const latestBlock = parseInt(data2.result, 16);
+	return latestBlock;
+    } else if (chainId == 18332) {
+	const btcRPC = RPCByChainID[chainId];
+	const url = `${btcRPC}/blocks/tip/height`; // esplora API from blockstream: doc: https://github.com/Blockstream/esplora/blob/master/API.md
+	let p2 = await fetch(url, {	    method: 'GET'    });
+	if (!p2.ok) {
+	    console.log("Error " + p2.status);
+	    return null;
+	}
+	let data2 = await p2.text();
+	console.log(data2);
+	const latestBlock = parseInt(data2, 10);
+	return latestBlock;
+    }
+    return null; 
+}
+
+getLatestBlockNumber(18332);
 

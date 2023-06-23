@@ -9,4 +9,5 @@ var RPCByChainID = {
     5: "https://rpc.ankr.com/eth_goerli",
     97: "https://data-seed-prebsc-1-s1.binance.org:8545",
     80001: "https://rpc-mumbai.maticvigil.com",
+    18332: "https://blockstream.info/testnet/api", 
 };
