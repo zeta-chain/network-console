@@ -173,6 +173,14 @@ async function gasPriceHeartBeats() {
 	console.log(blockNums);
 	if (badClientIndexes.length == 0) {
 	    appendMessage(`  OK: chainid ${chainId} no bad clients; `);
+	} else {
+	    appendMessage(`  WARNING: chainid ${chainId} has bad clients; `);
+	    for (let i = 0; i < badClientIndexes.length; i++) {
+		const index = badClientIndexes[i];
+		const blockNum = parseInt(data.GasPrice.block_nums[index], 10);
+		const blockDiff = latestBlock - blockNum;
+		appendMessage(`    client ${data.GasPrice.signers[index]} is ${blockDiff} blocks behind; `);
+	    }
 	}
 	appendMessage(`  maximum latency is ${latestBlock-Math.min(...blockNums)}`);
 	appendMessage(`  minimum latency is ${latestBlock-Math.max(...blockNums)}`);
