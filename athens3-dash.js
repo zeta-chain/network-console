@@ -29,7 +29,7 @@ async function node_info(){
 	    network: data.default_node_info.network,
 	    moniker: data.default_node_info.moniker,
 	    zetacored_version: data.application_version.version,
-	}
+	};
 	let div2 = document.getElementById(`${elemId}-summary`);
 	// div2.textContent = JSON.stringify(makeTableElement(summary), null, 2);
 	div2.appendChild(makeTableElement(summary));
@@ -305,6 +305,55 @@ last_txs(5);
 // latest_block();
 
 
+// proposals
+
+async function proposals() {
+    try {
+	const resource = `${nodeURL}/cosmos/gov/v1beta1/proposals`;
+	var p1 = await fetch(resource, {method: 'GET'});
+	if (!p1.ok) {
+	    throw new Error(`HTTP error! status: ${p1.status}`);
+	}
+	const data = await p1.json();
+	console.log(data);
+	const div0 = document.getElementById('proposals-results');
+	div0.appendChild(addDetails(`All proposals (${data?.proposals.length})` ,
+				    JSON.stringify(data, null, 2)));
+
+	const proposals = data?.proposals;
+
+	const div = document.getElementById('proposals-summary');
+
+
+	const div2 = document.getElementById('latest-proposals');
+	div2.appendChild(addDetails("Latest Proposal", JSON.stringify(proposals[proposals.length-1], null, 2)));
+
+
+	const upgradeProposals = proposals?.filter(p => p.content["@type"] == "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal");
+	const div3 = document.getElementById('upgrade-proposals');
+	div3.appendChild(addDetails(`Upgrade proposals (${upgradeProposals.length})`, JSON.stringify(upgradeProposals, null, 2)));
+
+	const passedProposals = proposals?.filter(p => p.status == "PROPOSAL_STATUS_PASSED");
+	const div4 = document.getElementById('passed-proposals');
+	div4.appendChild(addDetails(`Passed proposals (${passedProposals.length})`, JSON.stringify(passedProposals, null, 2)));
+
+	const activeProposals = proposals?.filter(p => p.status == "PROPOSAL_STATUS_VOTING_PERIOD");
+	const div5 = document.getElementById('active-proposals');
+	div5.appendChild(addDetails(`Active proposals (${activeProposals.length})`, JSON.stringify(activeProposals, null, 2)));
+
+	const failedProposals = proposals?.filter(p => p.status == "PROPOSAL_STATUS_FAILED");
+	const div6 = document.getElementById('failed-proposals');
+	div6.appendChild(addDetails(`Failed proposals (${failedProposals.length})`, JSON.stringify(failedProposals, null, 2)));
+
+	const rejectedProposals = proposals?.filter(p => p.status == "PROPOSAL_STATUS_REJECTED");
+	const div7 = document.getElementById('rejected-proposals');
+	div7.appendChild(addDetails(`Rejected proposals (${rejectedProposals.length})`, JSON.stringify(rejectedProposals, null, 2)));
+    } catch (error) {
+	console.log("Error " + error);
+    }
+}
+await proposals();
+
 
 /// -----------------  Non API utilities ---------------------
 
@@ -321,7 +370,7 @@ function translateAddress() {
     } else if (addr.length == 43 && addr.slice(0,5) == "zeta1") {
 	let d = decode(addr, encodings.BECH32);
 	console.log(d);
-	let output = int8ArrayToHex(convertbits(d.data, 5, 8, false))
+	let output = int8ArrayToHex(convertbits(d.data, 5, 8, false));
 	summary = {hex_addr: output, zeta_addr: addr};
     } else {
 	summary = {error: "invalid input"};
@@ -335,3 +384,17 @@ function translateAddress() {
 document.getElementById('button-translate-address').addEventListener('click', translateAddress);
 
 
+// summary & details are text; div is container
+// returns a div
+function addDetails(summary, details) {
+    const div = document.createElement('div');
+    const detailsElement = document.createElement('details');
+    const summaryElement = document.createElement('summary');
+    const preElement = document.createElement('pre');
+    preElement.textContent = details;
+    summaryElement.textContent = summary;
+    detailsElement.appendChild(summaryElement);
+    detailsElement.appendChild(preElement);
+    div.appendChild(detailsElement);
+    return div; 
+}
