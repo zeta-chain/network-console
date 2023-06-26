@@ -84,9 +84,9 @@ details {
 }
 
 summary {
-    font-weight: bold;
+    /* font-weight: bold; */
     margin: -0.5em -0.5em 0;
-    padding: 0.5em;
+    padding: 0.2em;
 }
 
 details[open] {

@@ -150,51 +150,28 @@ async function upgrade_plan() {
 upgrade_plan();
 
 // validators
-{
-    var divElement = document.createElement("div");
-    divElement.classList = "item";
-    var widgets = document.getElementById("network-widgets");
-    widgets.appendChild(divElement);
-    var header = document.createElement("b");
-    header.textContent = "Validators";
-    divElement.appendChild(header);
-    var summaryPre = document.createElement("div");
-    divElement.appendChild(summaryPre);
-    var button = document.createElement("button");
-    button.textContent = "Raw JSON"; 
-    button.onclick = function() {toggleDropdown("validators-dropdown")};
-    divElement.appendChild(button);
-    var detailPre = document.createElement("pre");
-    detailPre.id = "validators-dropdown";
-    divElement.appendChild(detailPre);
-    detailPre.classList = "dropdown-content";
-    fetch(`${nodeURL}/cosmos/staking/v1beta1/validators`, {
-        method: 'GET',
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+async function validators(){
+    const resource = `${nodeURL}/cosmos/staking/v1beta1/validators`;
+    const p1 = await fetch(resource, { method: 'GET', });
+    let data = await p1.json();
+    const div = document.getElementById('validators');
+    let jailed = 0;
+    let jailed_monikers = []; 
+    for (let i=0; i<data.validators.length; i++) {
+        let val = data.validators[i];
+        if (val.jailed) {
+            jailed++;
+            jailed_monikers.push(val.description.moniker);
         }
-        return response.json();
-    }).then(data => {
-        detailPre.textContent = JSON.stringify(data, null, 2); 
-        let jailed = 0;
-        let jailed_monikers = []; 
-        for (let i=0; i<data.validators.length; i++) {
-            let val = data.validators[i];
-            if (val.jailed) {
-                jailed++;
-                jailed_monikers.push(val.description.moniker);
-            }
-        }
-        var summary = {"num_validators": data.validators.length, "num_jailed": jailed, "jailed_monikers": jailed_monikers};
-        // summaryPre.textContent = JSON.stringify(summary, null, 2);
-	summaryPre.appendChild(makeTableElement(summary));
-    }).catch(error => {
-        console.log("fetch error" + error);
-    })
+    }
+    var summary = {"num_validators": data.validators.length, "num_jailed": jailed, "jailed_monikers": jailed_monikers};
+    const pre = document.createElement('pre');
+    pre.appendChild(makeTableElement(summary));
+    div.appendChild(pre);
+    div.appendChild(addDetails("Validators Raw JSON", JSON.stringify(data.validators, null, 2)));
 }
 
-
+validators();
 
 // block results
 async function block_results() {
@@ -332,6 +309,8 @@ async function proposals() {
 	const upgradeProposals = proposals?.filter(p => p.content["@type"] == "/cosmos.upgrade.v1beta1.SoftwareUpgradeProposal");
 	const div3 = document.getElementById('upgrade-proposals');
 	div3.appendChild(addDetails(`Upgrade proposals (${upgradeProposals.length})`, JSON.stringify(upgradeProposals, null, 2)));
+	doUpgradeProposals(upgradeProposals);
+	
 
 	const passedProposals = proposals?.filter(p => p.status == "PROPOSAL_STATUS_PASSED");
 	const div4 = document.getElementById('passed-proposals');
@@ -354,6 +333,20 @@ async function proposals() {
 }
 await proposals();
 
+async function doUpgradeProposals(proposals) {
+    proposals.reverse(); 
+    const div = document.getElementById('upgrade-proposals-summary');
+    function analyzeProposal(proposal) {
+	const div = document.createElement("div");
+	const summary = `ID ${proposal?.proposal_id} - Plan name ${proposal?.content?.plan?.name} - Height ${proposal?.content?.plan?.height} - Status ${proposal?.status}`;
+	div.appendChild(addDetails(summary, JSON.stringify(proposal, null, 2)));
+	return div; 
+    }
+    for (let i=0; i<proposals.length; i++) {
+	let proposal = proposals[i];
+	div.appendChild(analyzeProposal(proposal));
+    }
+}
 
 /// -----------------  Non API utilities ---------------------
 
