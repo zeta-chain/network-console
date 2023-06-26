@@ -337,10 +337,23 @@ async function doUpgradeProposals(proposals) {
     proposals.reverse(); 
     const div = document.getElementById('upgrade-proposals-summary');
     function analyzeProposal(proposal) {
-	const div = document.createElement("div");
-	const summary = `ID ${proposal?.proposal_id} - Plan name ${proposal?.content?.plan?.name} - Height ${proposal?.content?.plan?.height} - Status ${proposal?.status}`;
-	div.appendChild(addDetails(summary, JSON.stringify(proposal, null, 2)));
-	return div; 
+      const div = document.createElement("div");
+      let summary = `ID ${proposal?.proposal_id} - Plan name ${proposal?.content?.plan?.name} - Height ${proposal?.content?.plan?.height} - Status ${proposal?.status}`;
+      if (proposal?.status == "PROPOSAL_STATUS_VOTING_PERIOD") {
+	// console.log("voting end time", proposal?.voting_end_time);
+	const d = new Date(proposal?.voting_end_time);
+	const diff = d - new Date();
+	summary += ` - Voting ends ${((diff)/1000/3600).toFixed(2)}h from now`;
+      }
+      div.appendChild(addDetails(summary, JSON.stringify(proposal, null, 2)));
+      const info = proposal?.content?.plan?.info;
+      if (info) {
+	const infoObj = JSON.parse(info);
+	console.log(infoObj);
+	const div2 = document.createElement("pre");
+	div.appendChild(addDetails("Binaries", JSON.stringify(infoObj, null, 2)));
+      }
+      return div; 
     }
     for (let i=0; i<proposals.length; i++) {
 	let proposal = proposals[i];
