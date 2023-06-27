@@ -166,11 +166,17 @@ async function validators(){
             jailed_monikers.push(val.description.moniker);
         }
     }
-    var summary = {"num_validators": data.validators.length, "num_jailed": jailed, "jailed_monikers": jailed_monikers};
-    const pre = document.createElement('pre');
-    pre.appendChild(makeTableElement(summary));
-    div.appendChild(pre);
-    div.appendChild(addDetails("Validators Raw JSON", JSON.stringify(data.validators, null, 2)));
+    const div2 = document.getElementById('all-validators');
+    div2.appendChild(addDetails(`All validators (${data?.validators?.length})`, JSON.stringify(data.validators, null, 2)));
+    
+    // var summary = {"num_validators": data.validators.length, "num_jailed": jailed, "jailed_monikers": jailed_monikers};
+    // const pre = document.createElement('pre');
+    // pre.appendChild(makeTableElement(summary));
+    // div.appendChild(pre);
+    // div.appendChild(addDetails("Validators Raw JSON", JSON.stringify(data.validators, null, 2)));
+    const jailedValidators = data?.validators?.filter(v => v.jailed);
+    const div3 = document.getElementById('jailed-validators');
+    div3.appendChild(addDetails(`Jailed validators (${jailedValidators?.length}) -- ${jailedValidators?.map(x => x.description.moniker)}`, JSON.stringify(jailedValidators, null, 2)));
 }
 
 validators();
