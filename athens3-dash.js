@@ -89,6 +89,7 @@ async function keygen() {
 
 keygen(); 
 
+var blockNumber;  // global variable
 // Network status widget
 fetch(`${tmURL}/status`, {
     method: 'GET',
@@ -98,6 +99,7 @@ fetch(`${tmURL}/status`, {
     }
     return response.json();
 }).then(data => {
+    blockNumber = data?.result?.sync_info?.latest_block_height;
     let div = document.getElementById('block');
     div.innerHTML = JSON.stringify(data.result, null, 2);
     let div2 = document.getElementById('block-summary');
@@ -107,7 +109,7 @@ fetch(`${tmURL}/status`, {
     div2.appendChild(makeTableElement(summary));
 }).catch(error => {
     console.log("fetch error" + error);
-})
+});
 
 // supply widget
 fetch(`${nodeURL}/cosmos/bank/v1beta1/supply`, {
@@ -334,11 +336,12 @@ async function proposals() {
 await proposals();
 
 async function doUpgradeProposals(proposals) {
-    proposals.reverse(); 
+    proposals.reverse();
+  
     const div = document.getElementById('upgrade-proposals-summary');
     function analyzeProposal(proposal) {
       const div = document.createElement("div");
-      let summary = `ID ${proposal?.proposal_id} - Plan name ${proposal?.content?.plan?.name} - Height ${proposal?.content?.plan?.height} - Status ${proposal?.status}`;
+	let summary = `ID ${proposal?.proposal_id} - Plan name ${proposal?.content?.plan?.name} - Height ${proposal?.content?.plan?.height} ${((proposal?.content?.plan?.height - blockNumber)*5.7/3600).toFixed(2)}h to go  - Status ${proposal?.status}`;
       if (proposal?.status == "PROPOSAL_STATUS_VOTING_PERIOD") {
 	// console.log("voting end time", proposal?.voting_end_time);
 	const d = new Date(proposal?.voting_end_time);
