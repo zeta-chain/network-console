@@ -325,6 +325,7 @@ async function proposals() {
 	div4.appendChild(addDetails(`Passed proposals (${passedProposals.length})`, JSON.stringify(passedProposals, null, 2)));
 
 	const activeProposals = proposals?.filter(p => p.status == "PROPOSAL_STATUS_VOTING_PERIOD");
+	doTallyActiveProposals(activeProposals);
 	const div5 = document.getElementById('active-proposals');
 	div5.appendChild(addDetails(`Active proposals (${activeProposals.length})`, JSON.stringify(activeProposals, null, 2)));
 
@@ -368,6 +369,24 @@ async function doUpgradeProposals(proposals) {
     for (let i=0; i<proposals.length; i++) {
 	let proposal = proposals[i];
 	div.appendChild(analyzeProposal(proposal));
+    }
+}
+
+async function doTallyActiveProposals(proposals) {
+    const div = document.getElementById('tally-summary');
+    // div.appendChild(addDetails("Tally", JSON.stringify(proposals, null, 2)));
+
+    
+    for (let i=0; i<proposals.length; i++) {
+	const proposal = proposals[i];
+	const resource = `${nodeURL}/cosmos/gov/v1beta1/proposals/${proposal.proposal_id}/tally`;
+	const p1 = await fetch(resource, {method: 'GET'});
+	if (!p1.ok) {
+	    console.log(`error: ${p1.status}`);
+	    continue;
+	}
+	const data = await p1.json();
+	div.appendChild(addDetails(`Proposal ${proposal.proposal_id} - Tally`, JSON.stringify(data, null, 2)));
     }
 }
 
