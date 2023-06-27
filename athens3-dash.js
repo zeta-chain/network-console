@@ -345,14 +345,15 @@ async function doUpgradeProposals(proposals) {
 	const diff = d - new Date();
 	summary += ` - Voting ends ${((diff)/1000/3600).toFixed(2)}h from now`;
       }
-      div.appendChild(addDetails(summary, JSON.stringify(proposal, null, 2)));
+      let details = JSON.stringify(proposal, null, 2);
       const info = proposal?.content?.plan?.info;
       if (info) {
 	const infoObj = JSON.parse(info);
 	console.log(infoObj);
 	const div2 = document.createElement("pre");
-	div.appendChild(addDetails("Binaries", JSON.stringify(infoObj, null, 2)));
+	details = "Binaries\n" +JSON.stringify(infoObj, null, 2) + "\n" +  details;
       }
+      div.appendChild(addDetails(summary, details));
       return div; 
     }
     for (let i=0; i<proposals.length; i++) {
