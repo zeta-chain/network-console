@@ -173,10 +173,10 @@ async function buildValidatorAddressArray(validators) {
         for (let j=0; j<consPubKey.length; j++) {
             bytes[j] = consPubKey.charCodeAt(j);
         }
-        const bytesHash = await window.crypto.subtle.digest('SHA-256', bytes);
-        const addr = bytesHash.slice(0,20);
-        const addrArray = new Uint8Array(addr);
-        const addrHex =  bytesToHex(addrArray).toUpperCase();
+        // const bytesHash = await window.crypto.subtle.digest('SHA-256', bytes);
+        // const addr = bytesHash.slice(0,20);
+        // const addrArray = new Uint8Array(addr);
+        // const addrHex =  bytesToHex(addrArray).toUpperCase();
         v.pub_key = val.consensus_pubkey.key;
         v.operator_address = val.operator_address;
         v.moniker = val.description.moniker;
