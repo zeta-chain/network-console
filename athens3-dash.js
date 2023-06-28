@@ -156,6 +156,14 @@ async function buildValidatorAddressArray(validators) {
     function bytesToHex(bytes) {
         return Array.from(bytes).map(byte => byte.toString(16).padStart(2, '0')).join('');
     }
+    let resource = `${tmURL}/validators`;
+    let p1 = await fetch(resource, { method: 'GET', });
+    let data = await p1.json();
+    const tmVals = data?.result?.validators;
+    const tmValMap = {}; 
+    for (let i=0; i<tmVals.length; i++) {
+        tmValMap[tmVals[i].pub_key.value] = tmVals[i].address;
+    }
     const result  = []; 
     for (let i=0; i<validators.length; i++) {
         let val = validators[i];
@@ -172,8 +180,9 @@ async function buildValidatorAddressArray(validators) {
         v.pub_key = val.consensus_pubkey.key;
         v.operator_address = val.operator_address;
         v.moniker = val.description.moniker;
-        v.consensus_addr_hex = addrHex;
-        v.consensus_addr_bech32 = encode("zetavalcons", convertbits(addrArray, 8, 5, true), encodings.BECH32);
+        v.consenus_addr_hex = tmValMap[v.pub_key];
+        
+        // v.consensus_addr_bech32 = encode("zetavalcons", convertbits(addrArray, 8, 5, true), encodings.BECH32);
         result.push(v);
     }
     return result; 
