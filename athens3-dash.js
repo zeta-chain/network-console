@@ -151,11 +151,45 @@ async function upgrade_plan() {
 }
 upgrade_plan();
 
+
+async function buildValidatorAddressArray(validators) {
+    function bytesToHex(bytes) {
+        return Array.from(bytes).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    }
+    const result  = []; 
+    for (let i=0; i<validators.length; i++) {
+        let val = validators[i];
+        const v = {}; 
+        const consPubKey = atob(val?.consensus_pubkey?.key);
+        let bytes = new Uint8Array(consPubKey.length);
+        for (let j=0; j<consPubKey.length; j++) {
+            bytes[j] = consPubKey.charCodeAt(j);
+        }
+        const bytesHash = await window.crypto.subtle.digest('SHA-256', bytes);
+        const addr = bytesHash.slice(0,20);
+        const addrArray = new Uint8Array(addr);
+        const addrHex =  bytesToHex(addrArray).toUpperCase();
+        v.pub_key = val.consensus_pubkey.key;
+        v.operator_address = val.operator_address;
+        v.moniker = val.description.moniker;
+        v.consensus_addr_hex = addrHex;
+        v.consensus_addr_bech32 = encode("zetavalcons", convertbits(addrArray, 8, 5, true), encodings.BECH32);
+        result.push(v);
+    }
+    return result; 
+}
+
+
 // validators
 async function validators(){
     const resource = `${nodeURL}/cosmos/staking/v1beta1/validators`;
     const p1 = await fetch(resource, { method: 'GET', });
+    if (!p1.ok) {
+        throw new Error(`HTTP error! status: ${p1.status}`);
+    }
     let data = await p1.json();
+    const res = await buildValidatorAddressArray(data?.validators);
+    console.log("res", res);
     const div = document.getElementById('validators');
     let jailed = 0;
     let jailed_monikers = []; 
@@ -175,8 +209,14 @@ async function validators(){
     // div.appendChild(pre);
     // div.appendChild(addDetails("Validators Raw JSON", JSON.stringify(data.validators, null, 2)));
     const jailedValidators = data?.validators?.filter(v => v.jailed);
+    const unbondingValidators = data?.validators?.filter(v => v.status == "BOND_STATUS_UNBONDING");
     const div3 = document.getElementById('jailed-validators');
     div3.appendChild(addDetails(`Jailed validators (${jailedValidators?.length}) -- ${jailedValidators?.map(x => x.description.moniker)}`, JSON.stringify(jailedValidators, null, 2)));
+    div3.appendChild(addDetails(`Unbonding validators (${unbondingValidators?.length}) -- ${unbondingValidators?.map(x => x.description.moniker)}`, JSON.stringify(unbondingValidators, null, 2)));
+
+    div3.appendChild(addDetails("Validator Addresses", JSON.stringify(res, null, 2)));
+
+    
 }
 
 validators();
