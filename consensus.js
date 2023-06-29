@@ -63,6 +63,11 @@ async function consensusState() {
     }
     // console.log(tmValMap);
     console.log("tmVals", tmVals);
+    let totalVP = 0;
+    for (let i=0; i<tmVals.length; i++) {
+	totalVP += parseInt(tmVals[i].voting_power);
+    }
+    console.log("total voting power", totalVP);
 
     const vals = await buildValidatorAddressArray(data3?.validators, tmValMap);
     console.log(vals);
@@ -77,15 +82,15 @@ async function consensusState() {
 	const prevotesBitArray = voteSet?.prevotes_bit_array;
 	// div.appendChild(addDetails(`prevotes_bit_array`, prevotesBitArray));
 	const prevotes = prevotesBitArray.match(regex)[2];
-	const prevoteMonikers = bitsToMonikers(prevotes, tmVals, data3?.validators);
-	// console.log(prevoteMonikers);
-	div.appendChild(addDetails(`round ${voteSet.round} prevotes nil-voter monikers`, `${prevoteMonikers.toString()}`));
+	const [prevoteMonikers,pvVP] = bitsToMonikers(prevotes, tmVals, data3?.validators);
+
 	const precommitBitArray = voteSet?.precommits_bit_array;
-	// div.appendChild(addDetails(`round ${voteSet.round} precommits_bit_array`, precommitBitArray));
 	const precommits = precommitBitArray.match(regex)[2];
-	const precommitMonikers = bitsToMonikers(precommits, tmVals, data3?.validators);
-	// console.log(precommitMonikers);
+	const [precommitMonikers,pcVP] = bitsToMonikers(precommits, tmVals, data3?.validators);
+	div.appendChild(addDetails(`round ${voteSet.round} prevotes nil-voter monikers`, `${prevoteMonikers.toString()}`));
+	div.appendChild(addDetails(`prevotes nil-voter voting power ${pvVP}; ${pvVP/totalVP*100}%`, ""));
 	div.appendChild(addDetails(`round ${voteSet.round} precommits nil-voter monikers`, precommitMonikers.toString()));
+	div.appendChild(addDetails(`precommits nil-voter voting power ${pcVP}; ${pcVP/totalVP*100}%`, ""));
     }
 }
 
@@ -95,6 +100,7 @@ consensusState();
 // input: xxx_xx_; returns monikers for the _ bits
 function bitsToMonikers(bits, tmVals, validators) {
     const monikers = [];
+    let VP = 0; 
     for (let i=0; i<bits.length; i++) {
 	if (bits[i] === '_') {
 	    const pubkey = tmVals[i].pub_key.value;
@@ -104,7 +110,8 @@ function bitsToMonikers(bits, tmVals, validators) {
 		    break;
 		}
 	    }
+	    VP += parseInt(tmVals[i].voting_power);
 	}
     }
-    return monikers;
+    return [monikers, VP];
 }
