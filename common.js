@@ -32,3 +32,19 @@ function addDetails(summary, details) {
     div.appendChild(detailsElement);
     return div; 
 }
+
+function msToTime(duration) {
+    let seconds = parseInt((duration / 1000) % 60),
+        minutes = parseInt((duration / (1000 * 60)) % 60),
+        hours = parseInt((duration / (1000 * 60 * 60)) % 24),
+        days = parseInt((duration / (1000 * 60 * 60 * 24)));
+
+    let result = "";
+
+    if(days) { result += days + "d"; }
+    if(hours) { result += hours + "h"; }
+    if(minutes) { result += minutes + "m"; }
+    if(seconds) { result += seconds + "s"; }
+
+    return result.trim();
+}

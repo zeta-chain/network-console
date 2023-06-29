@@ -393,32 +393,64 @@ await proposals();
 
 async function doUpgradeProposals(proposals) {
     proposals.reverse();
-  
+    
     const div = document.getElementById('upgrade-proposals-summary');
     function analyzeProposal(proposal) {
-      const div = document.createElement("div");
-    let summary = `ID ${proposal?.proposal_id} - Plan name ${proposal?.content?.plan?.name} - Height ${proposal?.content?.plan?.height} ${((proposal?.content?.plan?.height - blockNumber)*5.7/3600).toFixed(2)}h to go  - Status ${proposal?.status}`;
-      if (proposal?.status == "PROPOSAL_STATUS_VOTING_PERIOD") {
-    // console.log("voting end time", proposal?.voting_end_time);
-    const d = new Date(proposal?.voting_end_time);
-    const diff = d - new Date();
-    summary += ` - Voting ends ${((diff)/1000/3600).toFixed(2)}h from now`;
-      }
-      let details = JSON.stringify(proposal, null, 2);
-      const info = proposal?.content?.plan?.info;
-      if (info) {
-    const infoObj = JSON.parse(info);
-    console.log(infoObj);
-    const div2 = document.createElement("pre");
-    details = "Binaries\n" +JSON.stringify(infoObj, null, 2) + "\n" +  details;
-      }
-      div.appendChild(addDetails(summary, details));
-      return div; 
+        const div = document.createElement("div");
+        let summary = `ID ${proposal?.proposal_id} - Plan name ${proposal?.content?.plan?.name} - Height ${proposal?.content?.plan?.height} ${((proposal?.content?.plan?.height - blockNumber)*5.7/3600).toFixed(2)}h to go  - Status ${proposal?.status}`;
+        if (proposal?.status == "PROPOSAL_STATUS_VOTING_PERIOD") {
+            // console.log("voting end time", proposal?.voting_end_time);
+            const d = new Date(proposal?.voting_end_time);
+            const diff = d - new Date();
+            summary += ` - Voting ends ${((diff)/1000/3600).toFixed(2)}h from now`;
+        } 
+        let details = JSON.stringify(proposal, null, 2);
+        const info = proposal?.content?.plan?.info;
+        if (info) {
+            const infoObj = JSON.parse(info);
+            console.log(infoObj);
+            const div2 = document.createElement("pre");
+            details = "Binaries\n" +JSON.stringify(infoObj, null, 2) + "\n" +  details;
+        }
+        div.appendChild(addDetails(summary, details));
+        return div; 
     }
     for (let i=0; i<proposals.length; i++) {
-    let proposal = proposals[i];
-    div.appendChild(analyzeProposal(proposal));
+        let proposal = proposals[i];
+        div.appendChild(analyzeProposal(proposal));
+
+	if (proposal?.status == "PROPOSAL_STATUS_PASSED") {
+	    doUpgradeHistory(proposal);
+	}
     }
+}
+
+async function doUpgradeHistory(proposal) {
+    async function getBlock(bn) {
+	const resource = `${tmURL}/block?height=${bn}`;
+	const p1 = await fetch(resource, {method: 'GET'});
+	if (!p1.ok) {
+	    throw new Error(`HTTP error! status: ${p1.status}`);
+	}
+	const data = await p1.json();
+	return data;
+    }
+    const div = document.getElementById('upgrade-history');
+    console.log("doUpgradeHistory", proposal);
+    const upgradeHeight = parseInt(proposal?.content?.plan?.height);
+    console.log("upgradeHeight", upgradeHeight);
+    const block0 = await getBlock(upgradeHeight);
+    console.log("block0", block0);
+    const block1 = await getBlock(upgradeHeight+1);
+    // console.log("block1", block1);
+    const block1SinceBlock0 = new Date(block1?.result?.block.header.time) - new Date(block0?.result?.block.header.time);
+    console.log("block1SinceBlock0", block1SinceBlock0);
+    const block2 = await getBlock(upgradeHeight+2);
+    // console.log("block2", block2);
+    const block2SinceBlock1 = new Date(block2?.result?.block.header.time) - new Date(block1?.result?.block.header.time);
+    console.log("block2SinceBlock1", block2SinceBlock1);
+    const summary = `${proposal.proposal_id} - ${proposal.content.plan.name} - ${proposal.content.plan.height} - ${msToTime(block1SinceBlock0)} - ${msToTime(block2SinceBlock1)}`;
+    div.appendChild(addDetails(summary, JSON.stringify(proposal, null, 2)));
 }
 
 async function doTallyActiveProposals(proposals) {
