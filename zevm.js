@@ -96,7 +96,7 @@
     let sys_promise = system_contract_status();
 
     
-    var chainIDs = [5, 97, 80001];
+    var chainIDs = [5, 97, 80001, 18332];
     async function gas_price() {
 	let summary = {};
 	for (let i = 0; i<chainIDs.length; i++) {
