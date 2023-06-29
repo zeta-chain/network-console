@@ -442,14 +442,15 @@ async function doUpgradeHistory(proposal) {
     const block0 = await getBlock(upgradeHeight);
     console.log("block0", block0);
     const block1 = await getBlock(upgradeHeight+1);
-    // console.log("block1", block1);
+    console.log("block1", block1);
+    console.log("block1 proposer", block1?.result?.block?.header?.proposer_address);
     const block1SinceBlock0 = new Date(block1?.result?.block.header.time) - new Date(block0?.result?.block.header.time);
     console.log("block1SinceBlock0", block1SinceBlock0);
     const block2 = await getBlock(upgradeHeight+2);
     // console.log("block2", block2);
     const block2SinceBlock1 = new Date(block2?.result?.block.header.time) - new Date(block1?.result?.block.header.time);
     console.log("block2SinceBlock1", block2SinceBlock1);
-    const summary = `${proposal.proposal_id} - ${proposal.content.plan.name} - ${proposal.content.plan.height} - ${msToTime(block1SinceBlock0)} - ${msToTime(block2SinceBlock1)}`;
+    const summary = `${proposal.proposal_id} - ${proposal.content.plan.name} - ${proposal.content.plan.height} - ${msToTime(block1SinceBlock0)} - ${msToTime(block2SinceBlock1)} - Resume time ${(new Date(block2.result.block.header.time)).toLocaleString()}`;
     div.appendChild(addDetails(summary, JSON.stringify(proposal, null, 2)));
 }
 
