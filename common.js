@@ -15,3 +15,20 @@ var RPCByChainID = {
 if (window.location.protocol === 'https:') {
     alert('HTTPS does not work; force your browser to use HTTP instead.');
 }
+
+
+
+// summary & details are text; div is container
+// returns a div
+function addDetails(summary, details) {
+    const div = document.createElement('div');
+    const detailsElement = document.createElement('details');
+    const summaryElement = document.createElement('summary');
+    const preElement = document.createElement('pre');
+    preElement.textContent = details;
+    summaryElement.textContent = summary;
+    detailsElement.appendChild(summaryElement);
+    detailsElement.appendChild(preElement);
+    div.appendChild(detailsElement);
+    return div; 
+}
