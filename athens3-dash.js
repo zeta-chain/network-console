@@ -1,5 +1,5 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
-
+import './bitcoinjs-lib.js';
 
 
 // Node info
@@ -174,13 +174,15 @@ async function buildValidatorAddressArray(validators) {
             bytes[j] = consPubKey.charCodeAt(j);
         }
         // const bytesHash = await window.crypto.subtle.digest('SHA-256', bytes);
-        // const addr = bytesHash.slice(0,20);
-        // const addrArray = new Uint8Array(addr);
-        // const addrHex =  bytesToHex(addrArray).toUpperCase();
+	const bytesHash = bitcoin.crypto.sha256(bytes);
+        const addr = bytesHash.slice(0,20);
+        const addrArray = new Uint8Array(addr);
+        const addrHex =  bytesToHex(addrArray).toUpperCase();
         v.pub_key = val.consensus_pubkey.key;
         v.operator_address = val.operator_address;
         v.moniker = val.description.moniker;
         v.consenus_addr_hex = tmValMap[v.pub_key];
+	v.consensus_addr_bech32 = encode("zetavalcons", convertbits(addrArray, 8, 5, true), encodings.BECH32);
         
         // v.consensus_addr_bech32 = encode("zetavalcons", convertbits(addrArray, 8, 5, true), encodings.BECH32);
         result.push(v);
