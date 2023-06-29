@@ -35,7 +35,8 @@ async function consensusState() {
 	return;
     }
     const data = await p1.json();
-    console.log(data); 
+    console.log(data);
+    const proposerIndex = data?.result?.round_state?.proposer?.index; 
 
     const p2 = await fetch(`${tmURL}/dump_consensus_state`, {method: 'GET'});
     if (!p2.ok) {
