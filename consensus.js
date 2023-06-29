@@ -62,7 +62,7 @@ async function consensusState() {
         tmValMap[tmVals[i].pub_key.value] = tmVals[i].address;
     }
     // console.log(tmValMap);
-    console.log(tmVals);
+    console.log("tmVals", tmVals);
 
     const vals = await buildValidatorAddressArray(data3?.validators, tmValMap);
     console.log(vals);
@@ -77,13 +77,13 @@ async function consensusState() {
 	const prevotesBitArray = voteSet?.prevotes_bit_array;
 	// div.appendChild(addDetails(`prevotes_bit_array`, prevotesBitArray));
 	const prevotes = prevotesBitArray.match(regex)[2];
-	const prevoteMonikers = bitsToMonikers(prevotes, vals);
+	const prevoteMonikers = bitsToMonikers(prevotes, tmVals, data3?.validators);
 	// console.log(prevoteMonikers);
 	div.appendChild(addDetails(`round ${voteSet.round} prevotes nil-voter monikers`, `${prevoteMonikers.toString()}`));
 	const precommitBitArray = voteSet?.precommits_bit_array;
 	// div.appendChild(addDetails(`round ${voteSet.round} precommits_bit_array`, precommitBitArray));
 	const precommits = precommitBitArray.match(regex)[2];
-	const precommitMonikers = bitsToMonikers(precommits, vals);
+	const precommitMonikers = bitsToMonikers(precommits, tmVals, data3?.validators);
 	// console.log(precommitMonikers);
 	div.appendChild(addDetails(`round ${voteSet.round} precommits nil-voter monikers`, precommitMonikers.toString()));
     }
@@ -93,11 +93,17 @@ consensusState();
 
 
 // input: xxx_xx_; returns monikers for the _ bits
-function bitsToMonikers(bits, vals) {
+function bitsToMonikers(bits, tmVals, validators) {
     const monikers = [];
     for (let i=0; i<bits.length; i++) {
 	if (bits[i] === '_') {
-	    monikers.push(vals[i].moniker);
+	    const pubkey = tmVals[i].pub_key.value;
+	    for (let j=0; j<validators.length; j++) {
+		if (validators[j].consensus_pubkey.key === pubkey) {
+		    monikers.push(validators[j].description.moniker);
+		    break;
+		}
+	    }
 	}
     }
     return monikers;
