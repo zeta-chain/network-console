@@ -181,7 +181,7 @@ async function buildValidatorAddressArray(validators) {
         v.pub_key = val.consensus_pubkey.key;
         v.operator_address = val.operator_address;
         v.moniker = val.description.moniker;
-        v.consenus_addr_hex = tmValMap[v.pub_key];
+        v.consenus_addr_hex = addrHex;
 	v.consensus_addr_bech32 = encode("zetavalcons", convertbits(addrArray, 8, 5, true), encodings.BECH32);
         
         // v.consensus_addr_bech32 = encode("zetavalcons", convertbits(addrArray, 8, 5, true), encodings.BECH32);
