@@ -53,7 +53,7 @@ document.getElementById('button-broadcast').addEventListener('click', async () =
     const txlink = document.createElement("a");
     txlink.href = `https://blockstream.info/testnet/tx/${data?.tx?.hash}`;
     txlink.textContent = "View broadcasted tx on Blockstream explorer";
-    
+    txlink.target = "_blank";
     div2.replaceChildren(txlink);
 });
 
@@ -165,12 +165,14 @@ async function makeTransaction(to, amount, utxos, memo) {
     // try creating a transaction
     const psbt = new bitcoin.Psbt({network: TESTNET});
     psbt.addOutput({address: to, value: amount});
+
+    if (memo.length > 0) {
+	const embed = bitcoin.payments.embed({data: [memo]});
+	psbt.addOutput({script: embed.output, value: 0});
+    }
     if (change > 0) {
 	psbt.addOutput({address: p2wpkhAddress, value: change});
     }
-
-    const embed = bitcoin.payments.embed({data: [memo]});
-    psbt.addOutput({script: embed.output, value: 0});
 
 
     for (let i = 0; i < pickUtxos.length; i++) {
