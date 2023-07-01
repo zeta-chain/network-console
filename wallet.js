@@ -38,6 +38,26 @@ let p2wpkhAddress;
 let txs;
 let utxos;
 
+document.getElementById('button-broadcast').addEventListener('click', async () => {
+    const txHex = document.getElementById("transaction-hex").textContent;
+    console.log("txHex", txHex);
+    const endpoint = `https://api.blockcypher.com/v1/btc/test3/txs/push`;
+
+    const p1 = await fetch(endpoint, {method: "POST", body: JSON.stringify({tx: txHex})});
+    const data = await p1.json();
+    console.log("data", data);
+    const div = document.getElementById("broadcast-result");
+    div.replaceChildren(addDetails(`Broadcasted Transaction: txid ${data?.tx?.hash}`, JSON.stringify(data, null, 2)));
+
+    const div2 = document.getElementById("explorer-link");
+    const txlink = document.createElement("a");
+    txlink.href = `https://blockstream.info/testnet/tx/${data?.tx?.hash}`;
+    txlink.textContent = "View broadcasted tx on Blockstream explorer";
+    
+    div2.replaceChildren(txlink);
+});
+
+
 document.getElementById('button-decode').addEventListener('click', async () => {
     const txHex = document.getElementById("transaction-hex").textContent;
     console.log("txHex", txHex);
@@ -57,7 +77,8 @@ document.getElementById('button-send').addEventListener('click', async () => {
     console.log("to", to);
     console.log("amount", amount);
     console.log("memo", memo);
-    const tx = await makeTransaction(to, amount, utxos, memo);
+    const memoBytes = Buffer.from(memo, 'hex');
+    const tx = await makeTransaction(to, amount, utxos, memoBytes);
     console.log("tx", tx);
     const pre = document.getElementById("transaction-hex");
     pre.innerHTML = tx;
@@ -119,7 +140,7 @@ async function updateTxs() {
 async function makeTransaction(to, amount, utxos, memo) {
     if (memo.length >= 78) throw new Error("Memo too long");
     utxos.sort((a, b) => a.value - b.value); // sort by value, ascending
-    const fee = 20000;
+    const fee = 10000;
     const total = amount + fee;
     let sum = 0;
     const pickUtxos = [];
@@ -148,22 +169,27 @@ async function makeTransaction(to, amount, utxos, memo) {
 	psbt.addOutput({address: p2wpkhAddress, value: change});
     }
 
+    const embed = bitcoin.payments.embed({data: [memo]});
+    psbt.addOutput({script: embed.output, value: 0});
+
+
     for (let i = 0; i < pickUtxos.length; i++) {
 	const utxo = pickUtxos[i];
 	const inputData = {};
 	inputData.hash = txs[i].txid;
 	inputData.index = utxo.vout;
-	const witnessUtxo = {script: Buffer.from(txs[i].vout[utxo.vout].scriptpubkey, 'hex'), value: 100000};
+	const witnessUtxo = {script: Buffer.from(txs[i].vout[utxo.vout].scriptpubkey, 'hex'), value: utxo.value};
 	inputData.witnessUtxo = witnessUtxo;
 	psbt.addInput(inputData);
+
+    }
+    for (let i = 0; i < pickUtxos.length; i++) {
 	psbt.signInput(i, key); 
 	if (!psbt.validateSignaturesOfInput(i, validator)) {
 	    throw new Error("invalid input");
 	}
-
     }
-    
-    
+
     psbt.finalizeAllInputs(); 
     console.log(psbt);
     console.log(psbt.extractTransaction().toHex());

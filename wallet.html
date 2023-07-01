@@ -42,11 +42,15 @@
       <label for="input-memo-hex">Memo(hex)</label>
       <input id="input-memo-hex" size="80"></input>
       </br>
-      <button id="button-send">Send</button>
+      <button id="button-send">Build Transaction</button>
       <div style="font-family: monospace; width: 600px; word-wrap: break-word;"><div id="transaction-hex"></div></div>
       </br>
       <button id="button-decode">Decode</button>
       <div id="decoded-tx"></div>
+      </br>
+      <button id="button-broadcast">Broadcast</button>
+      <div id="broadcast-result"></div>
+      <div id="explorer-link"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
