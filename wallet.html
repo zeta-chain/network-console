@@ -31,6 +31,24 @@
     <div id="address-info"></div>
     <div id="txs-info"></div>
 
+    <br>
+    <div>
+      <label for="input-recipient">Recipient:</label>
+      <input id="input-recipient" size="70"></input>
+      </br>
+      <label for="input-amount">Amount (in sats)</label>
+      <input id="input-amount" size="10"></input>
+      </br>
+      <label for="input-memo-hex">Memo(hex)</label>
+      <input id="input-memo-hex" size="80"></input>
+      </br>
+      <button id="button-send">Send</button>
+      <div style="font-family: monospace; width: 600px; word-wrap: break-word;"><div id="transaction-hex"></div></div>
+      </br>
+      <button id="button-decode">Decode</button>
+      <div id="decoded-tx"></div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script src="./common.js"></script>
     <script src="./utils.js"></script>
