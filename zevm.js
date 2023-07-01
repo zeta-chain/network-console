@@ -7,6 +7,7 @@
 
     var SystemContractABI;
     var UniswapV2PairABI;
+    var ZRC20ABI; 
     async function read_abis() {
 	try {
 	    let p1 = await fetch('abi/SystemContract.json');
@@ -18,6 +19,11 @@
 	    let data2 = await p2.json();
 	    UniswapV2PairABI = data2.abi;
 	    console.log("set UniswapV2PairABI", UniswapV2PairABI);
+
+	    let p3 = await fetch('abi/ZRC20.json');
+	    let data3 = await p3.json();
+	    ZRC20ABI = data3.abi;
+	    console.log("set ZRC20ABI", ZRC20ABI);
 	} catch (err) {
 	    console.log(err);
 	}
@@ -165,5 +171,39 @@
     }
     await Promise.all([coin_promise, sys_promise]);
     gas_zeta_pool_address();
+
+
+    // ==========================
+    // my wallet section =======
+    // ==========================
+    let myWalletAddress;
+    const inputWallet = document.getElementById("my-wallet-address")
+    if (localStorage.getItem("eth-wallet-address")) {
+	myWalletAddress = localStorage.getItem("eth-wallet-address");
+	inputWallet.value = myWalletAddress;
+    }
+
+    document.getElementById('button-set-wallet-address').addEventListener('click', async () => {
+	myWalletAddress = inputWallet.value;
+	localStorage.setItem("eth-wallet-address", myWalletAddress);
+	await updateMyZRC20Balances();
+    });
+
+    async function updateMyZRC20Balances() {
+	// console.log("zrc20s", zrc20s);
+	balances = {}; 
+	for (const zrc20Addr in zrc20s) {
+	    let coin = zrc20s[zrc20Addr];
+	    console.log("coin", coin);
+	    let contract = new web3.eth.Contract(ZRC20ABI, coin.zrc20_contract_address);
+	    let balance = await contract.methods.balanceOf(myWalletAddress).call();
+	    console.log("balance", balance);
+	    balances[zrc20Addr] = balance;
+	}
+
+	let div = document.getElementById('my-zrc20-balances');
+	div.appendChild(makeTableElement(balances));
+    }
+
 
 })();

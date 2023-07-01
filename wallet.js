@@ -2,7 +2,7 @@ import './bitcoinjs-lib.js';
 import './ecpair.js';
 import './secp256k1.js';
 import './buffer.js';
-import './bip66.js';
+
 
 const ecc = secp256k1;
 const ECPair = ecpair.ECPairFactory(ecc);
