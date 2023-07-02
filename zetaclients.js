@@ -31,11 +31,15 @@ async function zetaclients_versions() {
 	let p2pPromises = [];
 	let geoPromises = [];
 	let checkPromises = [];
+	let lastStartPromises = [];
+	let lastscannedPromises = [];
 	for (let i=0; i<IPs.length; i++) {
 	    fetchPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/version`, {method: 'GET'}));
 	    p2pPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
 	    geoPromises.push(fetch(`${ipAPI}/${IPs[i]}`, {method: 'GET'}));
 	    checkPromises.push(fetch(`${checkURL}/check?ip=${IPs[i]}`, {method: 'GET'}));
+	    lastStartPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/laststarttimestamp`, {method: 'GET'}));
+	    lastscannedPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/lastscannedblock`, {method: 'GET'}));
 	}
 
 
@@ -63,6 +67,12 @@ async function zetaclients_versions() {
 	let th6 = document.createElement('th');
 	th6.innerText = "Check P2P";
 	headRow.appendChild(th6);
+	let th7 = document.createElement('th');
+	th7.innerText = "Last Start Timestamp";
+	headRow.appendChild(th7);
+	let th8 = document.createElement('th');
+	th8.innerText = "Last Scanned Blocks";
+	headRow.appendChild(th8);
 
 	
 	div.appendChild(table);
@@ -82,12 +92,18 @@ async function zetaclients_versions() {
 	    td5.id = `zetaclients-org-${i}`;
 	    let td6 = document.createElement('td');
 	    td6.id = `zetaclients-check-${i}`;
+	    let td7 = document.createElement('td');
+	    td7.id = `zetaclients-laststart-${i}`;
+	    let td8 = document.createElement('td');
+	    td8.id = `zetaclients-lastscanned-${i}`;
 	    tr.appendChild(td1);
 	    tr.appendChild(td2);
 	    tr.appendChild(td3);
 	    tr.appendChild(td4);
 	    tr.appendChild(td5);
 	    tr.appendChild(td6);
+	    tr.appendChild(td7);
+	    tr.appendChild(td8);
 	}
 
 	for (let i=0; i<IPs.length; i++) {
@@ -130,6 +146,24 @@ async function zetaclients_versions() {
 	    let td4 = document.getElementById(`zetaclients-org-${i}`);
 	    td4.innerText = data3.org;
 
+	    let p5 = await lastStartPromises[i];
+	    if (!p5.ok) {
+		console.log("Error " + p5.status);
+		continue;
+	    }
+	    let data5 = await p5.text();
+	    let td6 = document.getElementById(`zetaclients-laststart-${i}`);
+	    const d = new Date(data5);
+	    td6.innerText = d.toLocaleString();
+
+	    let p6 = await lastscannedPromises[i];
+	    if (!p6.ok) {
+		console.log("Error " + p6.status);
+	    } else {
+		let data6 = await p6.text();
+		let td7 = document.getElementById(`zetaclients-lastscanned-${i}`);
+		td7.innerText = data6;
+	    }
 	}
     } catch (error) {
 	console.log("Error " + error);
