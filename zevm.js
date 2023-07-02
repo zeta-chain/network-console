@@ -195,15 +195,18 @@
 	for (const zrc20Addr in zrc20s) {
 	    let coin = zrc20s[zrc20Addr];
 	    console.log("coin", coin);
+	    const decimals = coin.decimals;
 	    let contract = new web3.eth.Contract(ZRC20ABI, coin.zrc20_contract_address);
 	    let balance = await contract.methods.balanceOf(myWalletAddress).call();
 	    console.log("balance", balance);
-	    balances[zrc20Addr] = balance;
+	    balances[zrc20Addr] = `${fromDecimals(balance, decimals).toFixed(4)} ${coin.symbol}`;
 	}
 
 	let div = document.getElementById('my-zrc20-balances');
 	div.appendChild(makeTableElement(balances));
     }
+
+    
 
 
 })();

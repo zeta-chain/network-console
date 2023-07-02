@@ -247,3 +247,9 @@ function int8ArrayToHexRelaxed(array) {
     hexString = '0x' + hexString;
     return hexString;
 }
+
+// amount in smallest denomination (wei, satoshi, etc), convert into (eth, btc, etc)
+// amount is string; decimals is Number; return Number
+function fromDecimals(amount, decimals) {
+    return Number(BigInt(amount)) / Math.pow(10, decimals);
+}
