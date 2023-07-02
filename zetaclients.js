@@ -57,7 +57,7 @@ async function zetaclients_versions() {
 	headRow.appendChild(th2);
 	let th3 = document.createElement('th');
 	th3.innerText = "P2P Peer ID";
-	headRow.appendChild(th3);
+	// headRow.appendChild(th3);
 	let th4 = document.createElement('th');
 	th4.innerText = "Geolocation";
 	headRow.appendChild(th4);
@@ -98,7 +98,7 @@ async function zetaclients_versions() {
 	    td8.id = `zetaclients-lastscanned-${i}`;
 	    tr.appendChild(td1);
 	    tr.appendChild(td2);
-	    tr.appendChild(td3);
+	    // tr.appendChild(td3);
 	    tr.appendChild(td4);
 	    tr.appendChild(td5);
 	    tr.appendChild(td6);
@@ -116,14 +116,14 @@ async function zetaclients_versions() {
 	    let td = document.getElementById(`zetaclients-version-${i}`);
 	    td.innerText = data;
 
-	    let p2 = await p2pPromises[i];
-	    if (!p2.ok) {
-		console.log("Error " + p2.status);
-		continue;
-	    }
-	    let data2 = await p2.text();
-	    let td2 = document.getElementById(`zetaclients-peerid-${i}`);
-	    td2.innerText = data2;
+	    // let p2 = await p2pPromises[i];
+	    // if (!p2.ok) {
+	    // 	console.log("Error " + p2.status);
+	    // 	continue;
+	    // }
+	    // let data2 = await p2.text();
+	    // let td2 = document.getElementById(`zetaclients-peerid-${i}`);
+	    // td2.innerText = data2;
 
 	    let p4 = await checkPromises[i];
 	    if (!p4.ok) {
