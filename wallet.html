@@ -19,12 +19,13 @@
     <div style="border-style: solid; background: yellow; color: red;">This wallet app is insecure! Use only for testnet testing. There may be data that are stored in the browser's local storage. 
     </div>
     
-    <h1>Bitcoin Wallet</h1>
+
     <button id="button-generate-key">Generate Key</button>
     <span id="output-private-key" style="font-family:monospace;">Generated key: </span> </br>
     <label for="input-private-key">Enter Private Key:</label>
     <input id="input-private-key" size="70"></input>
     <button id="button-set-key">Set Key</button>
+    <h1>Bitcoin Wallet</h1>
     <pre id="key-info">Address: </pre>
 
     <div id="balance-info"></div>
@@ -52,6 +53,10 @@
       <div id="broadcast-result"></div>
       <div id="explorer-link"></div>
     </div>
+
+    <h1>Ethereum Wallet</h1>
+    <div id="eth-address-info"></div>
+    
 
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script src="./common.js"></script>

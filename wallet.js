@@ -2,6 +2,21 @@ import './bitcoinjs-lib.js';
 import './ecpair.js';
 import './secp256k1.js';
 import './buffer.js';
+import  './web3.min.js';
+
+// console.log("Web3", Web3);
+let ZRC20ABI;
+async function read_abis() {
+    try {
+	let p3 = await fetch('abi/ZRC20.json');
+	let data3 = await p3.json();
+	ZRC20ABI = data3.abi;
+	console.log("set ZRC20ABI", ZRC20ABI);
+    } catch (err) {
+	console.log(err);
+    }
+}
+await read_abis();
 
 
 const ecc = secp256k1;
@@ -104,6 +119,7 @@ document.getElementById('button-set-key').addEventListener('click', async () => 
     updateUTXO();
     updateAddressInfo();
     updateTxs();
+    updateEthAccount(); 
 
     console.log("WIF", key.toWIF());
 });
@@ -199,24 +215,16 @@ async function makeTransaction(to, amount, utxos, memo) {
     return psbt.extractTransaction().toHex();
 }
 
+// ethereum wallet
 
-function createPayment(type, myKeys, network) {
-    network = network || TESTNET;
-    const splitType = type.split('-').reverse();
-    const keys = myKeys || [];
+const web3zevm = new Web3(evmURL);
+window.web3zevm = web3zevm;
 
-    if (!myKeys) keys.push(ECPair.makeRandom({ network: network }));
-    let payment = bitcoin.payments["p2wpkh"]({ pubkey: keys[0].publicKey, network: network });
-
-    return { payment, keys };
-}
-
-function getWitnessUtxo(out) {
-    delete out.address;
-    out.script = Buffer.from(out.script, 'hex');
-    return out;
-}
-
-async function getInputData(amount, payment, isSegwit, redeemType) {
-    
+let ethAccount; 
+async function updateEthAccount() {
+    console.log("key", key);
+    ethAccount = await web3zevm.eth.accounts.privateKeyToAccount("0x" + key.privateKey.toString('hex'));
+    console.log("ethAccount", ethAccount);
+    const div = document.getElementById("eth-address-info");
+    div.appendChild(addDetails(`Ethereum Address ${ethAccount.address}`, JSON.stringify(ethAccount, null, 2)));
 }
