@@ -56,7 +56,18 @@
 
     <h1>Ethereum Wallet</h1>
     <div id="eth-address-info"></div>
-    
+    <hr>
+    <div>
+      <h2>Send Ether(ZETA)</h2>
+      <label for="input-eth-recipient">Recipient:</label>
+      <input id="input-eth-recipient" size="70"></input>
+      </br>
+      <label for="input-eth-amount">Amount (in Ether/ZETA)</label>
+      <input id="input-eth-amount" size="10"></input>
+      </br>
+      <button id="button-eth-send">Build & Sign Transaction</button>
+      <div id="eth-transaction-receipt"></div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
     <script src="./common.js"></script>

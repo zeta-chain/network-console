@@ -220,11 +220,51 @@ async function makeTransaction(to, amount, utxos, memo) {
 const web3zevm = new Web3(evmURL);
 window.web3zevm = web3zevm;
 
-let ethAccount; 
+let ethAccount;
+
 async function updateEthAccount() {
     console.log("key", key);
     ethAccount = await web3zevm.eth.accounts.privateKeyToAccount("0x" + key.privateKey.toString('hex'));
+    window.ethAccount = ethAccount;
     console.log("ethAccount", ethAccount);
     const div = document.getElementById("eth-address-info");
     div.appendChild(addDetails(`Ethereum Address ${ethAccount.address}`, JSON.stringify(ethAccount, null, 2)));
+
+    const balance = await web3zevm.eth.getBalance(ethAccount.address);
+    div.appendChild(addDetails(`Ethereum Balance ${Web3.utils.fromWei(balance)} ZETA`, JSON.stringify(balance, null, 2)));
 }
+
+document.getElementById('button-eth-send').addEventListener('click', async () => {
+    const web3 = web3zevm;
+    // validate address & amount
+    const to = document.getElementById("input-eth-recipient").value;
+    if (!Web3.utils.isAddress(to)) {
+	alert("Invalid recipient address");
+	return; 
+    }
+    const amount = document.getElementById("input-eth-amount").value;
+    if (isNaN(amount)) {
+	alert("Invalid amount");
+	return;
+    }
+    const gasPrice = await web3zevm.eth.getGasPrice();
+    console.log("gasPrice", gasPrice);
+    console.log("web3", web3zevm);
+
+    const account = ethAccount;
+    let p = await account.signTransaction({
+	to: to,
+	value: Web3.utils.toWei(amount),
+	gas: "21000",
+    });
+    console.log("p", p);
+    web3zevm.eth.sendSignedTransaction(p.rawTransaction).on('receipt', (x) => {
+	const div = document.getElementById("eth-transaction-receipt");
+	div.appendChild(addDetails(`Transaction Receipt ${x.transactionHash}`, JSON.stringify(x, null, 2)));
+	const a = document.createElement("a");
+	a.href = `https://zetachain-athens-3.blockscout.com/tx/${x.transactionHash}`;
+	a.innerText = "View receipt on Blockscout";
+	a.target = "_blank";
+	div.appendChild(a);
+    });
+});
