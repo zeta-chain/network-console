@@ -2,7 +2,9 @@ import './bitcoinjs-lib.js';
 import './ecpair.js';
 import './secp256k1.js';
 import './buffer.js';
-import  './web3.min.js';
+import './web3.min.js';
+import {RPCByChainID,evmURL,addDetails} from './common.js';
+
 
 // console.log("Web3", Web3);
 let ZRC20ABI;
@@ -228,7 +230,10 @@ async function updateEthAccount() {
     window.ethAccount = ethAccount;
     console.log("ethAccount", ethAccount);
     const div = document.getElementById("eth-address-info");
-    div.appendChild(addDetails(`Ethereum Address ${ethAccount.address}`, JSON.stringify(ethAccount, null, 2)));
+    // div.appendChild(addDetails(`Ethereum Address ${ethAccount.address}`, JSON.stringify(ethAccount, null, 2)));
+    const template = document.createElement('template');
+    template.innerHTML = `<span style="font-family:monospace">Ethereum Address ${ethAccount.address}</span>`;
+    div.appendChild(template.content.firstChild)
 
     const balance = await web3zevm.eth.getBalance(ethAccount.address);
     div.appendChild(addDetails(`Ethereum Balance ${Web3.utils.fromWei(balance)} ZETA`, JSON.stringify(balance, null, 2)));
@@ -257,9 +262,9 @@ document.getElementById('button-eth-send').addEventListener('click', async () =>
 	value: Web3.utils.toWei(amount),
 	gas: "21000",
     });
-    console.log("p", p);
+    const div = document.getElementById("eth-transaction-receipt");
+    div.appendChild(addDetails(`Signed Transaction  ${p.transactionHash}`, JSON.stringify(p, null, 2)));
     web3zevm.eth.sendSignedTransaction(p.rawTransaction).on('receipt', (x) => {
-	const div = document.getElementById("eth-transaction-receipt");
 	div.appendChild(addDetails(`Transaction Receipt ${x.transactionHash}`, JSON.stringify(x, null, 2)));
 	const a = document.createElement("a");
 	a.href = `https://zetachain-athens-3.blockscout.com/tx/${x.transactionHash}`;
@@ -268,3 +273,5 @@ document.getElementById('button-eth-send').addEventListener('click', async () =>
 	div.appendChild(a);
     });
 });
+console.log(RPCByChainID);
+

@@ -1,3 +1,5 @@
+import {nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
+
 (async () => {
     var connectorABI, zetaTokenABI, erc20CustodyABI;
 

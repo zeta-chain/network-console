@@ -1,3 +1,5 @@
+import {evmURL, nodeURL} from './common.js';
+
 (async () => {
 
     var web3 = new Web3(`${evmURL}`);

@@ -1,6 +1,7 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
 import './bitcoinjs-lib.js';
-
+import {tmURL, nodeURL, corsProxyURL, makeTableElement, addDetails,
+	msToTime} from './common.js';
 
 // Node info
 async function node_info(){
@@ -91,7 +92,7 @@ keygen();
 
 var blockNumber;  // global variable
 // Network status widget
-fetch(`${tmURL}/status`, {
+await fetch(`${tmURL}/status`, {
     method: 'GET',
 }).then(response => {
     if (!response.ok) {
@@ -100,13 +101,21 @@ fetch(`${tmURL}/status`, {
     return response.json();
 }).then(data => {
     blockNumber = data?.result?.sync_info?.latest_block_height;
-    let div = document.getElementById('block');
-    div.innerHTML = JSON.stringify(data.result, null, 2);
-    let div2 = document.getElementById('block-summary');
+    let div = document.getElementById('block-summary');
+    
     let summary = {"block height": data.result.sync_info.latest_block_height,
-           "block timestamp": utcToLocal(data.result.sync_info.latest_block_time),
-           "earliest block timestamp": utcToLocal(data.result.sync_info.earliest_block_time)};
-    div2.appendChild(makeTableElement(summary));
+		   "block timestamp": utcToLocal(data.result.sync_info.latest_block_time),
+		   "earliest block timestamp": utcToLocal(data.result.sync_info.earliest_block_time)};
+    div.appendChild(makeTableElement(summary));
+    let div2 = document.getElementById('status-details');
+    div2.appendChild(addDetails(
+	`Athens3 status: current block ${blockNumber}`,
+	JSON.stringify(data?.result, null, 2)));
+
+
+
+	fcdfd
+	
 }).catch(error => {
     console.log("fetch error" + error);
 });
@@ -134,19 +143,22 @@ fetch(`${nodeURL}/cosmos/bank/v1beta1/supply`, {
 
 async function upgrade_plan() {
     try {
-    var resource = "/cosmos/upgrade/v1beta1/current_plan";
-    var p1 = await fetch(`${nodeURL}/${resource}`, { method: 'GET', });
-    let data = await p1.json();
-    const div1 = document.getElementById('upgrade-plan');
-    div1.textContent = JSON.stringify(data, null, 2);
-    if (data.plan == null) {
-        return;
-    }
-    let summary = {plan: data.plan.name, height: data.height, time: utcToLocal(data.time)};
-    let div2 = document.getElementById("upgrade-plan-summary");
-    div2.appendChild(makeTableElement(summary));
+	var resource = "/cosmos/upgrade/v1beta1/current_plan";
+	var p1 = await fetch(`${nodeURL}/${resource}`, { method: 'GET', });
+	let data = await p1.json();
+	const div1 = document.getElementById('upgrade-plan');
+	div1.textContent = JSON.stringify(data, null, 2);
+	if (data.plan == null) {
+            return;
+	}
+	const projectedTimeInMs = Date.now() + (data.plan.height - blockNumber)*5700;
+	const projectedTime = new Date(projectedTimeInMs);
+	console.log("projectedTime", projectedTime);
+	let summary = {plan: data.plan.name, height: data.plan.height, projected_time: projectedTime.toLocaleString()};
+	let div2 = document.getElementById("upgrade-plan-summary");
+	div2.appendChild(makeTableElement(summary));
     } catch (error) {
-    console.log('error', error);
+	console.log('error', error);
     }
 }
 upgrade_plan();

@@ -1,4 +1,5 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
+import {nodeURL, RPCByChainID, corsProxyURL, checkURL} from './common.js';
 
 // ---------------- zetaclients ------------------------------
 async function zetaclients_versions() {

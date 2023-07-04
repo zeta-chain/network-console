@@ -13,10 +13,9 @@
     <a href="./index.html">Basics</a>  <span class="flexible-filler"></span>
     <a href="./zevm.html">zEVM</a>  <span class="flexible-filler"></span>
     <a href="./zetaclients.html">ZetaClients</a>  <span class="flexible-filler"></span>
-    <a href="./crosschain.html">Cross-Chain Module</a>
-    <span class="flexible-filler"></span>
-    <a href="./consensus.html">Consensus</a> 
-    <span class="flexible-filler"></span>
+    <a href="./crosschain.html">Cross-Chain Module</a>    <span class="flexible-filler"></span>
+    <a href="./consensus.html">Consensus</a>     <span class="flexible-filler"></span>
+    <a href="./wallet.html">Wallet</a>     <span class="flexible-filler"></span>
   </div>
   <div id="outer-div"> 
 
@@ -42,10 +41,10 @@
   <h2 id="sec-network-status">Athens3 Network status</h2>
   <div class="container">
     <div class="item">
+      <div id="athens3-status"></div>
       <b>Athens3 status:</b>
       <pre id="block-summary"></pre>
-      <button onclick="toggleDropdown('block')">Raw JSON</button>
-      <pre id="block" class="dropdown-content">    </pre>
+      <div id="status-details"></div>
     </div>
 
 
@@ -138,7 +137,7 @@
   
 <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
 <!-- <script src="./bech32.js"></script>   -->
-<script src="./common.js"></script>
+<!-- <script src="./common.js"></script> -->
 <script src="./utils.js"></script>
 <script type="module" src="athens3-dash.js"></script>
 
