@@ -3,7 +3,7 @@ import './ecpair.js';
 import './secp256k1.js';
 import './buffer.js';
 import './web3.min.js';
-import {RPCByChainID,evmURL,addDetails} from './common.js';
+import {RPCByChainID,evmURL,addDetails,makeTableElement,Chains} from './common.js';
 
 
 // console.log("Web3", Web3);
@@ -220,7 +220,13 @@ async function makeTransaction(to, amount, utxos, memo) {
 // ethereum wallet
 
 const web3zevm = new Web3(evmURL);
-window.web3zevm = web3zevm;
+// window.web3zevm = web3zevm;
+const web3ByChainId = {};
+const ChainIDs = [5, 97, 80001, 7001];
+for (const chainId of ChainIDs) {
+    web3ByChainId[chainId] = new Web3(RPCByChainID[chainId]);
+}
+
 
 let ethAccount;
 
@@ -235,8 +241,12 @@ async function updateEthAccount() {
     template.innerHTML = `<span style="font-family:monospace">Ethereum Address ${ethAccount.address}</span>`;
     div.appendChild(template.content.firstChild)
 
-    const balance = await web3zevm.eth.getBalance(ethAccount.address);
-    div.appendChild(addDetails(`Ethereum Balance ${Web3.utils.fromWei(balance)} ZETA`, JSON.stringify(balance, null, 2)));
+    let balanceSummary = {};
+    for (const chainId of ChainIDs) {
+	const balance = await web3ByChainId[chainId].eth.getBalance(ethAccount.address);
+	balanceSummary[chainId] = `${Web3.utils.fromWei(balance)} ${Chains[chainId].nativeCurrency.symbol}`;
+    }
+    div.appendChild(makeTableElement(balanceSummary));
 }
 
 document.getElementById('button-eth-send').addEventListener('click', async () => {

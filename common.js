@@ -8,7 +8,46 @@ export var RPCByChainID = {
     5: "https://rpc.ankr.com/eth_goerli",
     97: "https://data-seed-prebsc-1-s1.binance.org:8545",
     80001: "https://rpc.ankr.com/polygon_mumbai",
-    18332: "https://blockstream.info/testnet/api", 
+    18332: "https://blockstream.info/testnet/api",
+    7001: evmURL,
+};
+export var Chains = {
+    5: {
+	"chainId": "5",
+	"chainName": "Goerli Testnet",
+	"nativeCurrency": {
+	    "name": "Goerli Ether",
+	    "symbol": "gETH",
+	    "decimals": 18
+	},
+    },
+    97: {
+	"chainId": "97",
+	"chainName": "Binance Smart Chain Testnet",
+	"nativeCurrency": {
+	    "name": "Testnet BNB",
+	    "symbol": "tBNB",
+	    "decimals": 18
+	},
+    },
+    80001: {
+	"chainId": "80001",
+	"chainName": "Polygon Mumbai Testnet",
+	"nativeCurrency": {
+	    "name": "Matic",
+	    "symbol": "tMATIC",
+	    "decimals": 18
+	},
+    },
+    7001: {
+	"chainId": "7001",
+	"chainName": "ZetaChain",
+	"nativeCurrency": {
+	    "name": "Zeta",
+	    "symbol": "ZETA",
+	    "decimals": 18
+	},
+    },
 };
 
 if (window.location.protocol === 'https:') {
