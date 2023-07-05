@@ -3,7 +3,7 @@ import './ecpair.js';
 import './secp256k1.js';
 import './buffer.js';
 import './web3.min.js';
-import {RPCByChainID,evmURL,addDetails,makeTableElement,Chains} from './common.js';
+import {getForegienCoins, RPCByChainID,evmURL,addDetails,makeTableElement,makeTableElement2,Chains} from './common.js';
 
 
 // console.log("Web3", Web3);
@@ -222,8 +222,9 @@ async function makeTransaction(to, amount, utxos, memo) {
 const web3zevm = new Web3(evmURL);
 // window.web3zevm = web3zevm;
 const web3ByChainId = {};
-const ChainIDs = [5, 97, 80001, 7001];
+const ChainIDs = [5, 97, 80001, 7001, 18332];
 for (const chainId of ChainIDs) {
+    if (chainId === 18332) continue;
     web3ByChainId[chainId] = new Web3(RPCByChainID[chainId]);
 }
 
@@ -240,13 +241,32 @@ async function updateEthAccount() {
     const template = document.createElement('template');
     template.innerHTML = `<span style="font-family:monospace">Ethereum Address ${ethAccount.address}</span>`;
     div.appendChild(template.content.firstChild)
-
-    let balanceSummary = {};
+    
+    const foreignCoins = await getForegienCoins();
+    console.log("foreignCoins", foreignCoins);
+    let balanceSummary = [];
     for (const chainId of ChainIDs) {
-	const balance = await web3ByChainId[chainId].eth.getBalance(ethAccount.address);
-	balanceSummary[chainId] = `${Web3.utils.fromWei(balance)} ${Chains[chainId].nativeCurrency.symbol}`;
+	const summary = {chain: Chains[chainId].chainName}; 
+	if (chainId != 18332) {
+	    const balance = await web3ByChainId[chainId].eth.getBalance(ethAccount.address);
+	    summary.gas_balance = `${Web3.utils.fromWei(balance)} ${Chains[chainId].nativeCurrency.symbol}`;
+	}
+	const coins = foreignCoins.filter(c => c.foreign_chain_id == chainId);
+	if (coins.length != 1) {
+	    console.log("warning: coins length != 1", coins);
+	    continue;
+	}
+	const zrc20Address = coins[0]?.zrc20_contract_address;
+	console.log(`${chainId} zrc20Address`, zrc20Address);
+	const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI,zrc20Address);
+	const zrc20Balance = await zrc20Contract.methods.balanceOf(ethAccount.address).call();
+	console.log(`${chainId} zrc20Balance`, zrc20Balance);
+	summary.zrc20_balance = `${Web3.utils.fromWei(zrc20Balance)} ${coins[0].symbol}`;
+	balanceSummary.push(summary);
     }
-    div.appendChild(makeTableElement(balanceSummary));
+    div.appendChild(makeTableElement2(balanceSummary, ["chain", "gas_balance", "zrc20_balance"]));
+
+    document.getElementById("eth-balance-info").innerHTML = `<span style="font-family:monospace">Ethereum Balance ${Web3.utils.fromWei(await web3zevm.eth.getBalance(ethAccount.address))} ETH</span>`;
 }
 
 document.getElementById('button-eth-send').addEventListener('click', async () => {

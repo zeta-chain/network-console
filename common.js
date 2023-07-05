@@ -11,6 +11,13 @@ export var RPCByChainID = {
     18332: "https://blockstream.info/testnet/api",
     7001: evmURL,
 };
+
+export async function getForegienCoins() {
+    const p1 = await fetch(`${nodeURL}/zeta-chain/zetacore/fungible/foreign_coins`, {  method: 'GET', });
+    const data = await p1.json();
+    return data?.foreignCoins; 
+}
+
 export var Chains = {
     5: {
 	"chainId": "5",
@@ -48,6 +55,15 @@ export var Chains = {
 	    "decimals": 18
 	},
     },
+    18332: {
+	"chainId": "18332",
+	"chainName": "Bitcoin Testnet",
+	"nativeCurrency": {
+	    "name": "Bitcoin",
+	    "symbol": "tBTC",
+	    "decimals": 8
+	},
+    }
 };
 
 if (window.location.protocol === 'https:') {
