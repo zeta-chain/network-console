@@ -48,7 +48,6 @@ async function read_abis() {
 }
 await read_abis();
 
-
 const ecc = secp256k1;
 const ECPair = ecpair.ECPairFactory(ecc);
 const TESTNET = bitcoin.networks.testnet;
