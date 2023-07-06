@@ -263,12 +263,14 @@ import {nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
 	if (status.status == "OutboundMined") {
 	    append("OK: CCTX status is OutboundMined");
 	    append("  Checking outbound tx confirmation votes...");
-	    const txhash = curOutParam.outbound_tx_hash;
 	    const chainID = curOutParam.receiver_chainId;
-	    const receipt = await getReceipt(chainID, txhash);
-	    append("  txhash: " + txhash);
-	    append("  chainID: " + chainID);
-	    append("  receipt: " + JSON.stringify(receipt, null, 2));
+	    const txhash = curOutParam.outbound_tx_hash;
+	    append("  outbound chainID: " + chainID);
+	    if (txhash.length == 66) {
+		const receipt = await getReceipt(chainID, txhash);
+		append("  txhash: " + txhash);
+		append("  receipt: " + JSON.stringify(receipt, null, 2));
+	    }
 	    // const ballotIndex = await getOutTxBallot(cc.index, curOutParam.outbound_tx_hash, outBlockHeight, amount, chainId, nonce, coinType); 
 	} else if (status.status == "Aborted") {
 	    append("OK: CCTX status is Aborted");
