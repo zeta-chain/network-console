@@ -261,7 +261,8 @@ async function updateEthAccount() {
 	const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI,zrc20Address);
 	const zrc20Balance = await zrc20Contract.methods.balanceOf(ethAccount.address).call();
 	console.log(`${chainId} zrc20Balance`, zrc20Balance);
-	summary.zrc20_balance = `${Web3.utils.fromWei(zrc20Balance)} ${coins[0].symbol}`;
+	const decimals = coins[0]?.decimals;
+	summary.zrc20_balance = `${Number(zrc20Balance)/Math.pow(10,decimals)} ${coins[0].symbol}`;
 	balanceSummary.push(summary);
     }
     div.appendChild(makeTableElement2(balanceSummary, ["chain", "gas_balance", "zrc20_balance"]));
