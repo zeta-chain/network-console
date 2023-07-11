@@ -13,28 +13,12 @@ async function zetaclients_versions() {
 	       "34.253.137.241",
 	       "18.143.71.236",
 	       "54.254.133.239",
-	       // "3.218.170.198",
-	       // "34.239.99.239",
-	       // "18.210.106.52",
-	       // "35.162.231.11",
-	       // "44.236.174.26",
-	       // "54.77.180.134",
-	       // "34.253.137.24",
-	       // "18.143.71.236",
-	       // "54.254.133.23",
 	      ];
+    let ChainIDs = [5, 97, 80001, 18332]; 
     let ipAPI = "http://ip-api.com/json";
     try {
 	let div = document.getElementById('zetaclients-summary');
 	console.log(div);
-
-	let fetchPromises = [];
-	let p2pPromises = [];
-	let geoPromises = [];
-	let checkPromises = [];
-	let lastStartPromises = [];
-
-
 
 	let table = document.createElement('table');
 
@@ -65,8 +49,21 @@ async function zetaclients_versions() {
 	headRow.appendChild(th7);
 	let th8 = document.createElement('th');
 	th8.innerText = "Last Scanned Blocks";
+	th8.colSpan = ChainIDs.length;
 	headRow.appendChild(th8);
-
+	let headRow2 = document.createElement('tr');
+	thead.appendChild(headRow2);
+	{
+	    let th = document.createElement('th');
+	    th.innerText = "";
+	    th.colSpan = 6;
+	    headRow2.appendChild(th);
+	}
+	for (let i=0; i<ChainIDs.length; i++) {
+	    let th = document.createElement('th');
+	    th.innerText = ChainIDs[i];
+	    headRow2.appendChild(th);
+	}
 	
 	div.appendChild(table);
 
@@ -87,16 +84,19 @@ async function zetaclients_versions() {
 	    td6.id = `zetaclients-check-${i}`;
 	    let td7 = document.createElement('td');
 	    td7.id = `zetaclients-laststart-${i}`;
-	    let td8 = document.createElement('td');
-	    td8.id = `zetaclients-lastscanned-${i}`;
 	    tr.appendChild(td1);
 	    tr.appendChild(td2);
-	    // tr.appendChild(td3);
 	    tr.appendChild(td4);
 	    tr.appendChild(td5);
 	    tr.appendChild(td6);
 	    tr.appendChild(td7);
-	    tr.appendChild(td8);
+
+	    for (let j=0; j<ChainIDs.length; j++) {
+		let td8 = document.createElement('td');
+		td8.id = `zetaclients-lastscanned-${i}-${ChainIDs[j]}`;
+		tr.appendChild(td8);
+	    }
+
 	}
 
 	let lastscannedPromises = [];
@@ -166,8 +166,12 @@ async function zetaclients_versions() {
 			console.log("Error " + response.status);
 		    }
 		}).then(data => {
-		    let td = document.getElementById(`zetaclients-lastscanned-${i}`);
-		    td.innerText = JSON.stringify(data);
+		    for (let j=0; j<ChainIDs.length; j++) {
+			if (data[ChainIDs[j]]) {
+			    let td = document.getElementById(`zetaclients-lastscanned-${i}-${ChainIDs[j]}`);
+			    td.innerText = data[ChainIDs[j]];
+			}
+		    }
 		}).catch(err => {
 		    console.log(err);
 		});
