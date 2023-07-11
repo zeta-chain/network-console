@@ -173,56 +173,7 @@ async function zetaclients_versions() {
 		});
 	}
 
-	for (let i=0; i<0; i++) { // IPs.length; i++) {
-	    let p1 = await fetchPromises[i];
-	    if (!p1.ok) {
-		console.log("Error " + p1.status);
-		continue;
-	    }
-	    let data = await p1.text();
-	    let td = document.getElementById(`zetaclients-version-${i}`);
-	    td.innerText = data;
 
-	    let p4 = await checkPromises[i];
-	    if (!p4.ok) {
-		console.log("Error " + p4.status);
-		continue;
-	    }
-	    let data4 = await p4.text();
-	    let td5 = document.getElementById(`zetaclients-check-${i}`);
-	    td5.innerText = data4;
-	    
-
-	    let p3 = await geoPromises[i];
-	    if (!p3.ok) {
-		console.log("Error " + p3.status);
-		continue;
-	    }
-	    let data3 = await p3.json();
-	    let td3 = document.getElementById(`zetaclients-geolocation-${i}`);
-	    td3.innerText = `${data3.city}, ${data3.country}`;
-	    let td4 = document.getElementById(`zetaclients-org-${i}`);
-	    td4.innerText = data3.org;
-
-	    let p5 = await lastStartPromises[i];
-	    if (!p5.ok) {
-		console.log("Error " + p5.status);
-		continue;
-	    }
-	    let data5 = await p5.text();
-	    let td6 = document.getElementById(`zetaclients-laststart-${i}`);
-	    const d = new Date(data5);
-	    td6.innerText = d.toLocaleString();
-
-	    let p6 = await lastscannedPromises[i];
-	    if (!p6.ok) {
-		console.log("Error " + p6.status);
-	    } else {
-		let data6 = await p6.text();
-		let td7 = document.getElementById(`zetaclients-lastscanned-${i}`);
-		td7.innerText = data6;
-	    }
-	}
     } catch (error) {
 	console.log("Error " + error);
     }
