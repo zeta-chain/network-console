@@ -33,15 +33,7 @@ async function zetaclients_versions() {
 	let geoPromises = [];
 	let checkPromises = [];
 	let lastStartPromises = [];
-	let lastscannedPromises = [];
-	for (let i=0; i<IPs.length; i++) {
-	    fetchPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/version`, {method: 'GET'}));
-	    p2pPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
-	    geoPromises.push(fetch(`${ipAPI}/${IPs[i]}`, {method: 'GET'}));
-	    checkPromises.push(fetch(`${checkURL}/check?ip=${IPs[i]}`, {method: 'GET'}));
-	    lastStartPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/laststarttimestamp`, {method: 'GET'}));
-	    lastscannedPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/lastscannedblock`, {method: 'GET'}));
-	}
+
 
 
 	let table = document.createElement('table');
@@ -107,7 +99,81 @@ async function zetaclients_versions() {
 	    tr.appendChild(td8);
 	}
 
+	let lastscannedPromises = [];
 	for (let i=0; i<IPs.length; i++) {
+	    fetch(`${corsProxyURL}/http://${IPs[i]}:8123/version`, {method: 'GET'})
+		.then(response => {
+		    if (response.ok) {
+			return response.text();
+		    } else {
+			console.log("Error " + response.status);
+		    }
+		}).then(data => {
+		    let td = document.getElementById(`zetaclients-version-${i}`);
+		    td.innerText = data;
+		}).catch(err => {
+		    console.log(err);
+		});
+
+	    // p2pPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
+	    fetch(`${ipAPI}/${IPs[i]}`, {method: 'GET'})
+	    	.then(response => {
+		    if (response.ok) {
+			return response.json();
+		    } else {
+			console.log("Error " + response.status);
+		    }
+		}).then(data => {
+		    let td = document.getElementById(`zetaclients-geolocation-${i}`);
+		    td.innerText = `${data.country} ${data.regionName} ${data.city}`;
+		    let td2 = document.getElementById(`zetaclients-org-${i}`);
+		    td2.innerText = data.org;
+		}).catch(err => {
+		    console.log(err);
+		});
+	    fetch(`${checkURL}/check?ip=${IPs[i]}`, {method: 'GET'})
+	    	.then(response => {
+		    if (response.ok) {
+			return response.text();
+		    } else {
+			console.log("Error " + response.status);
+		    }
+		}).then(data => {
+		    let td = document.getElementById(`zetaclients-check-${i}`);
+		    td.innerText = data;
+		}).catch(err => {
+		    console.log(err);
+		});
+	    fetch(`${corsProxyURL}/http://${IPs[i]}:8123/laststarttimestamp`, {method: 'GET'})
+	    	.then(response => {
+		    if (response.ok) {
+			return response.text();
+		    } else {
+			console.log("Error " + response.status);
+		    }
+		}).then(data => {
+		    let td = document.getElementById(`zetaclients-laststart-${i}`);
+		    const d = new Date(data);
+		    td.innerText = d.toLocaleString();
+		}).catch(err => {
+		    console.log(err);
+		});
+	    fetch(`${corsProxyURL}/http://${IPs[i]}:8123/lastscannedblock`, {method: 'GET'})
+	    	.then(response => {
+		    if (response.ok) {
+			return response.json();
+		    } else {
+			console.log("Error " + response.status);
+		    }
+		}).then(data => {
+		    let td = document.getElementById(`zetaclients-lastscanned-${i}`);
+		    td.innerText = JSON.stringify(data);
+		}).catch(err => {
+		    console.log(err);
+		});
+	}
+
+	for (let i=0; i<0; i++) { // IPs.length; i++) {
 	    let p1 = await fetchPromises[i];
 	    if (!p1.ok) {
 		console.log("Error " + p1.status);
@@ -116,15 +182,6 @@ async function zetaclients_versions() {
 	    let data = await p1.text();
 	    let td = document.getElementById(`zetaclients-version-${i}`);
 	    td.innerText = data;
-
-	    // let p2 = await p2pPromises[i];
-	    // if (!p2.ok) {
-	    // 	console.log("Error " + p2.status);
-	    // 	continue;
-	    // }
-	    // let data2 = await p2.text();
-	    // let td2 = document.getElementById(`zetaclients-peerid-${i}`);
-	    // td2.innerText = data2;
 
 	    let p4 = await checkPromises[i];
 	    if (!p4.ok) {

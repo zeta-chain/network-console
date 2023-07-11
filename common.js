@@ -1,6 +1,6 @@
 export var nodeURL = 'http://46.4.15.110:1317';
 export var evmURL = 'http://46.4.15.110:8545';
-export var corsProxyURL = 'http://3.132.197.22:8088';
+export var corsProxyURL = 'http://46.4.15.110:8088';
 export var checkURL = 'http://46.4.15.110:8888'; // remote server that tests port 6668 p2p nodes
 export var tmURL = 'http://46.4.15.110:26657';
 export var hashServerURL = 'http://46.4.15.110:9001';
