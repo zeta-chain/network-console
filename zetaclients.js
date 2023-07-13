@@ -51,6 +51,9 @@ async function zetaclients_versions() {
 	th8.innerText = "Last Scanned Blocks";
 	th8.colSpan = ChainIDs.length;
 	headRow.appendChild(th8);
+	let th9 = document.createElement('th');
+	th9.innerText = "Num UTXOs";
+	headRow.appendChild(th9);
 	let headRow2 = document.createElement('tr');
 	thead.appendChild(headRow2);
 	{
@@ -96,11 +99,31 @@ async function zetaclients_versions() {
 		td8.id = `zetaclients-lastscanned-${i}-${ChainIDs[j]}`;
 		tr.appendChild(td8);
 	    }
+	    {
+		let td8 = document.createElement('td');
+		td8.id = `zetaclients-numutxos-${i}`;
+		tr.appendChild(td8);
+	    }
 
 	}
 
 	let lastscannedPromises = [];
 	for (let i=0; i<IPs.length; i++) {
+	    fetch(`${corsProxyURL}/http://${IPs[i]}:8123/status`, {method: 'GET'})
+	    	.then(response => {
+		    if (response.ok) {
+			return response.json();
+		    } else {
+			console.log("Error " + response.status);
+		    }
+		}).then(data => {
+		    console.log("status", data);
+		    let td = document.getElementById(`zetaclients-numutxos-${i}`);
+		    td.innerText = data.btc_number_of_utxos;
+		}).catch(err => {
+		    console.log(err);
+		});
+
 	    fetch(`${corsProxyURL}/http://${IPs[i]}:8123/version`, {method: 'GET'})
 		.then(response => {
 		    if (response.ok) {
