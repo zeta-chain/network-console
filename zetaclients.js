@@ -1,5 +1,5 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
-import {nodeURL, RPCByChainID, corsProxyURL, checkURL} from './common.js';
+import {addDetails, nodeURL, RPCByChainID, corsProxyURL, checkURL, esploraAPIURL} from './common.js';
 
 // ---------------- zetaclients ------------------------------
 async function zetaclients_versions() {
@@ -117,7 +117,7 @@ async function zetaclients_versions() {
 			console.log("Error " + response.status);
 		    }
 		}).then(data => {
-		    console.log("status", data);
+		    // console.log("status", data);
 		    let td = document.getElementById(`zetaclients-numutxos-${i}`);
 		    td.innerText = data.btc_number_of_utxos;
 		}).catch(err => {
@@ -327,3 +327,49 @@ async function getLatestBlockNumber(chainId) {
 
 getLatestBlockNumber(18332);
 
+
+async function updateTSS() {
+    const resource = "zeta-chain/zetacore/crosschain/get_tss_address";
+    var p3 = await fetch(`${nodeURL}/${resource}`, {
+        method: 'GET',
+    });
+    let data3 = await p3.json();
+    console.log(data3);
+    if (data3?.btc == null) {
+	console.log("Error: no tss address for btc", data3);
+	return;
+    }
+    const btcAddress = data3.btc;
+    updateUTXO(btcAddress);
+    updateAddressInfo(btcAddress);
+    updateTxs(btcAddress);
+}
+
+updateTSS();
+
+
+async function updateUTXO(addr) {
+    const balance = document.getElementById("utxo-info");
+    const p1 = await fetch(`${esploraAPIURL}/address/${addr}/utxo`);
+    const data = await p1.json();
+    balance.replaceChildren(addDetails(`UTXOs (${data.length})`, JSON.stringify(data, null, 2)));
+    utxos = data;
+    // makeTransaction(p2wpkhAddress, 10000, data, "hello world");
+}
+
+async function updateAddressInfo(addr) {
+    const balance = document.getElementById("address-info");
+    const p1 = await fetch(`${esploraAPIURL}/address/${addr}`);
+    const data = await p1.json();
+    const bal = data.chain_stats.funded_txo_sum - data.chain_stats.spent_txo_sum;
+    balance.replaceChildren(addDetails(`Address Info: ${data.address} - balance ${bal} sats`,
+				       JSON.stringify(data, null, 2)));
+}
+
+async function updateTxs(addr) {
+    const balance = document.getElementById("txs-info");
+    const p1 = await fetch(`${esploraAPIURL}/address/${addr}/txs`);
+    const data = await p1.json();
+    balance.replaceChildren(addDetails(`Transactions (${data.length})`, JSON.stringify(data, null, 2)));
+    txs = data;
+}

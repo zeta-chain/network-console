@@ -3,7 +3,7 @@ import './ecpair.js';
 import './secp256k1.js';
 import './buffer.js';
 import './web3.min.js';
-import {getForegienCoins, RPCByChainID,evmURL,addDetails,makeTableElement,makeTableElement2,Chains} from './common.js';
+import {esploraAPIURL, getForegienCoins, RPCByChainID,evmURL,addDetails,makeTableElement,makeTableElement2,Chains} from './common.js';
 import {encodings, decode, convertbits} from './bech32.js';
 
 // console.log("Web3", Web3);
@@ -27,7 +27,7 @@ const TESTNET = bitcoin.networks.testnet;
 const Buffer = buffer.Buffer;
 const hash160 = (b) => bitcoin.crypto.ripemd160(bitcoin.crypto.sha256(b));
 
-const esploraAPIURL = "https://blockstream.info/testnet/api";
+
 
 const validator = (
     pubkey,
@@ -152,8 +152,6 @@ async function updateTxs() {
     const data = await p1.json();
     balance.replaceChildren(addDetails(`Transactions (${data.length})`, JSON.stringify(data, null, 2)));
     txs = data;
-
-
 }
 
 // memo: Buffer of at most 80 BYTES
