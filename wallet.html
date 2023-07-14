@@ -61,15 +61,17 @@
     <div id="zrc20-balances"></div>
     <hr>
     <div>
-      <h2>zEVM Send Ether(ZETA)</h2>
+      <h2>zEVM Send Ether(ZETA) and Withdraw ZRC20</h2>
       <div id="eth-balance-info"></div>
       <label for="input-eth-recipient">Recipient:</label>
       <input id="input-eth-recipient" size="70"></input>
       </br>
-      <label for="input-eth-amount">Amount (in Ether/ZETA)</label>
+      <label for="input-eth-amount">Amount (in Ether/ZETA/BTC)</label>
       <input id="input-eth-amount" size="10"></input>
       </br>
-      <button id="button-eth-send">Build & Sign Transaction</button>
+      <button id="button-eth-send">Build & Sign Transaction to send ZETA</button>
+      <button id="button-withdraw-tbnb">Build & Sign Transaction to withdraw tBNB</button>
+      <button id="button-withdraw-tbtc">Build & Sign Transaction to withdraw tBTC</button>
       <div id="eth-transaction-receipt"></div>
     </div>
 
