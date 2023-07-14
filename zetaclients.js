@@ -53,6 +53,8 @@ async function zetaclients_versions() {
 	headRow.appendChild(th8);
 	let th9 = document.createElement('th');
 	th9.innerText = "Num UTXOs";
+	let th10 = document.createElement('th');
+	th10.innerText = "Next UTXO Nonce";
 	headRow.appendChild(th9);
 	let headRow2 = document.createElement('tr');
 	thead.appendChild(headRow2);
@@ -67,6 +69,7 @@ async function zetaclients_versions() {
 	    th.innerText = ChainIDs[i];
 	    headRow2.appendChild(th);
 	}
+	
 	
 	div.appendChild(table);
 
@@ -103,6 +106,9 @@ async function zetaclients_versions() {
 		let td8 = document.createElement('td');
 		td8.id = `zetaclients-numutxos-${i}`;
 		tr.appendChild(td8);
+		let td9 = document.createElement('td');
+		td9.id = `zetaclients-next-utxo-nonce-${i}`;
+		tr.appendChild(td9);
 	    }
 
 	}
@@ -120,6 +126,8 @@ async function zetaclients_versions() {
 		    // console.log("status", data);
 		    let td = document.getElementById(`zetaclients-numutxos-${i}`);
 		    td.innerText = data.btc_number_of_utxos;
+		    td = document.getElementById(`zetaclients-next-utxo-nonce-${i}`);
+		    td.innerText = data.btc_next_nonce;
 		}).catch(err => {
 		    console.log(err);
 		});
@@ -362,7 +370,7 @@ async function updateAddressInfo(addr) {
     const p1 = await fetch(`${esploraAPIURL}/address/${addr}`);
     const data = await p1.json();
     const bal = data.chain_stats.funded_txo_sum - data.chain_stats.spent_txo_sum;
-    balance.replaceChildren(addDetails(`Address Info: ${data.address} - balance ${bal} sats`,
+    balance.replaceChildren(addDetails(`Address Info: ${data.address};  balance ${bal} sats (${bal/100000000} BTC)`,
 				       JSON.stringify(data, null, 2)));
 }
 
