@@ -12,6 +12,7 @@ export var RPCByChainID = {
     7001: evmURL,
 };
 export var esploraAPIURL = "https://blockstream.info/testnet/api";
+export var externalChainIDs = [5, 97, 80001, 18332]; 
 
 export async function getForegienCoins() {
     const p1 = await fetch(`${nodeURL}/zeta-chain/zetacore/fungible/foreign_coins`, {  method: 'GET', });

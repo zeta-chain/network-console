@@ -1,4 +1,4 @@
-import {addDetails, nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
+import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
 
 (async () => {
     var connectorABI, zetaTokenABI, erc20CustodyABI;
@@ -461,6 +461,28 @@ import {addDetails, nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './
 
 	}
 
-    })(); 
+    })();
+
+    // pending cctxs
+    (async () => {
+	const div = document.getElementById("pending");
+	for (let i = 0; i < externalChainIDs.length; i++) {
+	    let chainID = externalChainIDs[i];
+	    let resource = `${nodeURL}/zeta-chain/crosschain/cctxPending?chainId=${chainID}&pagination.limit=1`;
+	    let p = await fetch(resource, {method: 'GET'});
+	    const pendingNonces = []; 
+	    if (p.ok) {
+		let data = await p.json();
+		for (let j=0; j<data.CrossChainTx.length; j++) {
+		    let cctx = data.CrossChainTx[j];
+		    const outs = cctx.outbound_tx_params;
+		    const out = outs[outs.length-1];
+		    pendingNonces.push(out.outbound_tx_tss_nonce); 
+		}
+		console.log(`pending cctx chain id ${chainID}`, data);
+		div.appendChild(addDetails(`pending cctx chainID ${chainID}; #nonces: ${data.CrossChainTx.length}; nonces: ${pendingNonces}`, JSON.stringify(data.CrossChainTx, null, 2)));
+	    } 
+	}
+    })();
     
 })();
