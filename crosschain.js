@@ -1,4 +1,4 @@
-import {nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
+import {addDetails, nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
 
 (async () => {
     var connectorABI, zetaTokenABI, erc20CustodyABI;
@@ -444,5 +444,21 @@ import {nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
 	    
 	}
     }
+
+    // tx tracker stuff
+    (async () => {
+	const resource = `${nodeURL}/zeta-chain/crosschain/outTxTracker`;
+	let p1 = await fetch(resource, {method: 'GET'});
+	let data = await p1.json();
+	console.log("txtracker data", data);
+	const txs = data?.outTxTracker;
+	const div = document.getElementById("txtracker");
+	for (let i=0; i<txs.length; i++) {
+	    const tx = txs[i];
+	    div.appendChild(addDetails(`${tx.index}`, JSON.stringify(tx.hash_list, null, 2)));
+
+	}
+
+    })(); 
     
 })();
