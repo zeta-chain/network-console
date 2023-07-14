@@ -53,9 +53,10 @@ async function zetaclients_versions() {
 	headRow.appendChild(th8);
 	let th9 = document.createElement('th');
 	th9.innerText = "Num UTXOs";
+	headRow.appendChild(th9);
 	let th10 = document.createElement('th');
 	th10.innerText = "Next UTXO Nonce";
-	headRow.appendChild(th9);
+	headRow.appendChild(th10);
 	let headRow2 = document.createElement('tr');
 	thead.appendChild(headRow2);
 	{
