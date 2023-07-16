@@ -26,19 +26,22 @@ function tag(name, ...children) {
 const MUNDANE_TAGS = ["canvas", "h1", "h2", "h3", "p", "a", "div", "span",
                       "select", "details", "summary", "pre", "button", "code",
                       "table", "thead", "tbody", "tr", "td", "th"];
+var tags = {}
 for (let tagName of MUNDANE_TAGS) {
-    window[tagName] = (...children) => tag(tagName, ...children);
+    const funcName = tagName.toUpperCase(); 
+    window[funcName] = (...children) => tag(tagName, ...children);
 }
 
-function img(src) {
+
+function IMG(src) {
     return tag("img").att$("src", src);
 }
 
-function input(type) {
+function INPUT(type) {
     return tag("input").att$("type", type);
 }
 
-function text(t) {
+function TEXT(t) {
     return document.createTextNode(t);
 }
 

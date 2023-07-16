@@ -1,7 +1,7 @@
 import {evmURL, nodeURL,makeTableElementNew} from './common.js';
 
 window.onload = (async () => {
-    console.log("div func", div); 
+    console.log("div func", DIV); 
     var web3 = new Web3(`${evmURL}`);
     console.log(web3);
     let fromWei = web3.utils.fromWei;
@@ -71,11 +71,11 @@ window.onload = (async () => {
         let d = document.getElementById('system-contract-summary');
 	    d.appendChild(makeTableElement(data.SystemContract));
         d.appendChild(
-            details(
-                summary(code(text(`JSON`))),
-                div(
-                    a(text("hey")).att$("href", `${resource}`),
-                    pre(text(JSON.stringify(data, null, 2)))
+            DETAILS(
+                SUMMARY(CODE(TEXT(`JSON`))),
+                DIV(
+                    A(TEXT("hey")).att$("href", `${resource}`),
+                    PRE(TEXT(JSON.stringify(data, null, 2)))
                 )));
 	    SystemContractAddress = data.SystemContract.system_contract;
 	    console.log("system contract--set", SystemContractAddress);

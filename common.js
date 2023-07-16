@@ -75,10 +75,10 @@ if (window.location.protocol === 'https:') {
 
 
 export function addDetails(sum, det) {
-    return div(
-        details(
-            summary(text(sum)),
-            pre(text(det))
+    return DIV(
+        DETAILS(
+            SUMMARY(TEXT(sum)),
+            PRE(TEXT(det))
         ));
 }
 
@@ -127,15 +127,15 @@ export function addCommas(numberString) {
 }
 
 export function makeTableElementNew(json) {
-    const body = tbody();
+    const body = TBODY();
     for (const field in json) {
-        const row = tr(
-            td(text(field)),
-            td(text(json[field]))
+        const row = TR(
+            TD(TEXT(field)),
+            TD(TEXT(json[field]))
         );
         body.appendChild(row);
     }
-    return table(body); 
+    return TABLE(body); 
 }
 
 // simple utility to turn a JSON object into a HTML table element;
