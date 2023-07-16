@@ -148,15 +148,22 @@ async function updateAddressInfo() {
     const p1 = await fetch(`${esploraAPIURL}/address/${p2wpkhAddress}`);
     const data = await p1.json();
     const bal = data.chain_stats.funded_txo_sum - data.chain_stats.spent_txo_sum;
-    balance.replaceChildren(addDetails(`Address Info: ${data.address} - balance ${bal} sats`,
-				       JSON.stringify(data, null, 2)));
+    balance.replaceChildren(
+        details(
+            summary(text(`Address Info: ${data.address} - balance ${bal} sats`)),
+			pre(text(JSON.stringify(data, null, 2)))
+        ));
 }
 
 async function updateTxs() {
     const balance = document.getElementById("txs-info");
     const p1 = await fetch(`${esploraAPIURL}/address/${p2wpkhAddress}/txs`);
     const data = await p1.json();
-    balance.replaceChildren(addDetails(`Transactions (${data.length})`, JSON.stringify(data, null, 2)));
+    balance.replaceChildren(
+        details(
+            summary(text(`Transactions (${data.length})`)),
+            pre(text(JSON.stringify(data, null, 2)))
+        ));
     txs = data;
 }
 
