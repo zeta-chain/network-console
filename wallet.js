@@ -55,6 +55,7 @@ let p2wpkhAddress;
 let txs;
 let utxos;
 
+
 document.getElementById('button-broadcast').addEventListener('click', async () => {
     const txHex = document.getElementById("transaction-hex").textContent;
     console.log("txHex", txHex);
@@ -132,9 +133,14 @@ async function updateUTXO() {
     const balance = document.getElementById("balance-info");
     const p1 = await fetch(`${esploraAPIURL}/address/${p2wpkhAddress}/utxo`);
     const data = await p1.json();
-    balance.replaceChildren(addDetails(`UTXOs (${data.length})`, JSON.stringify(data, null, 2)));
+    // balance.replaceChildren(addDetails(`UTXOs (${data.length})`, JSON.stringify(data, null, 2)));
+    balance.replaceChildren(
+        details(
+            summary(text(`UTXOs (${data.length})`)),
+            pre(text(JSON.stringify(data, null, 2)))
+        ));
     utxos = data;
-    // makeTransaction(p2wpkhAddress, 10000, data, "hello world");
+
 }
 
 async function updateAddressInfo() {
