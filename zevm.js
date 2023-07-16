@@ -1,4 +1,4 @@
-import {evmURL, nodeURL} from './common.js';
+import {evmURL, nodeURL,makeTableElementNew} from './common.js';
 
 window.onload = (async () => {
     console.log("div func", div); 
@@ -118,7 +118,7 @@ window.onload = (async () => {
 	        summary[chainIDs[i]] = p1;
 	    }
 	    let div = document.getElementById('gas-prices');
-	    div.appendChild(makeTableElement(summary));
+	    div.appendChild(makeTableElementNew(summary));
     }
     gas_price();
 

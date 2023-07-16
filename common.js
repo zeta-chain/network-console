@@ -126,6 +126,18 @@ export function addCommas(numberString) {
     return parts.join(".");
 }
 
+export function makeTableElementNew(json) {
+    const body = tbody();
+    for (const field in json) {
+        const row = tr(
+            td(text(field)),
+            td(text(json[field]))
+        );
+        body.appendChild(row);
+    }
+    return table(body); 
+}
+
 // simple utility to turn a JSON object into a HTML table element;
 // two columns: "JSON key", "JSON value";
 // each row is a field in JSON object. 
@@ -142,21 +154,21 @@ export function makeTableElement(json) {
 
     // iterate over the JSON object
     for (var field in json) {
-	// create a row for each field
-	var tr = document.createElement('tr');
-	
-	// create a cell for the field name
-	var td1 = document.createElement('td');
-	td1.textContent = field;
-	tr.appendChild(td1);
-	
-	// create a cell for the field value
-	var td2 = document.createElement('td');
-	td2.textContent = json[field];
-	tr.appendChild(td2);
-	
-	// add the row to the table body
-	tbody.appendChild(tr);
+	    // create a row for each field
+	    var tr = document.createElement('tr');
+	    
+	    // create a cell for the field name
+	    var td1 = document.createElement('td');
+	    td1.textContent = field;
+	    tr.appendChild(td1);
+	    
+	    // create a cell for the field value
+	    var td2 = document.createElement('td');
+	    td2.textContent = json[field];
+	    tr.appendChild(td2);
+	    
+	    // add the row to the table body
+	    tbody.appendChild(tr);
     }
 
     // append the body to the table

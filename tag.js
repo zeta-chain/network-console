@@ -24,7 +24,8 @@ function tag(name, ...children) {
 }
 
 const MUNDANE_TAGS = ["canvas", "h1", "h2", "h3", "p", "a", "div", "span",
-                      "select", "details", "summary", "pre", "button", "code"];
+                      "select", "details", "summary", "pre", "button", "code",
+                      "table", "thead", "tbody", "tr", "td", "th"];
 for (let tagName of MUNDANE_TAGS) {
     window[tagName] = (...children) => tag(tagName, ...children);
 }
