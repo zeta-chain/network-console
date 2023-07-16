@@ -74,19 +74,12 @@ if (window.location.protocol === 'https:') {
 
 
 
-// summary & details are text; div is container
-// returns a div
-export function addDetails(summary, details) {
-    const div = document.createElement('div');
-    const detailsElement = document.createElement('details');
-    const summaryElement = document.createElement('summary');
-    const preElement = document.createElement('pre');
-    preElement.textContent = details;
-    summaryElement.textContent = summary;
-    detailsElement.appendChild(summaryElement);
-    detailsElement.appendChild(preElement);
-    div.appendChild(detailsElement);
-    return div; 
+export function addDetails(sum, det) {
+    return div(
+        details(
+            summary(text(sum)),
+            pre(text(det))
+        ));
 }
 
 export function msToTime(duration) {
