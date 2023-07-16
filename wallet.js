@@ -135,9 +135,9 @@ async function updateUTXO() {
     const data = await p1.json();
     // balance.replaceChildren(addDetails(`UTXOs (${data.length})`, JSON.stringify(data, null, 2)));
     balance.replaceChildren(
-        details(
-            summary(text(`UTXOs (${data.length})`)),
-            pre(text(JSON.stringify(data, null, 2)))
+        DETAILS(
+            SUMMARY(TEXT(`UTXOs (${data.length})`)),
+            PRE(TEXT(JSON.stringify(data, null, 2)))
         ));
     utxos = data;
 
@@ -149,9 +149,9 @@ async function updateAddressInfo() {
     const data = await p1.json();
     const bal = data.chain_stats.funded_txo_sum - data.chain_stats.spent_txo_sum;
     balance.replaceChildren(
-        details(
-            summary(text(`Address Info: ${data.address} - balance ${bal} sats`)),
-			pre(text(JSON.stringify(data, null, 2)))
+        DETAILS(
+            SUMMARY(TEXT(`Address Info: ${data.address} - balance ${bal} sats`)),
+			PRE(TEXT(JSON.stringify(data, null, 2)))
         ));
 }
 
@@ -160,9 +160,9 @@ async function updateTxs() {
     const p1 = await fetch(`${esploraAPIURL}/address/${p2wpkhAddress}/txs`);
     const data = await p1.json();
     balance.replaceChildren(
-        details(
-            summary(text(`Transactions (${data.length})`)),
-            pre(text(JSON.stringify(data, null, 2)))
+        DETAILS(
+            SUMMARY(TEXT(`Transactions (${data.length})`)),
+            PRE(TEXT(JSON.stringify(data, null, 2)))
         ));
     txs = data;
 }
