@@ -25,7 +25,7 @@ function tag(name, ...children) {
 
 const MUNDANE_TAGS = ["canvas", "h1", "h2", "h3", "p", "a", "div", "span",
                       "select", "details", "summary", "pre", "button", "code",
-                      "table", "thead", "tbody", "tr", "td", "th"];
+                      "table", "thead", "tbody", "tr", "td", "th", "br"];
 var tags = {}
 for (let tagName of MUNDANE_TAGS) {
     const funcName = tagName.toUpperCase(); 
