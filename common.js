@@ -11,6 +11,12 @@ export var RPCByChainID = {
     18332: "https://blockstream.info/testnet/api",
     7001: evmURL,
 };
+export var AddressExplorerByChainID = {
+    5: "https://goerli.etherscan.io/address",
+    97: "https://testnet.bscscan.com/address",
+    80001: "https://mumbai.polygonscan.com/address",
+    18332: "https://blockstream.info/testnet/address",
+};
 export var esploraAPIURL = "https://blockstream.info/testnet/api";
 export var externalChainIDs = [5, 97, 80001, 18332]; 
 

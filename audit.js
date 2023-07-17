@@ -1,4 +1,4 @@
-import {nodeURL,evmURL,RPCByChainID, esploraAPIURL} from './common.js';
+import {nodeURL,evmURL,RPCByChainID, esploraAPIURL,AddressExplorerByChainID} from './common.js';
 import './web3.min.js';
 
 class AuditPage {
@@ -95,19 +95,23 @@ class AuditPage {
         const symbol = fcoin.symbol;
         const decimals = fcoin.decimals;
         let assets, liabilities;
+	let tssAddr; 
 
         if (fcoin.coin_type == "Gas") {
             if (chainID != 18332) {
                 const foreignWeb3 = this.web3ByChainId[chainID];
+		tssAddr = this.tss.eth;
                 assets = await foreignWeb3.eth.getBalance(this.tss.eth);
                 assets = assets / Math.pow(10, decimals); 
             } else { // bitcoin clients
+		tssAddr = this.tss.btc;
                 const resource = `${esploraAPIURL}/address/${this.tss.btc}`;
                 const p = await fetch(resource, {
                     method: 'GET',
                 });
                 const data = await p.json();
-                assets = data.chain_stats.funded_txo_sum / Math.pow(10, decimals);
+		console.log("btc address info", data);
+                assets = (data.chain_stats.funded_txo_sum - data.chain_stats.spent_txo_sum) / Math.pow(10, 8);
             }
         }
         const zrc20 = new this.web3zevm.eth.Contract(this.ZRC20ABI, fcoin.zrc20_contract_address);
@@ -125,7 +129,10 @@ class AuditPage {
 	    poolBalance = poolBalance / Math.pow(10, decimals);
 	}
 
+	console.log("address explorer", AddressExplorerByChainID[chainID]);
+
         const flag = (assets >= liabilities) ? "🟢" : "🔴";
+	const surplus = assets - liabilities;
         return DIV(
             H3(`${flag}: Reserve of ${symbol} ZRC20 address ${fcoin.zrc20_contract_address} on chain ${chainID}`),
             PRE(TEXT(`Chain ID: ${chainID}, Symbol: ${symbol}, Decimals: ${decimals}`)),
@@ -136,7 +143,12 @@ class AuditPage {
 		TEXT(`  Rest:                                ${liabilities - fungibleBalance - poolBalance}`), BR(),
 	    ),
 	    PRE(
-		TEXT(`Assets (External Chain Balance):       ${assets}`), BR(),
+		A(`Assets (External Chain Balance):       ${assets}`)
+		    .att$("href", `${AddressExplorerByChainID[chainID]}/${tssAddr}`)
+		    .att$("target", "_blank"), BR(),
+	    ),
+	    PRE(
+		TEXT(`Surplus:                               ${surplus}`), BR(),
 	    ),
         );
     }
@@ -148,10 +160,9 @@ class AuditPage {
         for (const i in this.zrc20s) {
             const fcoin = this.zrc20s[i];
             console.log("foreign coin", fcoin);
-
             entry.appendChild(await this.TSSReserveComponent(fcoin));
-
         }
+	entry.appendChild(H1("ZETA Supply"));
 
     }
 }
