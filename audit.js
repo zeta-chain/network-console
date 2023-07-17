@@ -173,6 +173,5 @@ await page.initialize();
 
 console.log(page.tss);
 console.log(page.zrc20s);
-console.log("sys abi", page.SystemContractABI);
 console.log("web3zevm", page.web3zevm);
 await page.render();
