@@ -1,4 +1,4 @@
-import {nodeURL,evmURL,RPCByChainID, esploraAPIURL,AddressExplorerByChainID} from './common.js';
+import {nodeURL,evmURL,RPCByChainID, esploraAPIURL,AddressExplorerByChainID, } from './common.js';
 import './web3.min.js';
 
 class AuditPage {
@@ -74,6 +74,16 @@ class AuditPage {
 	let data4 = await p4.json();
 	this.UniswapV2FactoryABI = data4.abi;
 	console.assert(this.SystemContractABI.length > 0);
+
+	let p5 = await fetch('abi/ZetaConnectorEth.json');
+	let data5 = await p5.json();
+	this.EthConnectorABI = data5.abi;
+	console.assert(this.EthConnectorABI.length > 0);
+
+	let p6 = await fetch('abi/ZetaNonEth.json');
+	let data6 = await p6.json();
+	this.ZetaNonEthABI = data6.abi;
+	console.assert(this.ZetaNonEthABI.length > 0);
     }
 
     getWeb3() {
@@ -153,8 +163,55 @@ class AuditPage {
         );
     }
 
+    async ZETASupplyComponent() {
+	const p = await fetch(`${nodeURL}/cosmos/bank/v1beta1/supply/by_denom?denom=azeta`);
+	const data = await p.json();
+	const zetaSupplyZeta = parseInt(data.amount.amount) / Math.pow(10, 18);
+
+
+	const p2 = await fetch(`${nodeURL}/zeta-chain/zetacore/observer/get_core_params`);
+	const data2 = await p2.json();
+	const chainIDs= [5, 97, 80001, 18332];
+	const zetaContractByChainID = {};
+	let zetaLocked;
+	const zetaSupplies = {}; 
+	for (let params of data2.core_params.core_params) {
+	    const chainID = params.chain_id;
+	    const zetaContract = params.zeta_token_contract_address;
+	    zetaContractByChainID[chainID] = zetaContract;
+	    const RPC = RPCByChainID[chainID];
+	    const web3 = new Web3(RPC);
+	    
+	    if (chainID == 5) {
+		const ethConnectorAddress = params.connector_contract_address;
+		console.log("ethConnectorAddress", ethConnectorAddress);
+		const connector = new web3.eth.Contract(this.EthConnectorABI, ethConnectorAddress);
+		zetaLocked = await connector.methods.getLockedAmount().call();
+		zetaLocked = parseInt(zetaLocked) / Math.pow(10, 18);
+		console.log("eth chain zeta locked", zetaLocked);
+	    } else if (chainID == 97 || chainID == 80001) {
+		const zeta = new web3.eth.Contract(this.ZetaNonEthABI, zetaContract);
+		let  zetaSupply = await zeta.methods.totalSupply().call();
+		zetaSupply = parseInt(zetaSupply) / Math.pow(10, 18);
+		console.log("chainID", chainID, "zetaSupply", zetaSupply);
+		zetaSupplies[chainID] = zetaSupply;
+	    }
+	    
+	}
+	console.log("zetaContractByChainID", zetaContractByChainID);
+	return DIV(
+	    PRE(TEXT(`Assets (ZETA Supply): ${zetaLocked}`),BR(),
+		TEXT(`  ZETA locked on Ethereum: ${zetaLocked}`)
+	       ),
+	    PRE(TEXT(`Liabilities: `),BR(),
+		TEXT(`ZETA Supply on ZetaChain:${zetaSupplyZeta}`),BR(),
+		TEXT(`ZETA locked on BSC:      ${zetaSupplies[97]}`),BR(),
+		TEXT(`ZETA locked on Polygon:  ${zetaSupplies[80001]}`),BR()
+	       ),
+	);
+    }
+
     async render() {
-        
         const entry = document.getElementById("entry");
         entry.appendChild(H1("Foreign Reserves"));
         for (const i in this.zrc20s) {
@@ -163,6 +220,8 @@ class AuditPage {
             entry.appendChild(await this.TSSReserveComponent(fcoin));
         }
 	entry.appendChild(H1("ZETA Supply"));
+	entry.appendChild(await this.ZETASupplyComponent());
+
 
     }
 }
