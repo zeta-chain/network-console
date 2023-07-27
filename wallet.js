@@ -6,14 +6,42 @@ import './web3.min.js';
 import {esploraAPIURL, getForegienCoins, RPCByChainID,evmURL,addDetails,makeTableElement,makeTableElement2,Chains} from './common.js';
 import {encodings, decode, convertbits} from './bech32.js';
 
+
 // console.log("Web3", Web3);
 let ZRC20ABI;
+let UNISWAPV2FACTORYABI;
+let UNISWAPV2ROUTER02ABI;
+let UNISWAPV2PAIRABI;
 async function read_abis() {
     try {
 	let p3 = await fetch('abi/ZRC20.json');
 	let data3 = await p3.json();
 	ZRC20ABI = data3.abi;
 	console.log("set ZRC20ABI", ZRC20ABI);
+    } catch (err) {
+	console.log(err);
+    }
+    try {
+	let p3 = await fetch('abi/UniswapV2Factory.json');
+	let data3 = await p3.json();
+	UNISWAPV2FACTORYABI = data3.abi;
+	console.log("set UNISWAPV2FACTORYABI", UNISWAPV2FACTORYABI);
+    } catch (err) {
+	console.log(err);
+    }
+    try {
+	let p3 = await fetch('abi/UniswapV2Router02.json');
+	let data3 = await p3.json();
+	UNISWAPV2ROUTER02ABI = data3.abi;
+	console.log("set UNISWAPV2ROUTER02ABI", UNISWAPV2ROUTER02ABI);
+    } catch (err) {
+	console.log(err);
+    }
+    try {
+	let p3 = await fetch('abi/UniswapV2Pair.json');
+	let data3 = await p3.json();
+	UNISWAPV2PAIRABI = data3.abi;
+	console.log("set UNISWAPV2PAIRABI", UNISWAPV2PAIRABI);
     } catch (err) {
 	console.log(err);
     }
@@ -253,7 +281,7 @@ async function updateEthAccount() {
     // div.appendChild(addDetails(`Ethereum Address ${ethAccount.address}`, JSON.stringify(ethAccount, null, 2)));
     const template = document.createElement('template');
     template.innerHTML = `<span style="font-family:monospace">Ethereum Address ${ethAccount.address}</span>`;
-    div.appendChild(template.content.firstChild)
+    div.appendChild(template.content.firstChild);
     
     const foreignCoins = await getForegienCoins();
     console.log("foreignCoins", foreignCoins);
@@ -427,5 +455,69 @@ async function signWithdrawZRC20(zrc20, recipient, amount) {
     });
     return p2; 
 }
+const WZETA = "0x5F0b1a82749cb4E2278EC87F8BF6B618dC71a8bf";
+const BTCZRC20 = "0x65a45c57636f9BcCeD4fe193A602008578BcA90b"; 
+// bunch of functions to make trade on uniswap pools
+async function getZRC20WZETAPair(zrc20) {
 
+    const UNISWAPV2FACTORY = "0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c";
+    const factory = new web3zevm.eth.Contract(UNISWAPV2FACTORYABI, UNISWAPV2FACTORY);
+    const pair = await factory.methods.getPair(zrc20, WZETA).call();
+    return pair;
+}
+async function getReserves(pair) {
+    const uniswapPair = new web3zevm.eth.Contract(UNISWAPV2PAIRABI, pair);
+    const reserves = await uniswapPair.methods.getReserves().call();
+    return reserves;
+}
+async function amountOutSwapZetaForZrc20(zrc20, amount, reserves) {
+    const UNISWAPV2ROUTER02 = "0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe";
+    const router02 = new web3zevm.eth.Contract(UNISWAPV2ROUTER02ABI, UNISWAPV2ROUTER02);
+    if (reserves) {
+	const amountOut = await router02.methods.getAmountOut(amount, reserves[0], reserves[1]).call();
+	console.log("amountOut", amountOut);
+    }
+}
+async function doSwapZetaForZrc20(zrc20, amount, pair) {
+    const UNISWAPV2ROUTER02 = "0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe";
+    const router02 = new web3zevm.eth.Contract(UNISWAPV2ROUTER02ABI, UNISWAPV2ROUTER02);
+    const path = [WZETA, zrc20];
+    const encodedABISwap = router02.methods.swapExactETHForTokens(0, path, ethAccount.address,"1234567890123456789" ).encodeABI(); 
+    let p2 = await ethAccount.signTransaction({
+	to: UNISWAPV2ROUTER02,
+	value: amount,
+	gas: "2100000",
+	data: encodedABISwap,
+    });
+    web3zevm.eth.sendSignedTransaction(p2.rawTransaction).on('receipt', (x) => {
+	console.log("receipt", x);
+    });
+}
 
+async function burnZRC20(zrc20, amount) {
+    const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI,zrc20);
+    console.log("balance", await zrc20Contract.methods.balanceOf(ethAccount.address).call());
+    // const encodedABI = zrc20Contract.methods.burn(amount).encodeABI();
+    console.log("burning ", amount);
+    const encodedABI = zrc20Contract.methods.burn(amount).encodeABI();
+    let p = await ethAccount.signTransaction({
+	to: zrc20,
+	value: "0",
+	gas: "210000",
+	data: encodedABI,
+    });
+    const receipt = await web3zevm.eth.sendSignedTransaction(p.rawTransaction);
+    console.log("burn receipt", receipt);
+}
+window.burn = (async () => {
+    burnZRC20(BTCZRC20, "10000000");
+}); 
+
+document.getElementById("mysterious-button").addEventListener("click", (async ()=>{
+    window.getZRC20WZETAPair = getZRC20WZETAPair;
+    const pair = await getZRC20WZETAPair(BTCZRC20);
+    const reserves = await getReserves(pair);
+    console.log("reserves", reserves);
+    await amountOutSwapZetaForZrc20(BTCZRC20, "1000000000000000000", reserves);
+    await doSwapZetaForZrc20(BTCZRC20, "1000000000000000000", pair);
+})); 
