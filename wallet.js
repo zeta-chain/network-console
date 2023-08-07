@@ -347,7 +347,7 @@ document.getElementById('button-eth-send').addEventListener('click', async () =>
 });
 console.log(RPCByChainID);
 
-document.getElementById('button-withdraw-tbnb').addEventListener('click', async () => {
+async function withdrawZRC20(zrc20) {
     const web3 = web3zevm;
     // validate address & amount
     const to = document.getElementById("input-eth-recipient").value;
@@ -362,14 +362,20 @@ document.getElementById('button-withdraw-tbnb').addEventListener('click', async 
     }
     const amount = Web3.utils.toWei(amountInEther);
     
-    const zrc20 = "0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891"
-    
-    const div = document.getElementById("eth-transaction-receipt");
-    const p = await signApproveZRC20(zrc20, to, amount);
-    const receipt = await web3zevm.eth.sendSignedTransaction(p.rawTransaction)
-    console.log("approve receipt", receipt);
-    div.appendChild(addDetails(`Approved ${amount} ZRC20 to ${to}`, JSON.stringify(receipt, null, 2)));
-    
+
+    const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI,zrc20);
+    const approval = await zrc20Contract.methods.allowance(ethAccount.address, zrc20).call();
+
+    const div = document.getElementById("eth-transaction-receipt");    
+    if (approval < amount) {
+
+	const p = await signApproveZRC20(zrc20, to, amount);
+	const receipt = await web3zevm.eth.sendSignedTransaction(p.rawTransaction)
+	console.log("approve receipt", receipt);
+	div.appendChild(addDetails(`Approved ${amount} ZRC20 to ${to}`, JSON.stringify(receipt, null, 2)));
+    } else {
+	console.log(`already approved; allowance ${approval}` );
+    }
     const p2 = await signWithdrawZRC20(zrc20, to, amount);
     web3zevm.eth.sendSignedTransaction(p2.rawTransaction).on('receipt', (x) => {
 	div.appendChild(addDetails(`Transaction Receipt ${x.transactionHash}`, JSON.stringify(x, null, 2)));
@@ -379,6 +385,19 @@ document.getElementById('button-withdraw-tbnb').addEventListener('click', async 
 	a.target = "_blank";
 	div.appendChild(a);
     });
+}
+
+document.getElementById('button-withdraw-tbnb').addEventListener('click', async() => {
+    const zrc20 = "0xd97B1de3619ed2c6BEb3860147E30cA8A7dC9891";
+    await withdrawZRC20(zrc20);
+});
+document.getElementById('button-withdraw-geth').addEventListener('click', async() => {
+    const zrc20 = "0x13A0c5930C028511Dc02665E7285134B6d11A5f4";
+    await withdrawZRC20(zrc20);
+});
+document.getElementById('button-withdraw-tmatic').addEventListener('click', async() => {
+    const zrc20 = "0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb";
+    await withdrawZRC20(zrc20);
 });
 
 document.getElementById('button-withdraw-tbtc').addEventListener('click', async () => {
@@ -411,6 +430,7 @@ document.getElementById('button-withdraw-tbtc').addEventListener('click', async 
     // return;
     
     const zrc20 = "0x65a45c57636f9BcCeD4fe193A602008578BcA90b";
+    
     
     const div = document.getElementById("eth-transaction-receipt");
     const p = await signApproveZRC20(zrc20, to, amount);
