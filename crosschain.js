@@ -92,7 +92,7 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 
     async function externalContractAddress() {
 	try {
-	    let resource = "zeta-chain/zetacore/observer/get_core_params";
+	    let resource = "zeta-chain/observer/get_core_params";
 	    let p1 = await fetch(`${nodeURL}/${resource}`, {method: 'GET'});
 	    let data = await p1.json();
 	    console.log(data);
@@ -121,7 +121,7 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 	    console.log("zetaTokenAddr", zetaTokenAddr);
 	    console.log("erc20CustodyAddr", erc20CustodyAddr);
 
-	    resource = `zeta-chain/zetacore/crosschain/get_tss_address`;
+	    resource = `zeta-chain/crosschain/get_tss_address`;
 	    let p2 = await fetch(`${nodeURL}/${resource}`, {method: 'GET'});
 	    let data2 = await p2.json();
 	    let tssAddr = data2.eth;

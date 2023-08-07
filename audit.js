@@ -29,7 +29,7 @@ class AuditPage {
     
     async getTssAddress() {
         if (this.tss) return; 
-        const resource = "zeta-chain/zetacore/crosschain/get_tss_address";
+        const resource = "zeta-chain/crosschain/get_tss_address";
         const p = await fetch(`${nodeURL}/${resource}`, {
             method: 'GET',
         });
@@ -169,7 +169,7 @@ class AuditPage {
 	const zetaSupplyZeta = parseInt(data.amount.amount) / Math.pow(10, 18);
 
 
-	const p2 = await fetch(`${nodeURL}/zeta-chain/zetacore/observer/get_core_params`);
+	const p2 = await fetch(`${nodeURL}/zeta-chain/observer/get_core_params`);
 	const data2 = await p2.json();
 	const chainIDs= [5, 97, 80001, 18332];
 	const zetaContractByChainID = {};

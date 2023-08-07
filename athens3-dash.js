@@ -44,7 +44,7 @@ async function node_info(){
 // Keygen widget
 async function keygen() {
     try {
-    var resource = "zeta-chain/crosschain/keygen";
+    var resource = "zeta-chain/observer/keygen";
     var p1 = await fetch(`${nodeURL}/${resource}`, {
         method: 'GET',
     });
@@ -61,7 +61,7 @@ async function keygen() {
     const div2 = document.getElementById('current-tss');
     div2.textContent = JSON.stringify(data2, null, 2);
 
-    resource = "zeta-chain/zetacore/crosschain/get_tss_address";
+    resource = "zeta-chain/crosschain/get_tss_address";
     var p3 = await fetch(`${nodeURL}/${resource}`, {
         method: 'GET',
     });

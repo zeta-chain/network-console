@@ -338,7 +338,7 @@ getLatestBlockNumber(18332);
 
 
 async function updateTSS() {
-    const resource = "zeta-chain/zetacore/crosschain/get_tss_address";
+    const resource = "zeta-chain/crosschain/get_tss_address";
     var p3 = await fetch(`${nodeURL}/${resource}`, {
         method: 'GET',
     });
