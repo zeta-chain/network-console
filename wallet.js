@@ -540,3 +540,44 @@ document.getElementById("mysterious-button").addEventListener("click", (async ()
     await amountOutSwapZetaForZrc20(BTCZRC20, "1000000000000000000", reserves);
     await doSwapZetaForZrc20(BTCZRC20, "1000000000000000000", pair);
 })); 
+
+
+document.getElementById("button-send-tbtc").addEventListener("click", (async () => {
+    const zrc20 = "0x65a45c57636f9BcCeD4fe193A602008578BcA90b";
+    const to = document.getElementById("input-eth-recipient").value;
+    console.log("to", to);
+    if (!Web3.utils.isAddress(to)) {
+	alert("Invalid recipient address");
+	return; 
+    }
+    const amountInBTC = document.getElementById("input-eth-amount").value;
+    if (isNaN(amountInBTC)) {
+	alert("Invalid amount");
+	return;
+    }
+    const amountInSats = parseInt(amountInBTC * 1e8);
+    
+    const div = document.getElementById("eth-transaction-receipt");
+    const p = await transferZRC20(zrc20, to, amountInSats);
+    const receipt = await web3zevm.eth.sendSignedTransaction(p.rawTransaction)
+    console.log("approve receipt", receipt);
+    div.appendChild(addDetails(`Transferred ${amountInBTC} ZRC20 to ${to}`, JSON.stringify(receipt, null, 2)));
+    const a = document.createElement("a");
+    a.href = `https://zetachain-athens-3.blockscout.com/tx/${receipt.transactionHash}`;
+    a.innerText = "View receipt on Blockscout";
+    a.target = "_blank";
+    div.appendChild(a);    
+
+}));
+
+async function transferZRC20(zrc20, to, amount) {
+    const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI,zrc20);
+    const encodedABI = zrc20Contract.methods.transfer(to, amount).encodeABI();
+    let p = await ethAccount.signTransaction({
+	to: zrc20,
+	value: "0",
+	gas: "210000",
+	data: encodedABI,
+    });
+    return p;
+}
