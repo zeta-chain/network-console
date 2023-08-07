@@ -153,6 +153,10 @@ window.onload = (async () => {
 	        let reserve1 = Number(fromWei(p2[1]));
 
 	        let p3 = await pairContract.methods.token0().call();
+		if (chainIDs[i] == 18332) {
+		    if (p3 == wzetaAddress) reserve1 *= 1e10;
+		    else reserve0 *= 1e10;
+		}
 	        console.log("gas zeta pool token0", p3);
 	        pool[i].reserve0 = `${reserve0.toFixed(2)} ${zrc20AddressToSymbol(p3)}`; 
 	        let p4 = await pairContract.methods.token1().call();
