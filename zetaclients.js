@@ -54,9 +54,7 @@ async function zetaclients_versions() {
 	let th9 = document.createElement('th');
 	th9.innerText = "Num UTXOs";
 	headRow.appendChild(th9);
-	let th10 = document.createElement('th');
-	th10.innerText = "Next UTXO Nonce";
-	headRow.appendChild(th10);
+
 	let headRow2 = document.createElement('tr');
 	thead.appendChild(headRow2);
 	{
@@ -107,9 +105,7 @@ async function zetaclients_versions() {
 		let td8 = document.createElement('td');
 		td8.id = `zetaclients-numutxos-${i}`;
 		tr.appendChild(td8);
-		let td9 = document.createElement('td');
-		td9.id = `zetaclients-next-utxo-nonce-${i}`;
-		tr.appendChild(td9);
+
 	    }
 
 	}
@@ -127,8 +123,7 @@ async function zetaclients_versions() {
 		    // console.log("status", data);
 		    let td = document.getElementById(`zetaclients-numutxos-${i}`);
 		    td.innerText = data.btc_number_of_utxos;
-		    td = document.getElementById(`zetaclients-next-utxo-nonce-${i}`);
-		    td.innerText = data.btc_next_nonce;
+
 		}).catch(err => {
 		    console.log(err);
 		});
