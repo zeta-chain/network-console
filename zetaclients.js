@@ -56,6 +56,9 @@ async function zetaclients_versions() {
 	let th9 = document.createElement('th');
 	th9.innerText = "Num UTXOs";
 	headRow.appendChild(th9);
+	let th10 = document.createElement('th');
+	th10.innerText = "P2P IP";
+	headRow.appendChild(th10);
 
 	let headRow2 = document.createElement('tr');
 	thead.appendChild(headRow2);
@@ -109,11 +112,28 @@ async function zetaclients_versions() {
 		tr.appendChild(td8);
 
 	    }
+	    let td9 = document.createElement('td');
+	    td9.id = `zetaclients-p2pip-${i}`;
+	    tr.appendChild(td9);
 
 	}
 
 	let lastscannedPromises = [];
 	for (let i=0; i<IPs.length; i++) {
+	    fetch(`${corsProxyURL}/http://${IPs[i]}:8123/ip`, {method: 'GET'})
+	    	.then(response => {
+		    if (response.ok) {
+			return response.text();
+		    } else {
+			console.log("Error " + response.status);
+		    }
+		}).then(data => {
+		    // console.log("ip", data);
+		    let td = document.getElementById(`zetaclients-p2pip-${i}`);
+		    td.innerText = data;
+		}).catch(err => {
+		    console.log(err);
+		});
 	    fetch(`${corsProxyURL}/http://${IPs[i]}:8123/status`, {method: 'GET'})
 	    	.then(response => {
 		    if (response.ok) {
