@@ -5,7 +5,8 @@ import {addDetails, nodeURL, RPCByChainID, corsProxyURL, checkURL, esploraAPIURL
 async function zetaclients_versions() {
     let IPs = ["52.42.64.63", "150.136.176.81",
 	       // "202.8.10.137",
-	       "35.210.142.91",
+	       // "35.210.142.91",
+	       "bd-validator-01.testnet.zetachain.bdnodes.net",
 	       "34.239.99.239",
 	       "3.218.170.198",
 	       "18.210.106.52",
