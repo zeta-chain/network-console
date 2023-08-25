@@ -333,7 +333,7 @@ document.getElementById('button-eth-send').addEventListener('click', async () =>
 	to: to,
 	value: Web3.utils.toWei(amount),
 	gas: "21000",
-	gasPrice: "10000000000000,
+	gasPrice: "1000000000",
     });
     const div = document.getElementById("eth-transaction-receipt");
     div.appendChild(addDetails(`Signed Transaction  ${p.transactionHash}`, JSON.stringify(p, null, 2)));
