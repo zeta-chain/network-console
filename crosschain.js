@@ -108,9 +108,10 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 
 
     async function validateContracts(chain_id) {
+	const deployer = "0x55122f7590164Ac222504436943FAB17B62F5d7d"; 
 	try {
 	    appendMessage(`validating the three contracts on chain_id = ${chain_id}`);
-	    let resource = `zeta-chain/zetacore/observer/get_client_params_for_chain/${chain_id}`;
+	    let resource = `zeta-chain/observer/get_client_params_for_chain/${chain_id}`;
 	    let p1 = await fetch(`${nodeURL}/${resource}`, {method: 'GET'});
 	    let data = await p1.json();
 	    console.log(data);
@@ -126,7 +127,9 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 	    let data2 = await p2.json();
 	    let tssAddr = data2.eth;
 	    console.log("tssAddr", tssAddr);
-	    // appendMessage(`tssAddr = ${tssAddr}`);
+	    appendMessage(`tssAddr = ${tssAddr}`);
+	    appendMessage(`deployer = ${deployer}`);
+	    appendMessage("");
 
 	    let web3 = new Web3(RPCByChainID[chain_id]);
 	    let connectorContract = new web3.eth.Contract(connectorABI, connectorAddr);
@@ -138,6 +141,12 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 		appendMessage(`OK: Connector: TSS address match;`);
 	    } else {
 		appendMessage(`ERROR: Connector: TSS address mismatch;`);
+	    }
+	    res = await connectorContract.methods.tssAddressUpdater().call();
+	    if (res == deployer) {
+		appendMessage(`OK: Connector: TSS address updater match;`);
+	    } else {
+		appendMessage(`ERROR: connectorContract.tssAddressUpdater() = ${res}`);
 	    }
 
 	    let res2 = await connectorContract.methods.zetaToken().call();
@@ -159,6 +168,13 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 		} else {
 		    appendMessage(`ERROR: ERC20Custody: TSS address mismatch;`);
 		}
+		let res4 = await erc20CustodyContract.methods.TSSAddressUpdater().call();
+		if (res4 == deployer) {
+		    appendMessage(`OK: ERC20Custody: TSS address updater match;`);
+		} else {
+		    appendMessage(`ERROR: erc20CustodyContract.TSSAddressUpdater() = ${res4}`);
+		}
+		
 	    } catch (error) {
 		console.log('error', error);
 	    }
@@ -181,6 +197,13 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 		    appendMessage(`OK: ZetaToken: TSS address match;`);
 		} else {
 		    appendMessage(`ERROR: ZetaToken: TSS address mismatch;`);
+		}
+
+		let res5 = await zetaTokenContract.methods.tssAddressUpdater().call();
+		if (res5 == deployer) {
+		    appendMessage(`OK: ZetaToken: TSS address updater match;`);
+		} else {
+		    appendMessage(`ERROR: zetaTokenContract.tssAddressUpdater() = ${res5}`);
 		}
 	    } catch (error) {
 		console.log('error', error);
