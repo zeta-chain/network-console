@@ -7,6 +7,7 @@ async function zetaclients_versions() {
 	       // "202.8.10.137",
 	       // "35.210.142.91",
 	       "bd-validator-01.testnet.zetachain.bdnodes.net",
+	       "54.39.18.86",
 	       "34.239.99.239",
 	       "3.218.170.198",
 	       "18.210.106.52",
