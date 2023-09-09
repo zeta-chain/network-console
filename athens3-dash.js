@@ -51,7 +51,7 @@ async function keygen() {
     let data = await p1.json();
     const div1 = document.getElementById('current-keygen');
     div1.textContent = JSON.stringify(data, null, 2);
-    let kg = data.Keygen;
+    let kg = data.keygen;
 
     resource = "zeta-chain/crosschain/TSS";
     var p2 = await fetch(`${nodeURL}/${resource}`, {
@@ -83,7 +83,7 @@ async function keygen() {
 
     div3.replaceChildren(makeTableElement(summary));
     } catch (error) {
-    console.log('error', error);
+	console.log('error', error);
     // throw error;
     }
 }
@@ -444,7 +444,8 @@ async function doUpgradeHistory(proposal) {
 	const resource = `${tmURL}/block?height=${bn}`;
 	const p1 = await fetch(resource, {method: 'GET'});
 	if (!p1.ok) {
-	    throw new Error(`HTTP error! status: ${p1.status}`);
+	    // throw new Error(`HTTP error! status: ${p1.status}`);
+	    console.log(`HTTP error! status: ${p1.status}`);
 	}
 	const data = await p1.json();
 	return data;
