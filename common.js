@@ -1,24 +1,151 @@
-export var nodeURL = 'http://46.4.15.110:1317';
-export var evmURL = 'http://46.4.15.110:8545';
-export var corsProxyURL = 'http://46.4.15.110:8088';
-export var checkURL = 'http://46.4.15.110:8888'; // remote server that tests port 6668 p2p nodes
-export var tmURL = 'http://46.4.15.110:26657';
-export var hashServerURL = 'http://46.4.15.110:9001';
-export var RPCByChainID = {
-    5: "https://rpc.ankr.com/eth_goerli",
-    97: "https://data-seed-prebsc-1-s1.binance.org:8545",
-    80001: "https://rpc.ankr.com/polygon_mumbai",
-    18332: "https://blockstream.info/testnet/api",
-    7001: evmURL,
-};
-export var AddressExplorerByChainID = {
-    5: "https://goerli.etherscan.io/address",
-    97: "https://testnet.bscscan.com/address",
-    80001: "https://mumbai.polygonscan.com/address",
-    18332: "https://blockstream.info/testnet/address",
-};
-export var esploraAPIURL = "https://blockstream.info/testnet/api";
-export var externalChainIDs = [5, 97, 80001, 18332]; 
+export var nodeURL;
+export var evmURL;
+export var corsProxyURL;
+export var checkURL;
+export var tmURL;
+export var hashServerURL;
+export var RPCByChainID;
+export var AddressExplorerByChainID;
+export var esploraAPIURL;
+export var externalChainIDs;
+export var Chains;
+var zetaIP;
+var auxIP = "46.4.15.110";
+var zetaChainID;
+
+let network = localStorage.getItem("network");
+if (network == "mockmain") {
+    zetaIP =  "100.113.213.95";
+    zetaChainID = 70000;
+    RPCByChainID = {
+        1: "https://eth.llamarpc.com",
+        56: "https://binance.llamarpc.com",
+        8332: "https://blockstream.info/api",
+        70000: evmURL,
+    };
+    AddressExplorerByChainID = {
+        1: "https://www.etherscan.io/address",
+        56: "https://www.bscscan.com/address",
+        8332: "https://blockstream.info/address",
+    };
+    esploraAPIURL = "https://blockstream.info/api";
+    externalChainIDs = [1,56,8332];
+
+    Chains = {
+        1: {
+            "chainId": "1",
+            "chainName": "Ethereum Mainnet",
+            "nativeCurrency": {
+                "name": "Ether",
+                "symbol": "ETH",
+                "decimals": 18
+            },
+        },
+        56: {
+            "chainId": "56",
+            "chainName": "Binance Smart Chain",
+            "nativeCurrency": {
+                "name": "BNB",
+                "symbol": "BNB",
+                "decimals": 18
+            },
+        },
+        70000: {
+            "chainId": "70000",
+            "chainName": "ZetaChain",
+            "nativeCurrency": {
+                "name": "Zeta",
+                "symbol": "ZETA",
+                "decimals": 18
+            },
+        },
+        8332: {
+            "chainId": "8332",
+            "chainName": "Bitcoin Mainnet",
+            "nativeCurrency": {
+                "name": "Bitcoin",
+                "symbol": "tBTC",
+                "decimals": 8
+            },
+        }
+    };
+} else { // default to athens3
+    zetaIP = '46.4.15.110';
+    zetaChainID = 7001
+    RPCByChainID = {
+        5: "https://rpc.ankr.com/eth_goerli",
+        97: "https://data-seed-prebsc-1-s1.binance.org:8545",
+        80001: "https://rpc.ankr.com/polygon_mumbai",
+        18332: "https://blockstream.info/testnet/api",
+        7001: evmURL,
+    };
+    AddressExplorerByChainID = {
+        5: "https://goerli.etherscan.io/address",
+        97: "https://testnet.bscscan.com/address",
+        80001: "https://mumbai.polygonscan.com/address",
+        18332: "https://blockstream.info/testnet/address",
+    };
+    esploraAPIURL = "https://blockstream.info/testnet/api";
+    externalChainIDs = [5, 97, 80001, 18332];
+
+    Chains = {
+        5: {
+            "chainId": "5",
+            "chainName": "Goerli Testnet",
+            "nativeCurrency": {
+                "name": "Goerli Ether",
+                "symbol": "gETH",
+                "decimals": 18
+            },
+        },
+        97: {
+            "chainId": "97",
+            "chainName": "Binance Smart Chain Testnet",
+            "nativeCurrency": {
+                "name": "Testnet BNB",
+                "symbol": "tBNB",
+                "decimals": 18
+            },
+        },
+        80001: {
+            "chainId": "80001",
+            "chainName": "Polygon Mumbai Testnet",
+            "nativeCurrency": {
+                "name": "Matic",
+                "symbol": "tMATIC",
+                "decimals": 18
+            },
+        },
+        7001: {
+            "chainId": "7001",
+            "chainName": "ZetaChain",
+            "nativeCurrency": {
+                "name": "Zeta",
+                "symbol": "ZETA",
+                "decimals": 18
+            },
+        },
+        18332: {
+            "chainId": "18332",
+            "chainName": "Bitcoin Testnet",
+            "nativeCurrency": {
+                "name": "Bitcoin",
+                "symbol": "tBTC",
+                "decimals": 8
+            },
+        }
+    };
+}
+
+nodeURL = `http://${zetaIP}:1317`;
+evmURL = `http://${zetaIP}:8545`;
+corsProxyURL = `http://${auxIP}:8088`;
+checkURL = `http://${auxIP}:8888`; // remote server that tests port 6668 p2p nodes
+tmURL = `http://${zetaIP}:26657`;
+hashServerURL = `http://${auxIP}:9001`;
+RPCByChainID[zetaChainID] = evmURL;
+
+
 
 export async function getForegienCoins() {
     const p1 = await fetch(`${nodeURL}/zeta-chain/zetacore/fungible/foreign_coins`, {  method: 'GET', });
@@ -26,53 +153,6 @@ export async function getForegienCoins() {
     return data?.foreignCoins; 
 }
 
-export var Chains = {
-    5: {
-	"chainId": "5",
-	"chainName": "Goerli Testnet",
-	"nativeCurrency": {
-	    "name": "Goerli Ether",
-	    "symbol": "gETH",
-	    "decimals": 18
-	},
-    },
-    97: {
-	"chainId": "97",
-	"chainName": "Binance Smart Chain Testnet",
-	"nativeCurrency": {
-	    "name": "Testnet BNB",
-	    "symbol": "tBNB",
-	    "decimals": 18
-	},
-    },
-    80001: {
-	"chainId": "80001",
-	"chainName": "Polygon Mumbai Testnet",
-	"nativeCurrency": {
-	    "name": "Matic",
-	    "symbol": "tMATIC",
-	    "decimals": 18
-	},
-    },
-    7001: {
-	"chainId": "7001",
-	"chainName": "ZetaChain",
-	"nativeCurrency": {
-	    "name": "Zeta",
-	    "symbol": "ZETA",
-	    "decimals": 18
-	},
-    },
-    18332: {
-	"chainId": "18332",
-	"chainName": "Bitcoin Testnet",
-	"nativeCurrency": {
-	    "name": "Bitcoin",
-	    "symbol": "tBTC",
-	    "decimals": 8
-	},
-    }
-};
 
 if (window.location.protocol === 'https:') {
     alert('HTTPS does not work; force your browser to use HTTP instead.');
