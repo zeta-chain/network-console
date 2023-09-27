@@ -1,4 +1,4 @@
-import {evmURL, nodeURL,makeTableElementNew} from './common.js';
+import {evmURL, nodeURL,makeTableElementNew, externalChainIDs} from './common.js';
 
 window.onload = (async () => {
     console.log("div func", DIV); 
@@ -109,7 +109,7 @@ window.onload = (async () => {
     let sys_promise = system_contract_status();
 
     
-    var chainIDs = [5, 97, 80001, 18332];
+    var chainIDs = externalChainIDs;
     async function gas_price() {
 	    let summary = {};
 	    for (let i = 0; i<chainIDs.length; i++) {
