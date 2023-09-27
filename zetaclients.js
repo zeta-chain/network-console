@@ -1,24 +1,10 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
-import {addDetails, nodeURL, RPCByChainID, corsProxyURL, checkURL, esploraAPIURL} from './common.js';
+import {addDetails, nodeURL, RPCByChainID, corsProxyURL, checkURL, esploraAPIURL, zetaclientIPs, externalChainIDs} from './common.js';
 
 // ---------------- zetaclients ------------------------------
 async function zetaclients_versions() {
-    let IPs = ["52.42.64.63", "150.136.176.81",
-	       // "202.8.10.137",
-	       // "35.210.142.91",
-	       "bd-validator-01.testnet.zetachain.bdnodes.net",
-	       "54.39.18.86",
-	       "34.239.99.239",
-	       "3.218.170.198",
-	       "18.210.106.52",
-	       "44.236.174.26",
-	       "35.162.231.114",
-	       "54.77.180.134",
-	       "34.253.137.241",
-	       "18.143.71.236",
-	       "54.254.133.239",
-	      ];
-    let ChainIDs = [5, 97, 80001, 18332]; 
+    let IPs = zetaclientIPs;
+    let ChainIDs = externalChainIDs;
     let ipAPI = "http://ip-api.com/json";
     try {
 	let div = document.getElementById('zetaclients-summary');

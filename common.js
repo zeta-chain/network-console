@@ -9,6 +9,7 @@ export var AddressExplorerByChainID;
 export var esploraAPIURL;
 export var externalChainIDs;
 export var Chains;
+export var zetaclientIPs;
 var zetaIP;
 var auxIP = "46.4.15.110";
 var zetaChainID;
@@ -69,6 +70,7 @@ if (network == "mockmain") {
             },
         }
     };
+    zetaclientIPs = ["50.16.78.24", "44.218.42.109","44.216.230.163"];
 } else { // default to athens3
     network = "athens3";
     zetaIP = '46.4.15.110';
@@ -136,6 +138,21 @@ if (network == "mockmain") {
             },
         }
     };
+    zetaclientIPs = ["52.42.64.63", "150.136.176.81",
+        // "202.8.10.137",
+        // "35.210.142.91",
+        "bd-validator-01.testnet.zetachain.bdnodes.net",
+        "54.39.18.86",
+        "34.239.99.239",
+        "3.218.170.198",
+        "18.210.106.52",
+        "44.236.174.26",
+        "35.162.231.114",
+        "54.77.180.134",
+        "34.253.137.241",
+        "18.143.71.236",
+        "54.254.133.239",
+    ];
 }
 
 nodeURL = `http://${zetaIP}:1317`;
