@@ -1,6 +1,6 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
 import './bitcoinjs-lib.js';
-import {tmURL, nodeURL, corsProxyURL, makeTableElement, addDetails,
+import {tmURL, nodeURL, corsProxyURL, makeTableElement, addDetails, network,
 	msToTime} from './common.js';
 
 // Node info
@@ -123,11 +123,11 @@ await fetch(`${tmURL}/status`, {
     if (diffMinutes > 10) {
         banner.style.border = '1px solid black';
         banner.style.backgroundColor = 'red';
-        banner.innerText = `Data might not be up to date; Athens3 is ${diffMinutes.toFixed(0)} minutes behind; `;
+        banner.innerText = `Data might not be up to date; ${network} is ${diffMinutes.toFixed(0)} minutes behind; `;
     } else {
         banner.style.border = '1px solid black';
         banner.style.backgroundColor = 'lightgreen';
-        banner.innerText = `Data is up to date; Athens3 is ${diffMinutes.toFixed(0)} minutes behind; `;
+        banner.innerText = `Data is up to date; ${network} is ${diffMinutes.toFixed(0)} minutes behind; `;
     }
 
 }).catch(error => {

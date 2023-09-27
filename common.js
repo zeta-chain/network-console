@@ -13,7 +13,7 @@ var zetaIP;
 var auxIP = "46.4.15.110";
 var zetaChainID;
 
-let network = localStorage.getItem("network");
+export var network = localStorage.getItem("network");
 if (network == "mockmain") {
     zetaIP =  "100.113.213.95";
     zetaChainID = 70000;
@@ -70,6 +70,7 @@ if (network == "mockmain") {
         }
     };
 } else { // default to athens3
+    network = "athens3";
     zetaIP = '46.4.15.110';
     zetaChainID = 7001
     RPCByChainID = {
