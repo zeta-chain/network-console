@@ -102,20 +102,34 @@ await fetch(`${tmURL}/status`, {
 }).then(data => {
     blockNumber = data?.result?.sync_info?.latest_block_height;
     let div = document.getElementById('block-summary');
-    
-    let summary = {"block height": data.result.sync_info.latest_block_height,
-		   "block timestamp": utcToLocal(data.result.sync_info.latest_block_time),
-		   "earliest block timestamp": utcToLocal(data.result.sync_info.earliest_block_time)};
+
+    let summary = {
+        "block height": data.result.sync_info.latest_block_height,
+        "block timestamp": utcToLocal(data.result.sync_info.latest_block_time),
+        "earliest block timestamp": utcToLocal(data.result.sync_info.earliest_block_time)
+    };
     div.appendChild(makeTableElement(summary));
     let div2 = document.getElementById('status-details');
     div2.appendChild(addDetails(
-	`Athens3 status: current block ${blockNumber}`,
-	JSON.stringify(data?.result, null, 2)));
+        `Athens3 status: current block ${blockNumber}`,
+        JSON.stringify(data?.result, null, 2)));
 
+    let latestBlockTime = new Date(data.result.sync_info.latest_block_time);
+    // compare to current time
+    let now = new Date();
+    let diff = now - latestBlockTime;
+    let diffMinutes = diff/1000/60;
+    let banner = document.getElementById('banner');
+    if (diffMinutes > 10) {
+        banner.style.border = '1px solid black';
+        banner.style.backgroundColor = 'red';
+        banner.innerText = `Data might not be up to date; Athens3 is ${diffMinutes.toFixed(0)} minutes behind; `;
+    } else {
+        banner.style.border = '1px solid black';
+        banner.style.backgroundColor = 'lightgreen';
+        banner.innerText = `Data is up to date; Athens3 is ${diffMinutes.toFixed(0)} minutes behind; `;
+    }
 
-
-	fcdfd
-	
 }).catch(error => {
     console.log("fetch error" + error);
 });
