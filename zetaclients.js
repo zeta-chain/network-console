@@ -255,7 +255,7 @@ async function gasPriceHeartBeats() {
 	textarea.value += msg + "\n";
     }
 
-    const chainIds = [5, 97, 80001, 18332];
+    const chainIds = externalChainIDs;
     for (let i=0; i<chainIds.length; i++) {
 	const chainId = chainIds[i];
 	const resource = `zeta-chain/crosschain/gasPrice/${chainId}`;
@@ -303,40 +303,40 @@ async function gasPriceHeartBeats() {
 gasPriceHeartBeats();
 
 async function getLatestBlockNumber(chainId) {
-    const bodyForBlockNumber = {
-	"jsonrpc": "2.0",
-	"method": "eth_blockNumber",
-	"params": [],
-	"id": 1
-    };
-    if (chainId != 18332) {
-    	let evmRPC = RPCByChainID[chainId];
-	let p2 = await fetch(evmRPC, {
-	    method: 'POST',
-	    body: JSON.stringify(bodyForBlockNumber),
-	    headers: { 'Content-Type': 'application/json' }
-	});
-	if (!p2.ok) {
-	    console.log("Error " + p2.status);
-	    return null;
+	const bodyForBlockNumber = {
+		"jsonrpc": "2.0",
+		"method": "eth_blockNumber",
+		"params": [],
+		"id": 1
+	};
+	if (chainId != 18332 && chainId != 8332) {
+		let evmRPC = RPCByChainID[chainId];
+		let p2 = await fetch(evmRPC, {
+			method: 'POST',
+			body: JSON.stringify(bodyForBlockNumber),
+			headers: {'Content-Type': 'application/json'}
+		});
+		if (!p2.ok) {
+			console.log("Error " + p2.status);
+			return null;
+		}
+		let data2 = await p2.json();
+		const latestBlock = parseInt(data2.result, 16);
+		return latestBlock;
+	} else if (chainId == 18332 || chainId == 8332) {
+		const btcRPC = RPCByChainID[chainId];
+		const url = `${btcRPC}/blocks/tip/height`; // esplora API from blockstream: doc: https://github.com/Blockstream/esplora/blob/master/API.md
+		let p2 = await fetch(url, {method: 'GET'});
+		if (!p2.ok) {
+			console.log("Error " + p2.status);
+			return null;
+		}
+		let data2 = await p2.text();
+		console.log(data2);
+		const latestBlock = parseInt(data2, 10);
+		return latestBlock;
 	}
-	let data2 = await p2.json();
-	const latestBlock = parseInt(data2.result, 16);
-	return latestBlock;
-    } else if (chainId == 18332) {
-	const btcRPC = RPCByChainID[chainId];
-	const url = `${btcRPC}/blocks/tip/height`; // esplora API from blockstream: doc: https://github.com/Blockstream/esplora/blob/master/API.md
-	let p2 = await fetch(url, {	    method: 'GET'    });
-	if (!p2.ok) {
-	    console.log("Error " + p2.status);
-	    return null;
-	}
-	let data2 = await p2.text();
-	console.log(data2);
-	const latestBlock = parseInt(data2, 10);
-	return latestBlock;
-    }
-    return null; 
+	return null;
 }
 
 getLatestBlockNumber(18332);
