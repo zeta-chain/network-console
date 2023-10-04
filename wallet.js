@@ -3,7 +3,7 @@ import './ecpair.js';
 import './secp256k1.js';
 import './buffer.js';
 import './web3.min.js';
-import {esploraAPIURL, getForegienCoins, RPCByChainID,evmURL,addDetails,makeTableElement,makeTableElement2,Chains} from './common.js';
+import {esploraAPIURL, getForegienCoins, RPCByChainID,evmURL,addDetails,makeTableElement,makeTableElement2,Chains, externalChainIDs, network} from './common.js';
 import {encodings, decode, convertbits} from './bech32.js';
 
 
@@ -50,7 +50,13 @@ await read_abis();
 
 const ecc = secp256k1;
 const ECPair = ecpair.ECPairFactory(ecc);
-const TESTNET = bitcoin.networks.testnet;
+
+let  NETWORK;
+if (network == "mockmain") {
+    NETWORK = bitcoin.networks.mainnet;
+} else {
+    NETWORK = bitcoin.networks.testnet;
+}
 const Buffer = buffer.Buffer;
 const hash160 = (b) => bitcoin.crypto.ripemd160(bitcoin.crypto.sha256(b));
 
@@ -130,7 +136,7 @@ document.getElementById('button-send').addEventListener('click', async () => {
 });
 
 document.getElementById('button-generate-key').addEventListener('click', () => {
-    const keyPair = ECPair.makeRandom({ network: TESTNET });
+    const keyPair = ECPair.makeRandom({ network: NETWORK });
     console.log("keyPair", keyPair.privateKey);
     let pre = document.getElementById("output-private-key");
     pre.innerHTML = "Private key (please save it): " + keyPair.privateKey.toString('hex');
@@ -140,9 +146,9 @@ document.getElementById('button-set-key').addEventListener('click', async () => 
     const keyInput = document.getElementById("input-private-key");
     const keyHex = keyInput.value;
     localStorage.setItem("privateKey", keyHex);
-    key = ECPair.fromPrivateKey(Buffer.from(keyHex, 'hex'), { network: TESTNET });
+    key = ECPair.fromPrivateKey(Buffer.from(keyHex, 'hex'), { network: NETWORK });
     const addressPre = document.getElementById("key-info");
-    const {address} = bitcoin.payments.p2wpkh({ pubkey: key.publicKey, network: TESTNET });
+    const {address} = bitcoin.payments.p2wpkh({ pubkey: key.publicKey, network: NETWORK });
     p2wpkhAddress = address;
     addressPre.innerHTML = "P2WPKH (SegWit) Address: " + address;
 
@@ -221,7 +227,7 @@ async function makeTransaction(to, amount, utxos, memo) {
     console.log("txs", txs);
     
     // try creating a transaction
-    const psbt = new bitcoin.Psbt({network: TESTNET});
+    const psbt = new bitcoin.Psbt({network: NETWORK});
     psbt.addOutput({address: to, value: amount});
 
     if (memo.length > 0) {
@@ -262,7 +268,7 @@ async function makeTransaction(to, amount, utxos, memo) {
 const web3zevm = new Web3(evmURL);
 // window.web3zevm = web3zevm;
 const web3ByChainId = {};
-const ChainIDs = [5, 97, 80001, 7001, 18332];
+const ChainIDs = externalChainIDs;
 for (const chainId of ChainIDs) {
     if (chainId === 18332) continue;
     web3ByChainId[chainId] = new Web3(RPCByChainID[chainId]);
