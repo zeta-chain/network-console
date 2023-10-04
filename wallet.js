@@ -52,10 +52,13 @@ const ecc = secp256k1;
 const ECPair = ecpair.ECPairFactory(ecc);
 
 let  NETWORK;
+let  BLOCKCYPHER;
 if (network == "mockmain") {
     NETWORK = bitcoin.networks.mainnet;
+    BLOCKCYPHER = "https://api.blockcypher.com/v1/btc/main";
 } else {
     NETWORK = bitcoin.networks.testnet;
+    BLOCKCYPHER = "https://api.blockcypher.com/v1/btc/test3";
 }
 const Buffer = buffer.Buffer;
 const hash160 = (b) => bitcoin.crypto.ripemd160(bitcoin.crypto.sha256(b));
@@ -92,7 +95,7 @@ let utxos;
 document.getElementById('button-broadcast').addEventListener('click', async () => {
     const txHex = document.getElementById("transaction-hex").textContent;
     console.log("txHex", txHex);
-    const endpoint = `https://api.blockcypher.com/v1/btc/test3/txs/push`;
+    const endpoint = `${BLOCKCYPHER}/txs/push`;
 
     const p1 = await fetch(endpoint, {method: "POST", body: JSON.stringify({tx: txHex})});
     const data = await p1.json();
@@ -102,7 +105,7 @@ document.getElementById('button-broadcast').addEventListener('click', async () =
 
     const div2 = document.getElementById("explorer-link");
     const txlink = document.createElement("a");
-    txlink.href = `https://blockstream.info/testnet/tx/${data?.tx?.hash}`;
+    txlink.href = `${esploraAPIURL}/tx/${data?.tx?.hash}`;
     txlink.textContent = "View broadcasted tx on Blockstream explorer";
     txlink.target = "_blank";
     div2.replaceChildren(txlink);
@@ -112,7 +115,7 @@ document.getElementById('button-broadcast').addEventListener('click', async () =
 document.getElementById('button-decode').addEventListener('click', async () => {
     const txHex = document.getElementById("transaction-hex").textContent;
     console.log("txHex", txHex);
-    const endpoint = `https://api.blockcypher.com/v1/btc/test3/txs/decode`;
+    const endpoint = `${BLOCKCYPHER}/txs/decode`;
 
     const p1 = await fetch(endpoint, {method: "POST", body: JSON.stringify({tx: txHex})});
     const data = await p1.json();
@@ -310,6 +313,7 @@ async function updateEthAccount() {
         console.log(`${chainId} zrc20Balance`, zrc20Balance);
         const decimals = coins[0]?.decimals;
         summary.zrc20_balance = `${Number(zrc20Balance) / Math.pow(10, decimals)} ${coins[0].symbol}`;
+        console.log(`zrc20 balance ${coins[0].symbol} ${Number(zrc20Balance)}`);
         balanceSummary.push(summary);
     }
     div.appendChild(makeTableElement2(balanceSummary, ["chain", "gas_balance", "zrc20_balance"]));
