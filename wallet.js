@@ -364,38 +364,38 @@ async function withdrawZRC20(zrc20) {
     // validate address & amount
     const to = document.getElementById("input-eth-recipient").value;
     if (!Web3.utils.isAddress(to)) {
-	alert("Invalid recipient address");
-	return; 
+        alert("Invalid recipient address");
+        return;
     }
     const amountInEther = document.getElementById("input-eth-amount").value;
     if (isNaN(amountInEther)) {
-	alert("Invalid amount");
-	return;
+        alert("Invalid amount");
+        return;
     }
     const amount = Web3.utils.toWei(amountInEther);
-    
 
-    const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI,zrc20);
+
+    const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI, zrc20);
     const approval = await zrc20Contract.methods.allowance(ethAccount.address, zrc20).call();
 
-    const div = document.getElementById("eth-transaction-receipt");    
+    const div = document.getElementById("eth-transaction-receipt");
     if (approval < amount) {
 
-	const p = await signApproveZRC20(zrc20, to, amount);
-	const receipt = await web3zevm.eth.sendSignedTransaction(p.rawTransaction)
-	console.log("approve receipt", receipt);
-	div.appendChild(addDetails(`Approved ${amount} ZRC20 to ${to}`, JSON.stringify(receipt, null, 2)));
+        const p = await signApproveZRC20(zrc20, to, amount);
+        const receipt = await web3zevm.eth.sendSignedTransaction(p.rawTransaction)
+        console.log("approve receipt", receipt);
+        div.appendChild(addDetails(`Approved ${amount} ZRC20 to ${to}`, JSON.stringify(receipt, null, 2)));
     } else {
-	console.log(`already approved; allowance ${approval}` );
+        console.log(`already approved; allowance ${approval}`);
     }
     const p2 = await signWithdrawZRC20(zrc20, to, amount);
     web3zevm.eth.sendSignedTransaction(p2.rawTransaction).on('receipt', (x) => {
-	div.appendChild(addDetails(`Transaction Receipt ${x.transactionHash}`, JSON.stringify(x, null, 2)));
-	const a = document.createElement("a");
-	a.href = `https://zetachain-athens-3.blockscout.com/tx/${x.transactionHash}`;
-	a.innerText = "View receipt on Blockscout";
-	a.target = "_blank";
-	div.appendChild(a);
+        div.appendChild(addDetails(`Transaction Receipt ${x.transactionHash}`, JSON.stringify(x, null, 2)));
+        const a = document.createElement("a");
+        a.href = `https://zetachain-athens-3.blockscout.com/tx/${x.transactionHash}`;
+        a.innerText = "View receipt on Blockscout";
+        a.target = "_blank";
+        div.appendChild(a);
     });
 }
 
@@ -416,49 +416,51 @@ document.getElementById('button-withdraw-tbtc').addEventListener('click', async 
     const web3 = web3zevm;
     // validate address & amount
     const toStr = document.getElementById("input-eth-recipient").value;
-    const q = decode(toStr,"bech32"); 
+    const q = decode(toStr, "bech32");
     console.log("q", q);
     if (q === null) {
-	alert("Invalid recipient address");
-	return;
+        alert("Invalid recipient address");
+        return;
     }
+
     function asciiTo0x(str) {
-	let result = '';
-	for (let i = 0; i < str.length; i++) {
-	    let hex = str.charCodeAt(i).toString(16);
-	    result += (hex.length === 2 ? hex : '0' + hex);
-	}
-	return "0x"+ result;
+        let result = '';
+        for (let i = 0; i < str.length; i++) {
+            let hex = str.charCodeAt(i).toString(16);
+            result += (hex.length === 2 ? hex : '0' + hex);
+        }
+        return "0x" + result;
     }
+
     const to = asciiTo0x(toStr);
     console.log("to", to);
     const amountInBtc = document.getElementById("input-eth-amount").value;
     if (isNaN(amountInBtc)) {
-	alert("Invalid amount");
-	return;
+        alert("Invalid amount");
+        return;
     }
-    const amount = parseInt(amountInBtc * 1e8); 
+    const amount = parseInt(amountInBtc * 1e8);
     console.log("amount", amount, "to", to);
     // return;
-    
-    const zrc20 = "0x65a45c57636f9BcCeD4fe193A602008578BcA90b";
-    
-    
+
+    const zrc20 = "0x48f80608B672DC30DC7e3dbBd0343c5F02C738Eb";
+
+
     const div = document.getElementById("eth-transaction-receipt");
-    const p = await signApproveZRC20(zrc20, to, amount);
+    const p = await signApproveZRC20(zrc20, to, amount+10000000);
     const receipt = await web3zevm.eth.sendSignedTransaction(p.rawTransaction)
     console.log("approve receipt", receipt);
     div.appendChild(addDetails(`Approved ${amount} ZRC20 to ${to}`, JSON.stringify(receipt, null, 2)));
-    
+
     const p2 = await signWithdrawZRC20(zrc20, to, amount);
     console.log("p2", p2);
     web3zevm.eth.sendSignedTransaction(p2.rawTransaction).on('receipt', (x) => {
-	div.appendChild(addDetails(`Transaction Receipt ${x.transactionHash}`, JSON.stringify(x, null, 2)));
-	const a = document.createElement("a");
-	a.href = `https://zetachain-athens-3.blockscout.com/tx/${x.transactionHash}`;
-	a.innerText = "View receipt on Blockscout";
-	a.target = "_blank";
-	div.appendChild(a);
+        div.appendChild(addDetails(`Transaction Receipt ${x.transactionHash}`, JSON.stringify(x, null, 2)));
+        const a = document.createElement("a");
+        a.href = `https://zetachain-athens-3.blockscout.com/tx/${x.transactionHash}`;
+        a.innerText = "View receipt on Blockscout";
+        a.target = "_blank";
+        div.appendChild(a);
     });
 });
 
