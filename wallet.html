@@ -23,8 +23,11 @@
 
     <button id="button-generate-key">Generate Key</button>
     <span id="output-private-key" style="font-family:monospace;">Generated key: </span> </br>
-    <label for="input-private-key">Enter Private Key:</label>
-    <input id="input-private-key" size="70"></input>
+    <details>
+      <summary>ECDSA secp256k1 Private key in hex</summary>
+      <label for="input-private-key">Enter Private Key:</label>
+      <input id="input-private-key" size="70">
+    </details>
     <button id="button-set-key">Set Key</button>
     <h1>Bitcoin Wallet</h1>
     <pre id="key-info">Address: </pre>
