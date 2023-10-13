@@ -155,6 +155,8 @@ document.getElementById('button-set-key').addEventListener('click', async () => 
     p2wpkhAddress = address;
     addressPre.innerHTML = "P2WPKH (SegWit) Address: " + address;
 
+    console.log("pubkey", (key.publicKey));
+
     updateUTXO();
     updateAddressInfo();
     updateTxs();
