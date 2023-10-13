@@ -490,6 +490,21 @@ async function signApproveZRC20(zrc20, recipient, amount) {
     return p;
 }
 
+async function doZRC20Approve(zrc20, recipient, amount) {
+    const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI, zrc20);
+    const encodedABI = zrc20Contract.methods.approve(recipient, amount).encodeABI();
+    let p2 = await ethAccount.signTransaction({
+        to: zrc20,
+        value: "0",
+        gas: "210000",
+        data: encodedABI,
+    });
+    web3zevm.eth.sendSignedTransaction(p2.rawTransaction).on('receipt', (x) => {
+        console.log("receipt", x);
+    });
+}
+window.doZRC20Approve = doZRC20Approve;
+
 
 async function signWithdrawZRC20(zrc20, recipient, amount) {
     const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI, zrc20);
@@ -520,6 +535,7 @@ async function getReserves(pair) {
     const reserves = await uniswapPair.methods.getReserves().call();
     return reserves;
 }
+window.getReserves = getReserves;
 
 async function amountOutSwapZetaForZrc20(zrc20, amount, reserves) {
     const UNISWAPV2ROUTER02 = "0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe";
@@ -529,8 +545,9 @@ async function amountOutSwapZetaForZrc20(zrc20, amount, reserves) {
         console.log("amountOut", amountOut);
     }
 }
+window.amountOutSwapZetaForZrc20 = amountOutSwapZetaForZrc20;
 
-async function doSwapZetaForZrc20(zrc20, amount, pair) {
+async function doSwapZetaForZrc20(zrc20, amount) {
     const UNISWAPV2ROUTER02 = "0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe";
     const router02 = new web3zevm.eth.Contract(UNISWAPV2ROUTER02ABI, UNISWAPV2ROUTER02);
     const path = [WZETA, zrc20];
@@ -545,6 +562,55 @@ async function doSwapZetaForZrc20(zrc20, amount, pair) {
         console.log("receipt", x);
     });
 }
+window.doSwapZetaForZrc20 = doSwapZetaForZrc20;
+
+async function doSwapZrc20ForZeta(zrc20, amount) {
+    const UNISWAPV2ROUTER02 = "0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe";
+    const router02 = new web3zevm.eth.Contract(UNISWAPV2ROUTER02ABI, UNISWAPV2ROUTER02);
+    const path = [zrc20, WZETA];
+    const encodedABISwap = router02.methods.swapExactTokensForETH(amount,0, path, ethAccount.address, "1234567890123456789").encodeABI();
+    let p2 = await ethAccount.signTransaction({
+        to: UNISWAPV2ROUTER02,
+        value: amount,
+        gas: "2100000",
+        data: encodedABISwap,
+    });
+    web3zevm.eth.sendSignedTransaction(p2.rawTransaction).on('receipt', (x) => {
+        console.log("receipt", x);
+    });
+}
+
+
+async function addLiquidityForZRC20(zrc20, amount, eth_value) {
+    const UNISWAPV2ROUTER02 = "0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe";
+    const router02 = new web3zevm.eth.Contract(UNISWAPV2ROUTER02ABI, UNISWAPV2ROUTER02);
+//     function addLiquidityETH(
+//         address token,
+//         uint amountTokenDesired,
+//         uint amountTokenMin,
+//         uint amountETHMin,
+//         address to,
+//         uint deadline
+// ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
+    const encodedABIAddLiq = router02.methods.addLiquidityETH(
+        zrc20,
+        amount,
+        amount,
+        0,
+        ethAccount.address,
+        "1234567890123456789"
+    ).encodeABI();
+    let p2 = await ethAccount.signTransaction({
+        to: UNISWAPV2ROUTER02,
+        value: eth_value,
+        gas: "2100000",
+        data: encodedABIAddLiq,
+    });
+    web3zevm.eth.sendSignedTransaction(p2.rawTransaction).on('receipt', (x) => {
+        console.log("receipt", x);
+    });
+}
+window.addLiquidityForZRC20 = addLiquidityForZRC20;
 
 async function burnZRC20(zrc20, amount) {
     const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI, zrc20);
@@ -562,9 +628,7 @@ async function burnZRC20(zrc20, amount) {
     console.log("burn receipt", receipt);
 }
 
-window.burn = (async () => {
-    burnZRC20(BTCZRC20, "10000000");
-});
+window.burnZRC20 = burnZRC20;
 
 document.getElementById("mysterious-button").addEventListener("click", (async () => {
     window.getZRC20WZETAPair = getZRC20WZETAPair;
