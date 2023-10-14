@@ -316,19 +316,21 @@ async function updateEthAccount() {
             summary.gas_balance = `${Web3.utils.fromWei(balance)} ${Chains[chainId].nativeCurrency.symbol}`;
         }
         const coins = foreignCoins.filter(c => c.foreign_chain_id == chainId);
-        if (coins.length != 1) {
-            console.log("warning: coins length != 1", coins);
-            continue;
+        // if (coins.length != 1) {
+        //     console.log("warning: coins length != 1", coins);
+        //     continue;
+        // }
+        for (let i=0; i<coins.length; i++) {
+            const zrc20Address = coins[i]?.zrc20_contract_address;
+            console.log(`${chainId} zrc20Address`, zrc20Address);
+            const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI, zrc20Address);
+            const zrc20Balance = await zrc20Contract.methods.balanceOf(ethAccount.address).call();
+            console.log(`${chainId} zrc20Balance`, zrc20Balance);
+            const decimals = coins[i]?.decimals;
+            summary.zrc20_balance = `${Number(zrc20Balance) / Math.pow(10, decimals)} ${coins[i].symbol}`;
+            console.log(`zrc20 balance ${coins[i].symbol} ${Number(zrc20Balance)}`);
+            balanceSummary.push(summary);
         }
-        const zrc20Address = coins[0]?.zrc20_contract_address;
-        console.log(`${chainId} zrc20Address`, zrc20Address);
-        const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI, zrc20Address);
-        const zrc20Balance = await zrc20Contract.methods.balanceOf(ethAccount.address).call();
-        console.log(`${chainId} zrc20Balance`, zrc20Balance);
-        const decimals = coins[0]?.decimals;
-        summary.zrc20_balance = `${Number(zrc20Balance) / Math.pow(10, decimals)} ${coins[0].symbol}`;
-        console.log(`zrc20 balance ${coins[0].symbol} ${Number(zrc20Balance)}`);
-        balanceSummary.push(summary);
     }
     div.appendChild(makeTableElement2(balanceSummary, ["chain", "gas_balance", "zrc20_balance"]));
 
@@ -529,6 +531,31 @@ async function getZRC20WZETAPair(zrc20) {
     const pair = await factory.methods.getPair(zrc20, WZETA).call();
     return pair;
 }
+window.getZRC20WZETAPair = getZRC20WZETAPair;
+
+async function getPair(tokenA, tokenB) {
+    const UNISWAPV2FACTORY = "0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c";
+    const factory = new web3zevm.eth.Contract(UNISWAPV2FACTORYABI, UNISWAPV2FACTORY);
+    const pair = await factory.methods.getPair(tokenA, tokenB).call();
+    return pair;
+}
+window.getPair = getPair;
+
+async function doCreatePair(tokenA, tokenB) {
+    const UNISWAPV2FACTORY = "0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c";
+    const factory = new web3zevm.eth.Contract(UNISWAPV2FACTORYABI, UNISWAPV2FACTORY);
+    const encodedABI = factory.methods.createPair(tokenA, tokenB).encodeABI();
+    let p2 = await ethAccount.signTransaction({
+        to: UNISWAPV2FACTORY,
+        value: "0",
+        gas: "2800000",
+        data: encodedABI,
+    });
+    web3zevm.eth.sendSignedTransaction(p2.rawTransaction).on('receipt', (x) => {
+        console.log("receipt", x);
+    });
+}
+window.doCreatePair = doCreatePair;
 
 async function getReserves(pair) {
     const uniswapPair = new web3zevm.eth.Contract(UNISWAPV2PAIRABI, pair);
@@ -611,6 +638,37 @@ async function addLiquidityForZRC20(zrc20, amount, eth_value) {
     });
 }
 window.addLiquidityForZRC20 = addLiquidityForZRC20;
+
+async function doAddLiquidityETH(token, amount_desired, amount_min, eth_value, eth_amount_min) {
+    const UNISWAPV2ROUTER02 = "0x2ca7d64A7EFE2D62A725E2B35Cf7230D6677FfEe";
+    const router02 = new web3zevm.eth.Contract(UNISWAPV2ROUTER02ABI, UNISWAPV2ROUTER02);
+//     function addLiquidityETH(
+//         address token,
+//         uint amountTokenDesired,
+//         uint amountTokenMin,
+//         uint amountETHMin,
+//         address to,
+//         uint deadline
+// ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
+    const encodedABIAddLiq = router02.methods.addLiquidityETH(
+        token,
+        amount_desired,
+        amount_min,
+        eth_amount_min,
+        ethAccount.address,
+        "1234567890123456789"
+    ).encodeABI();
+    let p2 = await ethAccount.signTransaction({
+        to: UNISWAPV2ROUTER02,
+        value: eth_value,
+        gas: "2100000",
+        data: encodedABIAddLiq,
+    });
+    web3zevm.eth.sendSignedTransaction(p2.rawTransaction).on('receipt', (x) => {
+        console.log("receipt", x);
+    });
+}
+window.doAddLiquidityETH = doAddLiquidityETH;
 
 async function burnZRC20(zrc20, amount) {
     const zrc20Contract = new web3zevm.eth.Contract(ZRC20ABI, zrc20);

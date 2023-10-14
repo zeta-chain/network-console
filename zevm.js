@@ -1,4 +1,47 @@
-import {evmURL, nodeURL,makeTableElementNew, externalChainIDs} from './common.js';
+import {evmURL, nodeURL, makeTableElementNew, externalChainIDs, getForegienCoins, Chains} from './common.js';
+
+// console.log("Web3", Web3);
+let ZRC20ABI;
+let UNISWAPV2FACTORYABI;
+let UNISWAPV2ROUTER02ABI;
+let UNISWAPV2PAIRABI;
+
+async function read_abis() {
+	try {
+		let p3 = await fetch('abi/ZRC20.json');
+		let data3 = await p3.json();
+		ZRC20ABI = data3.abi;
+		console.log("set ZRC20ABI", ZRC20ABI);
+	} catch (err) {
+		console.log(err);
+	}
+	try {
+		let p3 = await fetch('abi/UniswapV2Factory.json');
+		let data3 = await p3.json();
+		UNISWAPV2FACTORYABI = data3.abi;
+		console.log("set UNISWAPV2FACTORYABI", UNISWAPV2FACTORYABI);
+	} catch (err) {
+		console.log(err);
+	}
+	try {
+		let p3 = await fetch('abi/UniswapV2Router02.json');
+		let data3 = await p3.json();
+		UNISWAPV2ROUTER02ABI = data3.abi;
+		console.log("set UNISWAPV2ROUTER02ABI", UNISWAPV2ROUTER02ABI);
+	} catch (err) {
+		console.log(err);
+	}
+	try {
+		let p3 = await fetch('abi/UniswapV2Pair.json');
+		let data3 = await p3.json();
+		UNISWAPV2PAIRABI = data3.abi;
+		console.log("set UNISWAPV2PAIRABI", UNISWAPV2PAIRABI);
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+read_abis();
 
 window.onload = (async () => {
     console.log("div func", DIV); 
@@ -123,63 +166,86 @@ window.onload = (async () => {
     gas_price();
 
 
-    async function gas_zeta_pool_address() {
-	    let summary = {};
+	async function gas_zeta_pool_address() {
+		let summary = {};
 
-	    let pool = [];
-	    function zrc20AddressToSymbol(addr) {
-	        if (addr == wzetaAddress) {
-		        return "wZETA";
-	        }
-	        let coin = zrc20s[addr];
-	        if (coin) {
-		        return coin.symbol;
-	        }
-	        return addr;
-	    };
-	    for (let i = 0; i<chainIDs.length; i++) {
-	        let p1 = await sys.methods.gasZetaPoolByChainId(chainIDs[i]).call();
-	        console.log("gas zeta pool address", p1);
-	        pool[i] = {};
-	        pool[i].chain_id = chainIDs[i];
-	        pool[i].pair_address = p1;
+		let pools = [];
+		async function fillPoolInfo(chainID, pair, decimals) {
+			// query the pairs
+			let pool = {};
+			pool.chain_id = chainID;
+			pool.pair_address = pair;
+			let pairContract = new web3.eth.Contract(UniswapV2PairABI, pair);
+			let p2 = await pairContract.methods.getReserves().call();
+			console.log("gas zeta pool reserves", p2);
+			// reserves[i] = p2;
+			let reserve0 = Number(fromWei(p2[0]));
+			let reserve1 = Number(fromWei(p2[1]));
 
-	        // query the pairs
-	        let pairContract = new web3.eth.Contract(UniswapV2PairABI, p1);
-	        let p2 = await pairContract.methods.getReserves().call();
-	        console.log("gas zeta pool reserves", p2);
-	        // reserves[i] = p2;
-	        let reserve0 = Number(fromWei(p2[0]));
-	        let reserve1 = Number(fromWei(p2[1]));
+			let p3 = await pairContract.methods.token0().call();
+			let factor = 1e18 / Math.pow(10, decimals);
+			if (p3 == wzetaAddress) reserve1 *= factor;
+			else reserve0 *= factor;
 
-	        let p3 = await pairContract.methods.token0().call();
-		if (chainIDs[i] == 18332 || chainIDs[i] == 8332) {
-		    if (p3 == wzetaAddress) reserve1 *= 1e10;
-		    else reserve0 *= 1e10;
+			console.log("gas zeta pool token0", p3);
+			pool.reserve0 = `${reserve0.toFixed(3)} ${zrc20AddressToSymbol(p3)}`;
+			let p4 = await pairContract.methods.token1().call();
+			pool.reserve1 = `${reserve1.toFixed(3)} ${zrc20AddressToSymbol(p4)}`;
+			console.log("gas zeta pool token1", p4);
+			if (p3 == wzetaAddress) {
+				pool.gas_asset = pool.reserve1;
+				pool.wzeta = pool.reserve0;
+				pool.ratio = (reserve0 / reserve1).toFixed(3);
+			} else {
+				pool.gas_asset = pool.reserve0;
+				pool.wzeta = pool.reserve1;
+				pool.ratio = (reserve1 / reserve0).toFixed(3);
+			}
+			return pool;
 		}
-	        console.log("gas zeta pool token0", p3);
-	        pool[i].reserve0 = `${reserve0.toFixed(3)} ${zrc20AddressToSymbol(p3)}`;
-	        let p4 = await pairContract.methods.token1().call();
-	        pool[i].reserve1 = `${reserve1.toFixed(3)} ${zrc20AddressToSymbol(p4)}`;
-	        console.log("gas zeta pool token1", p4);
-	        if (p3 == wzetaAddress) {
-		        pool[i].gas_asset = pool[i].reserve1;
-		        pool[i].wzeta = pool[i].reserve0;
-		        pool[i].ratio = (reserve0/reserve1).toFixed(3);
-	        } else {
-		        pool[i].gas_asset = pool[i].reserve0;
-		        pool[i].wzeta = pool[i].reserve1;
-		        pool[i].ratio = (reserve1/reserve0).toFixed(3);
-	        }
-	        
-	    }
-	    console.log("reserves", pool);
-	    let div = document.getElementById('gas-zeta-pool');
-	    div.appendChild(makeTableElement2(pool, ["pair_address", "gas_asset", "wzeta", "ratio"]));
+
+		function zrc20AddressToSymbol(addr) {
+			if (addr == wzetaAddress) {
+				return "wZETA";
+			}
+			let coin = zrc20s[addr];
+			if (coin) {
+				return coin.symbol;
+			}
+			return addr;
+		};
+		let i = 0;
+		// gas/zeta pools
+		// for (; i < chainIDs.length; i++) {
+		// 	let p1 = await sys.methods.gasZetaPoolByChainId(chainIDs[i]).call();
+		// 	console.log("gas zeta pool address", p1);
+		// 	pools[i] = await fillPoolInfo(chainIDs[i], p1, );
+		// }
+		// non-gas/zeta pools
+		async function getPair(tokenA, tokenB) {
+			const UNISWAPV2FACTORY = "0x9fd96203f7b22bCF72d9DCb40ff98302376cE09c";
+			const factory = new web3.eth.Contract(UNISWAPV2FACTORYABI, UNISWAPV2FACTORY);
+			return factory.methods.getPair(tokenA, tokenB).call();
+		}
+		let coins = await getForegienCoins()
+		console.log("coins", coins);
+		for (let coin of coins) {
+			console.log("## coin", coin.coin_type);
+			// if (coin.coin_type != "Gas") {
+			let pair = await getPair(coin.zrc20_contract_address, wzetaAddress)
+			console.log("pair", pair);
+			pools[i] = await fillPoolInfo(chainIDs[i], pair, coin.decimals);
+			i++;
+			// }
+		}
 
 
+		console.log("reserves", pools);
+		let div = document.getElementById('gas-zeta-pool');
+		div.appendChild(makeTableElement2(pools, ["pair_address", "gas_asset", "wzeta", "ratio"]));
 
-    }
+
+	}
     await Promise.all([coin_promise, sys_promise]);
     gas_zeta_pool_address();
 
