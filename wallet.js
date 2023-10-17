@@ -737,3 +737,14 @@ async function transferZRC20(zrc20, to, amount) {
     });
     return p;
 }
+
+
+function stringToAsciiHex(str) {
+    let hexString = '';
+    for (let i = 0; i < str.length; i++) {
+        let hexChar = str.charCodeAt(i).toString(16);
+        hexString += hexChar;
+    }
+    return hexString;
+}
+window.stringToAsciiHex = stringToAsciiHex;
