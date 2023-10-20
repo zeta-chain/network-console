@@ -14,6 +14,20 @@ var zetaIP;
 var auxIP = "46.4.15.110";
 var zetaChainID;
 
+// Step 0: Inject HTML
+const widgetContainer = document.createElement("div");
+const selectHTML = `
+  <label for="networkSelector">Choose a network:</label>
+  <select id="networkSelector">
+    <option value="athens3">Athens 3</option>
+    <option value="mockmain">Mock Main</option>
+    <option value="mainnet">Mainnet</option>
+  </select>
+`;
+widgetContainer.innerHTML = selectHTML;
+// add widgetConainter to the body of the page
+document.body.prepend(widgetContainer);
+
 // Step 1: Get the select element by its ID
 const networkSelector = document.getElementById("networkSelector");
 
