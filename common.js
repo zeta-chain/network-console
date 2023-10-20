@@ -71,6 +71,63 @@ if (network == "mockmain") {
         }
     };
     zetaclientIPs = ["50.16.78.24", "44.218.42.109","44.216.230.163"];
+} else if (network == "mainnet") {
+    zetaIP =  "100.122.166.130";
+    zetaChainID = 7000;
+    RPCByChainID = {
+        1: "https://eth.llamarpc.com",
+        56: "https://binance.llamarpc.com",
+        8332: "https://blockstream.info/api",
+        7000: evmURL,
+    };
+    AddressExplorerByChainID = {
+        1: "https://www.etherscan.io/address",
+        56: "https://www.bscscan.com/address",
+        8332: "https://blockstream.info/address",
+    };
+    esploraAPIURL = "https://blockstream.info/api";
+    externalChainIDs = [1,56,8332];
+
+    Chains = {
+        1: {
+            "chainId": "1",
+            "chainName": "Ethereum Mainnet",
+            "nativeCurrency": {
+                "name": "Ether",
+                "symbol": "ETH",
+                "decimals": 18
+            },
+        },
+        56: {
+            "chainId": "56",
+            "chainName": "Binance Smart Chain",
+            "nativeCurrency": {
+                "name": "BNB",
+                "symbol": "BNB",
+                "decimals": 18
+            },
+        },
+        7000: {
+            "chainId": "7000",
+            "chainName": "ZetaChain",
+            "nativeCurrency": {
+                "name": "Zeta",
+                "symbol": "ZETA",
+                "decimals": 18
+            },
+        },
+        8332: {
+            "chainId": "8332",
+            "chainName": "Bitcoin Mainnet",
+            "nativeCurrency": {
+                "name": "Bitcoin",
+                "symbol": "tBTC",
+                "decimals": 8
+            },
+        }
+    };
+    // zetaclientIPs = ["50.16.78.24", "44.218.42.109","44.216.230.163"];
+
 } else { // default to athens3
     network = "athens3";
     zetaIP = '46.4.15.110';
