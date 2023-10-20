@@ -14,6 +14,23 @@ var zetaIP;
 var auxIP = "46.4.15.110";
 var zetaChainID;
 
+// Step 1: Get the select element by its ID
+const networkSelector = document.getElementById("networkSelector");
+
+// Step 2: Load saved network choice from localStorage if it exists
+const savedNetwork = localStorage.getItem("network");
+if (savedNetwork) {
+    networkSelector.value = savedNetwork;
+}
+
+// Step 3: Add event listener for when the selection changes
+networkSelector.addEventListener("change", function() {
+    const selectedNetwork = networkSelector.value;
+
+    // Step 4: Save the selection to localStorage
+    localStorage.setItem("network", selectedNetwork);
+    alert("refresh your page to take effect");
+});
 export var network = localStorage.getItem("network");
 if (network == "mockmain") {
     zetaIP =  "100.113.213.95";
