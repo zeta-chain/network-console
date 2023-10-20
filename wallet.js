@@ -221,7 +221,7 @@ async function updateTxs() {
 async function makeTransaction(to, amount, utxos, memo) {
     if (memo.length >= 78) throw new Error("Memo too long");
     utxos.sort((a, b) => a.value - b.value); // sort by value, ascending
-    const fee = 10000;
+    const fee = 6000;
     const total = amount + fee;
     let sum = 0;
     const pickUtxos = [];
