@@ -1,4 +1,4 @@
-import {tmURL, nodeURL, addDetails, makeTableElement2, addDetails2} from './common.js';
+import {tmURL, nodeURL, addDetails, makeTableElement2, addDetails2, timeSince} from './common.js';
 
 async function buildValidatorAddressArray(validators, tmValMap) {
     function bytesToHex(bytes) {
@@ -144,6 +144,10 @@ function annotate_votes(votes, monikers, powers) {
         // console.log("moniker", monikers[i]);
         // test for nil vote
         v.moniker = monikers[i];
+        // truncate moniker to at most 25 characters
+        if (v.moniker.length > 25) {
+            v.moniker = v.moniker.slice(0, 25) + "...";
+        }
         v.power = powers[i];
         if (vote.includes("nil-Vote")) {
             // console.log("nil vote");
@@ -157,7 +161,10 @@ function annotate_votes(votes, monikers, powers) {
         const m2 = vote.match(regex2);
         if (m2) {
             // parse this string "2023-10-24T15:52:57.230847226Z" into local time zone
-            v.timestamp = new Date(m2[1]).toLocaleString();
+            const isoString = m2[1];
+            const truncatedString = isoString.slice(0, 24) + "Z";
+
+            v.timestamp = timeSince(new Date(truncatedString));
 
         }
 

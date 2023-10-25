@@ -282,6 +282,22 @@ export function addDetails2(sum,detElement) {
         ));
 }
 
+export function  timeSince(date) {
+    const now = new Date();
+    const secondsPast = (now.getTime() - date.getTime()) / 1000;
+
+    if (secondsPast < 60) {
+        return `${parseInt(secondsPast)}s ago`;
+    }
+    if (secondsPast < 3600) {
+        return `${parseInt(secondsPast / 60)}m ago`;
+    }
+    if (secondsPast <= 86400) {
+        return `${parseInt(secondsPast / 3600)}h${parseInt((secondsPast % 3600) / 60)}m ago`;
+    }
+    // Handle cases for more than one day here if needed
+}
+
 export function msToTime(duration) {
     let seconds = parseInt((duration / 1000) % 60),
         minutes = parseInt((duration / (1000 * 60)) % 60),
