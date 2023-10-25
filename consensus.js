@@ -1,4 +1,4 @@
-import {tmURL, nodeURL, addDetails} from './common.js';
+import {tmURL, nodeURL, addDetails, makeTableElement2, addDetails2} from './common.js';
 
 async function buildValidatorAddressArray(validators, tmValMap) {
     function bytesToHex(bytes) {
@@ -78,11 +78,14 @@ async function consensusState() {
     console.log(vals);
 
     const sortedVals = [];
+    const sortedPowers = [];
     for (let i = 0; i < tmVals.length; i++) {
         console.log("tmVals[i].address", tmVals[i].address);
+        sortedPowers.push(tmVals[i].voting_power/totalVP*100);
 
         for (let j = 0; j <vals.length; j++) {
             const val = vals[j];
+
             // console.log("val.consenus_addr_hex", val.consenus_addr_hex);
             if (val.consenus_addr_hex === tmVals[i].address) {
                 sortedVals.push(val.moniker);
@@ -110,17 +113,15 @@ async function consensusState() {
         const prevotes = prevotesBitArray.match(regex)[2];
         const [prevoteMonikers, pvVP] = bitsToMonikers(prevotes, tmVals, data3?.validators);
 
-        const apv = annotate_votes(pv, sortedVals);
+        const apv = annotate_votes(pv, sortedVals, sortedPowers);
         // console.log("apv", apv);
-        const apc = annotate_votes(pc, sortedVals);
+        const apc = annotate_votes(pc, sortedVals, sortedPowers);
 
         const precommitBitArray = voteSet?.precommits_bit_array;
         const precommits = precommitBitArray.match(regex)[2];
         const [precommitMonikers, pcVP] = bitsToMonikers(precommits, tmVals, data3?.validators);
-        div.appendChild(addDetails(`round ${voteSet.round} prevotes nil-voter monikers `+`prevotes nil-voter voting power ${pvVP}; ${pvVP / totalVP * 100}%`, `${apv.join('\n')}`));
-        // div.appendChild(addDetails(`prevotes nil-voter voting power ${pvVP}; ${pvVP / totalVP * 100}%`, ""));
-        div.appendChild(addDetails(`round ${voteSet.round} precommits nil-voter monikers `+`precommits nil-voter voting power ${pcVP}; ${pcVP / totalVP * 100}%`, `${apc.join('\n')}`));
-        // div.appendChild(addDetails(`precommits nil-voter voting power ${pcVP}; ${pcVP / totalVP * 100}%`, ""));
+        div.appendChild(addDetails2(`round ${voteSet.round} prevotes nil-voter monikers `+`prevotes nil-voter voting power ${pvVP}; ${pvVP / totalVP * 100}%`, makeTableElement2(apv, ["moniker", "type", "block", "power"])));
+        div.appendChild(addDetails2(`round ${voteSet.round} precommits nil-voter monikers `+`precommits nil-voter voting power ${pcVP}; ${pcVP / totalVP * 100}%`, makeTableElement2(apc, ["moniker", "type", "block", "power"])));
     }
 }
 
@@ -132,16 +133,20 @@ async function consensusState() {
 //     "nil-Vote",
 // -------------
 // 000000000000 hash is the real nil vote in consensus; B24FF10CC94D is a vote on that block; nil-Vote is missing vote
-function annotate_votes(votes, monikers) {
+function annotate_votes(votes, monikers, powers) {
     let results = [];
     for (let i = 0; i < votes.length; i++) {
         let v = {};
         const vote = votes[i];
-        console.log("moniker", monikers[i]);
+        // console.log("moniker", monikers[i]);
         // test for nil vote
+        v.moniker = monikers[i];
+        v.power = powers[i];
         if (vote.includes("nil-Vote")) {
-            console.log("nil vote");
-                results.push(`missed vote                       ${monikers[i]}`);
+            // console.log("nil vote");
+            v.type = "missed vote";
+            results.push(v);
+                // results.push(`missed vote                       ${monikers[i]}`);
         }
 
         // extract the 000000000000 hash
@@ -149,12 +154,16 @@ function annotate_votes(votes, monikers) {
         const m = vote.match(regex);
         if (m) {
             const hash = m[1];
-            console.log(hash);
+            // console.log(hash);
             if (hash === "000000000000") {
-                results.push(`nil vote:                         ${monikers[i]}`);
+                v.type = "nil vote";
+                // results.push(`nil vote:                         ${monikers[i]}`);
             } else {
-                results.push(`voted:                            ${monikers[i]}`);
+                v.type = "voted";
+                v.block = hash;
+                // results.push(`voted:                            ${monikers[i]}`);
             }
+            results.push(v);
         }
 
     }

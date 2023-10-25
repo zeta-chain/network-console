@@ -274,6 +274,14 @@ export function addDetails(sum, det) {
         ));
 }
 
+export function addDetails2(sum,detElement) {
+    return DIV(
+        DETAILS(
+            SUMMARY(TEXT(sum)),
+            detElement
+        ));
+}
+
 export function msToTime(duration) {
     let seconds = parseInt((duration / 1000) % 60),
         minutes = parseInt((duration / (1000 * 60)) % 60),
