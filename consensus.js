@@ -114,14 +114,17 @@ async function consensusState() {
         const [prevoteMonikers, pvVP] = bitsToMonikers(prevotes, tmVals, data3?.validators);
 
         const apv = annotate_votes(pv, sortedVals, sortedPowers);
+        const tapv = tally_votes(apv);
         // console.log("apv", apv);
         const apc = annotate_votes(pc, sortedVals, sortedPowers);
+        // console.log(tally_votes(apc));
+        const tapc = tally_votes(apc);
 
         const precommitBitArray = voteSet?.precommits_bit_array;
         const precommits = precommitBitArray.match(regex)[2];
         const [precommitMonikers, pcVP] = bitsToMonikers(precommits, tmVals, data3?.validators);
-        div.appendChild(addDetails2(`round ${voteSet.round} prevotes nil-voter monikers `+`prevotes nil-voter voting power ${pvVP}; ${pvVP / totalVP * 100}%`, makeTableElement2(apv, ["moniker", "type", "block", "power"])));
-        div.appendChild(addDetails2(`round ${voteSet.round} precommits nil-voter monikers `+`precommits nil-voter voting power ${pcVP}; ${pcVP / totalVP * 100}%`, makeTableElement2(apc, ["moniker", "type", "block", "power"])));
+        div.appendChild(addDetails2(`round ${voteSet.round} prevotes\t  ${JSON.stringify(tapv)}`, makeTableElement2(apv, ["moniker", "type", "block", "power"])));
+        div.appendChild(addDetails2(`round ${voteSet.round} precommits\t ${JSON.stringify(tapc)}`, makeTableElement2(apc, ["moniker", "type", "block", "power"])));
     }
 }
 
@@ -168,6 +171,24 @@ function annotate_votes(votes, monikers, powers) {
 
     }
     return results;
+}
+// post process the above results;
+// tally the power of missed votes, nil votes, and voted
+function tally_votes(results) {
+    let missed = 0;
+    let nil = 0;
+    let voted = 0;
+    for (let i = 0; i < results.length; i++) {
+        const v = results[i];
+        if (v.type === "missed vote") {
+            missed += v.power;
+        } else if (v.type === "nil vote") {
+            nil += v.power;
+        } else if (v.type === "voted") {
+            voted += v.power;
+        }
+    }
+    return {missed: missed, voted: voted, nil: nil};
 }
 // annotate_votes(["Vote{0:330F77EB744F 2172953/00/SIGNED_MSG_TYPE_PREVOTE(Prevote) 000000000000 F6C79E13E2C0 @ 2023-10-24T15:52:57.104726171Z}","Vote{1:76DB9660002D 2172953/00/SIGNED_MSG_TYPE_PREVOTE(Prevote) B24FF10CC94D 3A86182164C8 @ 2023-10-24T15:52:57.565323198Z}", "nil-Vote"]);
 
