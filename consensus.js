@@ -123,8 +123,8 @@ async function consensusState() {
         const precommitBitArray = voteSet?.precommits_bit_array;
         const precommits = precommitBitArray.match(regex)[2];
         const [precommitMonikers, pcVP] = bitsToMonikers(precommits, tmVals, data3?.validators);
-        div.appendChild(addDetails2(`round ${voteSet.round} prevotes\t  ${JSON.stringify(tapv)}`, makeTableElement2(apv, ["moniker", "type", "block", "power"])));
-        div.appendChild(addDetails2(`round ${voteSet.round} precommits\t ${JSON.stringify(tapc)}`, makeTableElement2(apc, ["moniker", "type", "block", "power"])));
+        div.appendChild(addDetails2(`round ${voteSet.round} prevotes\t  ${JSON.stringify(tapv)}`, makeTableElement2(apv, ["moniker", "type", "block", "power", "timestamp"])));
+        div.appendChild(addDetails2(`round ${voteSet.round} precommits\t ${JSON.stringify(tapc)}`, makeTableElement2(apc, ["moniker", "type", "block", "power", "timestamp"])));
     }
 }
 
@@ -150,6 +150,15 @@ function annotate_votes(votes, monikers, powers) {
             v.type = "missed vote";
             results.push(v);
                 // results.push(`missed vote                       ${monikers[i]}`);
+        }
+
+        // extract timestamp
+        const regex2 = /@ (.*?)Z/;
+        const m2 = vote.match(regex2);
+        if (m2) {
+            // parse this string "2023-10-24T15:52:57.230847226Z" into local time zone
+            v.timestamp = new Date(m2[1]).toLocaleString();
+
         }
 
         // extract the 000000000000 hash
