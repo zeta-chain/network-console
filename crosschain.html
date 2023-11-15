@@ -32,7 +32,15 @@
 	<pre id="pending-outbound-queues" class="dropdown-content"></pre>
       </div>
 
-      <div class="item">
+        <div class="item">
+            <b>Block Header States</b>
+            <div id="block-header-state-summary"></div>
+            <button onclick="toggleDropdown('block-header-state')">Raw JSON</button>
+            <pre id="block-header-state" class="dropdown-content"></pre>
+        </div>
+
+
+        <div class="item">
 	<b>External Contract Addresses</b>
 	<div id="external-contract-addresses-summary"></div>
 	<button onclick="toggleDropdown('external-contract-addresses')">Raw JSON</button>

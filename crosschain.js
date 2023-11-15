@@ -89,6 +89,27 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
     }
     pendingOutboundQueue();
 
+	async function blockHeaderState() {
+		const states = [];
+		for (let i = 0; i < externalChainIDs.length; i++) {
+			const chainID = externalChainIDs[i];
+			try {
+				let resource = `zeta-chain/observer/get_block_header_state_by_chain_id/${chainID}`;
+				let p2 = await fetch(`${nodeURL}/${resource}`, {method: 'GET',});
+				let data2 = await p2.json();
+				console.log("chainid", chainID, data2);
+				const state = data2.block_header_state;
+				if (state) states.push(state);
+			} catch (error) {
+				console.log('error', error);
+			}
+		}
+		console.log("states", states);
+		let div = document.getElementById("block-header-state-summary");
+		div.appendChild(makeTableElement2(states, ["chain_id", "earliest_height", "latest_height"]));
+	}
+	blockHeaderState();
+
 
     async function externalContractAddress() {
 	try {
