@@ -145,7 +145,8 @@ function annotate_votes(votes, monikers, powers) {
         // test for nil vote
         v.moniker = monikers[i];
         // truncate moniker to at most 25 characters
-        if (v.moniker.length > 25) {
+        console.log("moniker", v.moniker);
+        if (v.moniker && v.moniker.length > 25) {
             v.moniker = v.moniker.slice(0, 25) + "...";
         }
         v.power = powers[i];
