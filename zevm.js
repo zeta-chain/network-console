@@ -79,9 +79,8 @@ window.onload = (async () => {
     // foreign coins
     var zrc20s = {}; // key: contract address, value: coin info (from foreign_coins RPC)
     async function foreign_coins(){
-		const url = network == "mockmain" ?
-			`${nodeURL}/zeta-chain/fungible/foreign_coins` :
-			`${nodeURL}/zeta-chain/zetacore/fungible/foreign_coins`;
+
+		const url = `${nodeURL}/zeta-chain/fungible/foreign_coins`;
 	    fetch(url , {
             method: 'GET',
 	    }).then(response => {
@@ -109,10 +108,7 @@ window.onload = (async () => {
     var SystemContractAddress; 
     // system contract
     async function system_contract() {
-
-        const resource = network == "mockmain" ?
-			`${nodeURL}/zeta-chain/fungible/system_contract` :
-			`${nodeURL}/zeta-chain/zetacore/fungible/system_contract`;
+		const resource = `${nodeURL}/zeta-chain/fungible/system_contract`;
 	    let p1 = await fetch(resource, {
             method: 'GET',
 	    });

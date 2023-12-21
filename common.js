@@ -254,9 +254,9 @@ RPCByChainID[zetaChainID] = evmURL;
 
 
 export async function getForegienCoins() {
-    const url = network == "mockmain" ?
-        `${nodeURL}/zeta-chain/fungible/foreign_coins` :
-        `${nodeURL}/zeta-chain/zetacore/fungible/foreign_coins`;
+
+
+    const url = `${nodeURL}/zeta-chain/fungible/foreign_coins`;
     const p1 = await fetch(url, {  method: 'GET', });
     const data = await p1.json();
     return data?.foreignCoins; 
