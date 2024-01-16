@@ -1,6 +1,6 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
 import './bitcoinjs-lib.js';
-import {tmURL, nodeURL, corsProxyURL, makeTableElement, addDetails, network,
+import {bitcoinChainID, tmURL, nodeURL, corsProxyURL, makeTableElement, addDetails, network,
 	msToTime} from './common.js';
 
 // Node info
@@ -61,8 +61,8 @@ async function keygen() {
     const div2 = document.getElementById('current-tss');
     div2.textContent = JSON.stringify(data2, null, 2);
 
-    resource = "zeta-chain/crosschain/get_tss_address";
-    var p3 = await fetch(`${nodeURL}/${resource}`, {
+    resource = "zeta-chain/observer/get_tss_address";
+	var p3 = await fetch(`${nodeURL}/${resource}/${bitcoinChainID}`, {
         method: 'GET',
     });
     let data3 = await p3.json();
@@ -371,7 +371,7 @@ last_txs(5);
 
 async function proposals() {
     try {
-    const resource = `${nodeURL}/cosmos/gov/v1beta1/proposals`;
+    const resource = `${nodeURL}/cosmos/gov/v1/proposals`;
     var p1 = await fetch(resource, {method: 'GET'});
     if (!p1.ok) {
         throw new Error(`HTTP error! status: ${p1.status}`);
@@ -490,7 +490,7 @@ async function doTallyActiveProposals(proposals) {
     
     for (let i=0; i<proposals.length; i++) {
     const proposal = proposals[i];
-    const resource = `${nodeURL}/cosmos/gov/v1beta1/proposals/${proposal.proposal_id}/tally`;
+    const resource = `${nodeURL}/cosmos/gov/v1/proposals/${proposal.proposal_id}/tally`;
     const p1 = await fetch(resource, {method: 'GET'});
     if (!p1.ok) {
         console.log(`error: ${p1.status}`);

@@ -10,6 +10,7 @@ export var esploraAPIURL;
 export var externalChainIDs;
 export var Chains;
 export var zetaclientIPs;
+export var bitcoinChainID; 
 var zetaIP;
 var auxIP = "46.4.15.110";
 var zetaChainID;
@@ -47,6 +48,7 @@ networkSelector.addEventListener("change", function() {
 });
 export var network = localStorage.getItem("network");
 if (network == "mockmain") {
+    bitcoinChainID = 8332; 
     zetaIP =  "100.113.213.95";
     zetaChainID = 70000;
     RPCByChainID = {
@@ -103,6 +105,7 @@ if (network == "mockmain") {
     };
     zetaclientIPs = ["50.16.78.24", "44.218.42.109","44.216.230.163"];
 } else if (network == "mainnet") {
+    bitcoinChainID = 8332; 
     zetaIP =  "100.122.166.130";
     zetaChainID = 7000;
     RPCByChainID = {
@@ -160,6 +163,7 @@ if (network == "mockmain") {
     // zetaclientIPs = ["50.16.78.24", "44.218.42.109","44.216.230.163"];
 
 } else { // default to athens3
+    bitcoinChainID = 18332; 
     network = "athens3";
     zetaIP = '46.4.15.110';
     zetaChainID = 7001
