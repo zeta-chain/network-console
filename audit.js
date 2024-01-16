@@ -169,7 +169,7 @@ class AuditPage {
 	const zetaSupplyZeta = parseInt(data.amount.amount) / Math.pow(10, 18);
 
 
-	const p2 = await fetch(`${nodeURL}/zeta-chain/observer/get_core_params`);
+	const p2 = await fetch(`${nodeURL}/zeta-chain/observer/get_chain_params`);
 	const data2 = await p2.json();
 	const chainIDs= [5, 97, 80001, 18332];
 	const zetaContractByChainID = {};

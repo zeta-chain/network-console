@@ -87,7 +87,7 @@ async function consensusState() {
             const val = vals[j];
 
             // console.log("val.consenus_addr_hex", val.consenus_addr_hex);
-            if (val.consenus_addr_hex === tmVals[i].address) {
+            if (val.consenus_addr_hex === tmVals[i].address && val.moniker) {
                 sortedVals.push(val.moniker);
                 break;
             }

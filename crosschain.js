@@ -45,7 +45,7 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 
     async function pendingOutboundQueue() {
 	try {
-	    let resource = "zeta-chain/crosschain/TSS";
+	    let resource = "zeta-chain/observer/TSS";
 	    let p1 = await fetch(`${nodeURL}/${resource}`, {
 		method: 'GET',
 	    });
@@ -53,7 +53,7 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 	    let TSS = data.TSS.tss_pubkey;
 	    console.log("TSS", TSS);
 
-	    resource = "zeta-chain/crosschain/pendingNonces";
+	    resource = "zeta-chain/observer/pendingNonces";
 	    let p2 = await fetch(`${nodeURL}/${resource}`, { method: 'GET', });
 	    let data2 = await p2.json();
 	    let pending = data2.pending_nonces;
@@ -113,7 +113,7 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 
     async function externalContractAddress() {
 	try {
-	    let resource = "zeta-chain/observer/get_core_params";
+	    let resource = "zeta-chain/observer/get_chain_params";
 	    let p1 = await fetch(`${nodeURL}/${resource}`, {method: 'GET'});
 	    let data = await p1.json();
 	    console.log(data);

@@ -53,7 +53,7 @@ async function keygen() {
     div1.textContent = JSON.stringify(data, null, 2);
     let kg = data.keygen;
 
-    resource = "zeta-chain/crosschain/TSS";
+    resource = "zeta-chain/observer/TSS";
     var p2 = await fetch(`${nodeURL}/${resource}`, {
         method: 'GET',
     });
