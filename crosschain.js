@@ -118,9 +118,9 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
 	    let data = await p1.json();
 	    console.log(data);
 	    let pre = document.getElementById("external-contract-addresses");
-	    pre.textContent = JSON.stringify(data.core_params, null, 2);
+	    pre.textContent = JSON.stringify(data.chain_params, null, 2);
 	    let div = document.getElementById("external-contract-addresses-summary");
-	    div.appendChild(makeTableElement2(data.core_params.core_params, ["chain_id", "zeta_token_contract_address", "connector_contract_address", "erc20_custody_contract_address"]));
+	    div.appendChild(makeTableElement2(data.chain_params.chain_params, ["chain_id", "zeta_token_contract_address", "connector_contract_address", "erc20_custody_contract_address"]));
 	} catch (error) {
 	    console.log('error', error);
 	}

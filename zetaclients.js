@@ -1,5 +1,5 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
-import {addDetails, nodeURL, RPCByChainID, corsProxyURL, checkURL, esploraAPIURL, zetaclientIPs, externalChainIDs} from './common.js';
+import {bitcoinChainID, addDetails, nodeURL, RPCByChainID, corsProxyURL, checkURL, esploraAPIURL, zetaclientIPs, externalChainIDs} from './common.js';
 
 // ---------------- zetaclients ------------------------------
 async function zetaclients_versions() {
@@ -343,8 +343,8 @@ getLatestBlockNumber(18332);
 
 
 async function updateTSS() {
-    const resource = "zeta-chain/crosschain/get_tss_address";
-    var p3 = await fetch(`${nodeURL}/${resource}`, {
+    const resource = "zeta-chain/observer/get_tss_address";
+    var p3 = await fetch(`${nodeURL}/${resource}?bitcoin_chain_id=${bitcoinChainID}`, {
         method: 'GET',
     });
     let data3 = await p3.json();

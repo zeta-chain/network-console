@@ -62,7 +62,7 @@ async function keygen() {
     div2.textContent = JSON.stringify(data2, null, 2);
 
     resource = "zeta-chain/observer/get_tss_address";
-	var p3 = await fetch(`${nodeURL}/${resource}/${bitcoinChainID}`, {
+	var p3 = await fetch(`${nodeURL}/${resource}?bitcoin_chain_id=${bitcoinChainID}`, {
         method: 'GET',
     });
     let data3 = await p3.json();

@@ -1,4 +1,4 @@
-import {nodeURL,evmURL,RPCByChainID, esploraAPIURL,AddressExplorerByChainID, } from './common.js';
+import {bitcoinChainID,nodeURL,evmURL,RPCByChainID, esploraAPIURL,AddressExplorerByChainID, } from './common.js';
 import './web3.min.js';
 
 class AuditPage {
@@ -14,7 +14,7 @@ class AuditPage {
     }
 
     async getSystemContracts() {
-	const resource = `${nodeURL}/zeta-chain/zetacore/fungible/system_contract`;
+	const resource = `${nodeURL}/zeta-chain/fungible/system_contract`;
 	const p = await fetch(resource, {
 	    method: 'GET',
 	});
@@ -29,15 +29,15 @@ class AuditPage {
     
     async getTssAddress() {
         if (this.tss) return; 
-        const resource = "zeta-chain/crosschain/get_tss_address";
-        const p = await fetch(`${nodeURL}/${resource}`, {
+        const resource = "zeta-chain/observer/get_tss_address";
+        const p = await fetch(`${nodeURL}/${resource}?bitcoin_chain_id=${bitcoinChainID}`, {
             method: 'GET',
         });
         this.tss = await p.json(); 
     }
 
     async getZRC20Addresses() {
-        const resource = "zeta-chain/zetacore/fungible/foreign_coins";
+        const resource = "zeta-chain/fungible/foreign_coins";
         const p = await fetch(`${nodeURL}/${resource}`, {
             method: 'GET',
         });
