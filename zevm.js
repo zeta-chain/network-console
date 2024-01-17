@@ -92,7 +92,7 @@ window.onload = (async () => {
             let div = document.getElementById('foreign-coins');
             div.textContent = JSON.stringify(data, null, 2);
             let div2 = document.getElementById('foreign-coins-summary');
-	        div2.appendChild(makeTableElement2(data.foreignCoins, ["zrc20_contract_address", "foreign_chain_id", "symbol", "coin_type"]));
+	        div2.appendChild(makeTableElement2(data.foreignCoins, ["zrc20_contract_address", "foreign_chain_id", "symbol", "coin_type", "asset"]));
 	        
 	        data.foreignCoins.forEach( (coin) => {
 		        zrc20s[coin.zrc20_contract_address] = coin;
