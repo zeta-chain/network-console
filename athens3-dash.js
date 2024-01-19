@@ -99,14 +99,21 @@ await fetch(`${tmURL}/status`, {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     return response.json();
-}).then(data => {
+}).then(async data => {
     blockNumber = data?.result?.sync_info?.latest_block_height;
     let div = document.getElementById('block-summary');
+
+    const res3 = await fetch(`${nodeURL}/ethermint/feemarket/v1/params`)
+    const data3 = await res3.json()
+    console.log("data3", data3);
+    const baseFee = BigInt(data3.params.base_fee) / BigInt("1000000000");
+
 
     let summary = {
         "block height": data.result.sync_info.latest_block_height,
         "block timestamp": utcToLocal(data.result.sync_info.latest_block_time),
-        "earliest block timestamp": utcToLocal(data.result.sync_info.earliest_block_time)
+        "earliest block timestamp": utcToLocal(data.result.sync_info.earliest_block_time),
+        "base fee": `${baseFee} GWEI (GAZETA)`,
     };
     div.appendChild(makeTableElement(summary));
     let div2 = document.getElementById('status-details');
