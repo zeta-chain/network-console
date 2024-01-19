@@ -1,7 +1,9 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
 import './bitcoinjs-lib.js';
-import {bitcoinChainID, tmURL, nodeURL, corsProxyURL, makeTableElement, addDetails, network,
-	msToTime} from './common.js';
+import {
+    bitcoinChainID, tmURL, nodeURL, corsProxyURL, makeTableElement, addDetails, network,
+    msToTime, makeTableElement2
+} from './common.js';
 
 // Node info
 async function node_info(){
@@ -310,6 +312,59 @@ node_info();
 
 
 // block_results();
+
+async function observerParams() {
+    const div = document.getElementById('governance-groups-summary');
+    const res1 = await fetch(`${nodeURL}/zeta-chain/observer/params`);
+    const data1 = await res1.json();
+    // console.log("observer params", data1);
+    const admin_policy = data1.params.admin_policy;
+    var group1, group2;
+    for (let i=0; i<admin_policy.length; i++) {
+        const policy = admin_policy[i];
+        if (policy.policy_type == "group1") {
+            group1 = policy;
+        }
+        if (policy.policy_type == "group2") {
+            group2 = policy;
+        }
+    }
+    console.log("group1", group1);
+    console.log("group2", group2);
+    // const summary = {"group1 address": `<a href="${group1.address}">a</a>`, "group2 address": group2.address};
+    async function addGroup(group1, caption) {
+        const res2 = await fetch(`${nodeURL}/cosmos/group/v1/group_policy_info/${group1.address}`, {method: 'GET'});
+        const data2 = await res2.json();
+        console.log("group1 info", data2);
+        const res3 = await fetch(`${nodeURL}/cosmos/group/v1/group_members/${data2.info.group_id}`, {method: 'GET'});
+        const data3 = await res3.json();
+        console.log("group1 members", data3);
+        const d3 = data3.members.map(m => {
+            return m.member
+        });
+        console.log("d3", d3);
+        const summary1 = {
+            "group1 address": group1.address,
+            "admin": data2.info.admin,
+            "created_at": data2.info.created_at,
+            "group_id": data2.info.group_id,
+            "voting_period": data2.info.decision_policy.windows.voting_period,
+            "threshold": data2.info.decision_policy.threshold,
+        }
+        const g1Div = DIV(
+            H4(caption),
+            makeTableElement(summary1),
+            P("members"),
+            makeTableElement2(d3, ["metadata", "address", "added_at", "weight"]),
+        );
+        div.appendChild(g1Div);
+    };
+    addGroup(group1, "Group 1: fast response");
+    addGroup(group2, "Group 2: regular admin group");
+
+}
+
+observerParams();
 
 
 // ------------------------------------------------------------------------------

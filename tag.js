@@ -23,7 +23,7 @@ function tag(name, ...children) {
     return result;
 }
 
-const MUNDANE_TAGS = ["canvas", "h1", "h2", "h3", "p", "a", "div", "span",
+const MUNDANE_TAGS = ["canvas", "h1", "h2", "h3", "h4", "p", "a", "div", "span",
                       "select", "details", "summary", "pre", "button", "code",
                       "table", "thead", "tbody", "tr", "td", "th", "br"];
 var tags = {}
