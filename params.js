@@ -60,4 +60,22 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
         const element = createTreeView(div, data);
     }
     renderObserverParams();
+
+    async function renderNodeAccounts() {
+        const div = document.getElementById('node-accounts-json');
+        const url = `${nodeURL}/zeta-chain/observer/nodeAccount`;
+        const response = await fetch(url);
+        const data = await response.json();
+        const element = createTreeView(div, data);
+    }
+    renderNodeAccounts();
+
+    async function renderObserverSet() {
+        const div = document.getElementById('observer-set-json');
+        const url = `${nodeURL}/zeta-chain/observer/observer_set`;
+        const response = await fetch(url);
+        const data = await response.json();
+        const element = createTreeView(div, data);
+    }
+    renderObserverSet();
 })();
