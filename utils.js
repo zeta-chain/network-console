@@ -1,6 +1,33 @@
 // const Web3 = require('web3');
 
+function createTreeView(element, obj) {
+    for (let key in obj) {
+        // Create a container for each key-value pair
+        let pairContainer = document.createElement('div');
+        pairContainer.style.marginLeft = '20px';
 
+        // Create and append the key element
+        let keyElement = document.createElement('span');
+        keyElement.textContent = key + ': ';
+        pairContainer.appendChild(keyElement);
+
+        // Check if the value is an object, if so, recursively create its tree view
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            let subTree = createTreeView(document.createElement('div'), obj[key]);
+            pairContainer.appendChild(subTree);
+        } else {
+            // If the value is not an object, just append the value
+            let valueElement = document.createElement('span');
+            valueElement.textContent = obj[key];
+            pairContainer.appendChild(valueElement);
+        }
+
+        // Append the key-value pair container to the element
+        element.appendChild(pairContainer);
+    }
+
+    return element;
+}
 
 function base64ToUint8Array(base64) {
     const binaryString = atob(base64);

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Parameters</title>
+    <link rel="stylesheet" href="./main.css">
+</head>
+<body>
+<div id="links" style="text-align: center;font-size: 20px;display: flex;justify-content: space-between;">
+    <span class="flexible-filler"></span>
+    <a href="./index.html">Basics</a>  <span class="flexible-filler"></span>
+    <a href="./zevm.html">zEVM</a>  <span class="flexible-filler"></span>
+    <a href="./zetaclients.html">ZetaClients</a>  <span class="flexible-filler"></span>
+    <a href="./crosschain.html">Cross-Chain Module</a><span class="flexible-filler"></span>
+    <a href="./params.html">Params</a><span class="flexible-filler"></span>
+    <a href="./consensus.html">Consensus</a>       <span class="flexible-filler"></span>
+    <a href="./wallet.html">Wallet</a>     <span class="flexible-filler"></span>
+</div>
+
+<h1 id="sec-cross-chain-module">Important Params</h1>
+<div class="container">
+    <div class="item">
+        <b>Observer Params</b>
+        <div id="observer-params-json"></div>
+    </div>
+    <div class="item">
+        <b>Chain Params</b>
+        <div id="chain-params-json"></div>
+    </div>
+    <div class="item">
+        <b>Slashing</b>
+        <div id="slashing-params-json"></div>
+    </div>
+    <div class="item">
+        <b>Staking</b>
+        <div id="staking-params-json"></div>
+    </div>
+    <div class="item">
+        <b>Emission</b>
+        <div id="emission-params-json"></div>
+    </div>
+    <div class="item">
+        <b>Governance</b>
+        <div id="gov-params-json-voting"></div>
+        <div id="gov-params-json-tallying"></div>
+        <div id="gov-params-json-deposit"></div>
+    </div>
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+<!-- <script src="./common.js"></script> -->
+<script src="./utils.js"></script>
+<script src="./tag.js"></script>
+<script type="module" src="params.js"></script>
+</body>
+</html>
