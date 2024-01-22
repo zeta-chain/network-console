@@ -52,6 +52,11 @@
     </div>
 
     <div class="item">
+      <b>Current TSS Pubkey and Addresses</b>
+      <pre id="tss-summary"></pre>
+    </div>
+
+    <div class="item">
       <b>ZETA Supply: </b>
       <pre id="supply-summary"></pre>
       <button onclick="toggleDropdown('supply')">Raw JSON</button>
@@ -137,6 +142,9 @@
 <script src="./utils.js"></script>
 <script src="./tag.js"></script>
 <script type="module" src="athens3-dash.js"></script>
+  <script type="module">
+    import cosmjsamino from 'https://cdn.jsdelivr.net/npm/@cosmjs/amino@0.32.2/+esm'
+  </script>
 
 
 

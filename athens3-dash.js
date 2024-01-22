@@ -1,9 +1,25 @@
 import {decode, encode, convertbits, encodings} from './bech32.js';
 import './bitcoinjs-lib.js';
+import './web3.min.js';
+
 import {
     bitcoinChainID, tmURL, nodeURL, corsProxyURL, makeTableElement, addDetails, network,
     msToTime, makeTableElement2
 } from './common.js';
+// import {decodeBech32Pubkey} from './cosmjs-amino.js';\
+import amino from 'https://cdn.jsdelivr.net/npm/@cosmjs/amino@0.32.2/+esm'
+import elliptic  from 'https://cdn.jsdelivr.net/npm/elliptic@6.5.4/+esm';
+
+// console.log("elliptic", elliptic);
+import './ecpair.js';
+import './secp256k1.js';
+const ecc = secp256k1;
+const ECPair = ecpair.ECPairFactory(ecc);
+
+const ec = new elliptic.ec('secp256k1');
+
+
+console.log("decodeBech32Pubkey", amino.decodeBech32Pubkey);
 
 // Node info
 async function node_info() {
@@ -60,8 +76,27 @@ async function keygen() {
             method: 'GET',
         });
         let data2 = await p2.json();
-        const div2 = document.getElementById('current-tss');
-        div2.textContent = JSON.stringify(data2, null, 2);
+        console.log("tss data2", data2);
+        const pk = base64ToUint8Array(amino.decodeBech32Pubkey(data2.TSS.tss_pubkey).value);
+        console.log("pk", pk);
+        const pair = ECPair.fromPublicKey(pk);
+        const { address } = bitcoin.payments.p2wpkh({ pubkey: pair.publicKey });
+        console.log("btcAddress", address);
+        const e1 = ec.keyFromPublic(pk);
+        const uncompressedPk = e1.getPublic(false,'buffer');
+        console.log("e1 pubkey",uncompressedPk );
+        const ethAddr = Web3.utils.keccak256(uncompressedPk.slice(1)).slice(26);
+
+
+
+        const div2 = document.getElementById('tss-summary');
+        const summary2 = {
+            finalized_zeta_height: data2.TSS.finalizedZetaHeight,
+            tss_address_eth: ethAddr,
+            tss_address_btc: address,
+        }
+        div2.appendChild(makeTableElement(summary2));
+        // div2.textContent = JSON.stringify(data2, null, 2);
 
         resource = "zeta-chain/observer/get_tss_address";
         var p3 = await fetch(`${nodeURL}/${resource}?bitcoin_chain_id=${bitcoinChainID}`, {
@@ -71,9 +106,8 @@ async function keygen() {
 
         let pkBech32 = data2.TSS.tss_pubkey;
         let pkDecoded = decode(pkBech32, "bech32");
-        console.log(pkDecoded);
         let pkDecodedBytes = convertbits(pkDecoded.data, 5, 8, false);
-        console.log("pkDecoded", pkDecodedBytes);
+        console.log(`pkDecoded: len ${pkDecodedBytes.length}`, pkDecodedBytes);
         let pkDecodedHex = int8ArrayToHexRelaxed(pkDecodedBytes);
         console.log("pkDecoded hex", pkDecodedHex);
 
@@ -81,7 +115,8 @@ async function keygen() {
             status: kg.status, num_pubkeys: kg.granteePubkeys.length, block_num: kg.blockNumber,
             tss_pubkey: data2.TSS.tss_pubkey,
             tss_pubkey_hex: pkDecodedHex,
-            tss_address_eth: data3.eth, tss_address_btc: data3.btc
+            // tss_address_eth: data3.eth,
+	    // tss_address_btc: data3.btc
         };
         let div3 = document.getElementById("keygen-summary");
 

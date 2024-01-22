@@ -387,3 +387,5 @@ async function updateTxs(addr) {
     balance.replaceChildren(addDetails(`Transactions (${data.length})`, JSON.stringify(data, null, 2)));
     txs = data;
 }
+
+
