@@ -118,6 +118,11 @@ async function zetaclients_versions() {
 
         let lastscannedPromises = [];
         for (let i = 0; i < IPs.length; i++) {
+            const res = await fetch(`${corsProxyURL}/http://${IPs[i]}:8123/ping`);
+            if (!res.ok) {
+                console.log(`IP or 8123 port not availableError: ${IPs[i]} ${res.status}` );
+                continue;
+            }
             fetch(`${corsProxyURL}/http://${IPs[i]}:8123/ip`, {method: 'GET'})
                 .then(response => {
                     if (response.ok) {
