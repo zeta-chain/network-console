@@ -491,5 +491,5 @@ async function getGranteeFromGrantor(grantor) {
     if (S.length == 0) {
         return null;
     }
-    return S[0];
+    return [...new Set(S)];
 }
