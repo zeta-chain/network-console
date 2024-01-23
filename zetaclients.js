@@ -433,14 +433,17 @@ async function renderHotkey() {
         const balance = await getBalance(hotkeyAddress);
         const bal = Number(BigInt(balance));
         console.log("balance", nAcc, hotkeyAddress,  balance);
+        const authorized = await getAllAuthorization(operatorAddress, hotkeyAddress);
+        console.log("authorized", authorized);
         rows.push({
             "moniker": operatorAddressToMoniker[operatorAddress],
             "operatorAddress": operatorAddress,
 			"hotkeyAddress": hotkeyAddress,
 			"balance": bal/1e18,
+            "authorization": authorized,
 		});
     }
-    div.appendChild(makeTableElement2(rows, ["moniker","operatorAddress", "hotkeyAddress", "balance"]));
+    div.appendChild(makeTableElement2(rows, ["moniker","operatorAddress", "hotkeyAddress", "balance", "authorization"]));
 }
 
 renderHotkey();
@@ -492,4 +495,19 @@ async function getGranteeFromGrantor(grantor) {
         return null;
     }
     return [...new Set(S)];
+}
+
+// aux functions
+
+async function getAllAuthorization(grantor, grantee) {
+    const url = `${nodeURL}/cosmos/authz/v1beta1/grants?granter=${grantor}&grantee=${grantee}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    // console.log("grantsss", data);
+    const auths = [];
+    for (let i=0; i<data.grants.length; i++) {
+        const grant = data.grants[i];
+        auths.push(grant.authorization.msg);
+    }
+    return auths;
 }
