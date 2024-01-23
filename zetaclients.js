@@ -444,3 +444,52 @@ async function renderHotkey() {
 }
 
 renderHotkey();
+
+async function renderValidatorGrantorGrantee() {
+    const url = `${nodeURL}/cosmos/staking/v1beta1/validators`;
+    const response = await fetch(url);
+    const data = await response.json();
+    const operAddrToMonikerGrantee = {}
+    for (let i=0; i<data.validators.length; i++) {
+        const val = data.validators[i];
+        const d = decode(val.operator_address, "bech32");
+        const a = convertbits(d.data, 5, 8, false);
+        const valAddress = encode("zeta", convertbits(a, 8, 5, true), "bech32");
+        operAddrToMonikerGrantee[valAddress] = val.description.moniker;
+        const grantee = await getGranteeFromGrantor(valAddress);
+        operAddrToMonikerGrantee[valAddress] = {
+            "moniker": val.description.moniker,
+            "grantee": grantee,
+        };
+    }
+    const div = document.getElementById('validator-granter-grantee');
+    // const element = createTreeView(div, operAddrToMonikerGrantee);
+    const rows = [];
+    for (let key in operAddrToMonikerGrantee) {
+        const val = operAddrToMonikerGrantee[key];
+        rows.push({
+            "moniker": val.moniker,
+            "grantor": key,
+            "grantee": val.grantee,
+        });
+    }
+    div.appendChild(makeTableElement2(rows, ["moniker", "grantor", "grantee"]));
+    console.log("operAddrToMonikerGrantee", operAddrToMonikerGrantee);
+}
+renderValidatorGrantorGrantee();
+
+async function getGranteeFromGrantor(grantor) {
+    const url = `${nodeURL}/cosmos/authz/v1beta1/grants/granter/${grantor}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log("grants", data);
+    const S = [];
+    for (let i=0; i<data.grants.length; i++) {
+        const grant = data.grants[i];
+        S.push(grant.grantee);
+    }
+    if (S.length == 0) {
+        return null;
+    }
+    return S[0];
+}
