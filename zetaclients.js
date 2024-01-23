@@ -435,12 +435,13 @@ async function renderHotkey() {
         console.log("balance", nAcc, hotkeyAddress,  balance);
         const authorized = await getAllAuthorization(operatorAddress, hotkeyAddress);
         console.log("authorized", authorized);
+
         rows.push({
             "moniker": operatorAddressToMoniker[operatorAddress],
             "operatorAddress": operatorAddress,
 			"hotkeyAddress": hotkeyAddress,
 			"balance": bal/1e18,
-            "authorization": authorized,
+            "authorization": authorized.map((x)=>x.split(".")[3]),
 		});
     }
     div.appendChild(makeTableElement2(rows, ["moniker","operatorAddress", "hotkeyAddress", "balance", "authorization"]));
