@@ -1,4 +1,5 @@
 import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
+// import {create} from "./secp256k1";
 
 (async () => {
     async function renderChainParams() {
@@ -58,8 +59,9 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
         const response = await fetch(url);
         const data = await response.json();
         const element = createTreeView(div, data);
+        return data;
     }
-    renderObserverParams();
+    const obP = renderObserverParams();
 
     async function renderNodeAccounts() {
         const div = document.getElementById('node-accounts-json');
@@ -67,8 +69,12 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
         const response = await fetch(url);
         const data = await response.json();
         const element = createTreeView(div, data);
+        return data;
+        const grantees = data.NodeAccount.map((x)=>x.granteeAddress);
+        div.appendChild(createTreeView(document.createElement("div"), grantees));
     }
-    renderNodeAccounts();
+    const nAccP = renderNodeAccounts();
+
 
     async function renderObserverSet() {
         const div = document.getElementById('observer-set-json');
@@ -78,4 +84,13 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
         const element = createTreeView(div, data);
     }
     renderObserverSet();
+
+    async function renderCrosschainFlags() {
+        const div = document.getElementById('crosschain-flags-json');
+        const url = `${nodeURL}/zeta-chain/observer/crosschain_flags`;
+        const response = await fetch(url);
+        const data = await response.json();
+        const element = createTreeView(div, data);
+    }
+    renderCrosschainFlags();
 })();
