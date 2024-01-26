@@ -66,7 +66,7 @@ const ECPair = ecpair.ECPairFactory(ecc);
 
 let NETWORK;
 let BLOCKCYPHER;
-if (network == "mockmain") {
+if (network == "mockmain" || network == "mainnet") {
     NETWORK = bitcoin.networks.mainnet;
     BLOCKCYPHER = "https://api.blockcypher.com/v1/btc/main";
 } else {
