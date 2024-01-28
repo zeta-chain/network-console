@@ -233,12 +233,14 @@ window.onload = (async () => {
 		console.log("coins", coins);
 		for (let coin of coins) {
 			console.log("## coin", coin.coin_type);
-			// if (coin.coin_type != "Gas") {
+
 			let pair = await getPair(coin.zrc20_contract_address, wzetaAddress)
 			console.log("pair", pair);
+			if (pair == "0x0000000000000000000000000000000000000000")
+				continue;
 			pools[i] = await fillPoolInfo(chainIDs[i], pair, coin.decimals);
 			i++;
-			// }
+
 		}
 
 
