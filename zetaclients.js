@@ -57,6 +57,9 @@ async function zetaclients_versions() {
         let th10 = document.createElement('th');
         th10.innerText = "P2P IP";
         headRow.appendChild(th10);
+        let th11 = document.createElement('th');
+        th11.innerText = "Last Core Block";
+        headRow.appendChild(th11);
 
         let headRow2 = document.createElement('tr');
         thead.appendChild(headRow2);

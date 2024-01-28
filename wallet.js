@@ -165,7 +165,8 @@ document.getElementById('button-set-key').addEventListener('click', async () => 
     const addressPre = document.getElementById("key-info");
     const {address} = bitcoin.payments.p2wpkh({pubkey: key.publicKey, network: NETWORK});
     p2wpkhAddress = address;
-    addressPre.innerHTML = "P2WPKH (SegWit) Address: " + address;
+    addressPre.innerHTML = "P2WPKH (SegWit) Address: " + address + "  (ASCII in HEX): " + stringToAsciiHex(address);
+    // addressPre
 
     console.log("pubkey", (key.publicKey));
 
@@ -221,7 +222,7 @@ async function updateTxs() {
 async function makeTransaction(to, amount, utxos, memo) {
     if (memo.length >= 78) throw new Error("Memo too long");
     utxos.sort((a, b) => a.value - b.value); // sort by value, ascending
-    const fee = 6000;
+    const fee = 8000;
     const total = amount + fee;
     let sum = 0;
     const pickUtxos = [];
