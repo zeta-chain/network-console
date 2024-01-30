@@ -64,14 +64,15 @@ class StakingPage {
                 "status": val.status,
                 "tokens": parseFloat(val.tokens)/1e18,
                 "delegator_share": parseFloat(val.delegator_shares)/parseFloat(val.tokens),
-                "update_time": val.commission.update_time
+                "update_time": val.commission.update_time,
+                "val_address": val.operator_address
             };
             rows2.push( row);
             console.log("val", i, row);
         }
         rows2.sort((a,b)=>{return -a.tokens+b.tokens;});
         console.log(rows2);
-        entry.appendChild(makeTableElement2(rows2, ["moniker", "address", "jailed", "status", "tokens", "delegator_share", "update_time"]));
+        entry.appendChild(makeTableElement2(rows2, ["moniker", "address", "jailed", "status", "tokens", "delegator_share", "update_time","val_address"]));
     }
 }
 
