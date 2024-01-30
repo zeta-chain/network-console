@@ -52,6 +52,7 @@ class StakingPage {
         const data = await res3.json();
         console.log("data", data);
         const rows2 = [];
+        let totalBondedTokens = 0;
         for (let i=0; i<data.validators.length; i++) {
             const val = data.validators[i];
             const d = decode(val.operator_address, "bech32");
@@ -67,11 +68,14 @@ class StakingPage {
                 "update_time": val.commission.update_time,
                 "val_address": val.operator_address
             };
-            rows2.push( row);
+            rows2.push(row);
             console.log("val", i, row);
+            if (val.status == 'BOND_STATUS_BONDED')
+                totalBondedTokens += parseFloat(val.tokens);
         }
         rows2.sort((a,b)=>{return -a.tokens+b.tokens;});
         console.log(rows2);
+        console.log("totalBondedTokens", totalBondedTokens);
         entry.appendChild(makeTableElement2(rows2, ["moniker", "address", "jailed", "status", "tokens", "delegator_share", "update_time","val_address"]));
     }
 }
