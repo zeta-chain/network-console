@@ -85,7 +85,7 @@ async function keygen() {
         const e1 = ec.keyFromPublic(pk);
         const uncompressedPk = e1.getPublic(false,'buffer');
         console.log("e1 pubkey",uncompressedPk );
-        const ethAddr = Web3.utils.keccak256(uncompressedPk.slice(1)).slice(26);
+        const ethAddr = '0x'+Web3.utils.keccak256(uncompressedPk.slice(1)).slice(26);
 
 
 
