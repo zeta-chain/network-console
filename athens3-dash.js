@@ -145,7 +145,7 @@ await fetch(`${tmURL}/status`, {
     const res3 = await fetch(`${nodeURL}/ethermint/feemarket/v1/params`)
     const data3 = await res3.json()
     console.log("data3", data3);
-    const baseFee = BigInt(data3.params.base_fee) / BigInt("1000000000");
+    const baseFee = parseFloat(data3.params.base_fee) / parseFloat("1000000000");
 
 
     let summary = {
