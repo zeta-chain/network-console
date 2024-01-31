@@ -93,4 +93,14 @@ import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashS
         const element = createTreeView(div, data);
     }
     renderCrosschainFlags();
+
+    async function renderBlockParams() {
+        const div = document.getElementById('block-params-json');
+        const url = `${nodeURL}/cosmos/params/v1beta1/params?subspace=baseapp&key=BlockParams`;
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+        const element = createTreeView(div, data);
+    }
+    renderBlockParams();
 })();
