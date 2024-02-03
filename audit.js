@@ -12,6 +12,7 @@ class AuditPage {
         this.getWeb3();
         await this.getSystemContracts();
         await this.getSystemPools();
+        await this.getERC20Custody();
     }
 
     async getSystemContracts() {
@@ -26,6 +27,24 @@ class AuditPage {
         let p2 = await this.systemContract.methods.uniswapv2FactoryAddress().call();
         this.uniswapv2FactoryAddress = p2;
         this.uniswapv2Factory = new this.web3zevm.eth.Contract(this.UniswapV2PairABI, this.uniswapv2FactoryAddress);
+    }
+
+    async getERC20Custody() {
+        this.erc20CustodyAddress = {};
+        for (let i=0; i<externalChainIDs.length; i++) {
+
+            const chainID = externalChainIDs[i];
+            if (chainID == 8332) continue;
+            const resource = `${nodeURL}/zeta-chain/observer/get_chain_params_for_chain/${chainID}`;
+            const p = await fetch(resource, {
+                method: 'GET',
+            });
+            const chainParams = await p.json();
+            console.log("chainParams", chainParams);
+            const erc20CustodyAddress = chainParams.chain_params.erc20_custody_contract_address;
+            console.log("erc20CustodyAddress", erc20CustodyAddress);
+            this.erc20CustodyAddress[`${chainID}`] = erc20CustodyAddress;
+        }
     }
 
     async getTssAddress() {
@@ -126,6 +145,15 @@ class AuditPage {
                 console.log("btc address info", data);
                 assets = (data.chain_stats.funded_txo_sum - data.chain_stats.spent_txo_sum) / Math.pow(10, 8);
             }
+        } else if (fcoin.coin_type == "ERC20") {
+            const foreignWeb3 = this.web3ByChainId[chainID];
+            const erc20CustodyAddress = this.erc20CustodyAddress[fcoin.foreign_chain_id];
+            console.log("erc20CustodyAddress", erc20CustodyAddress);
+            console.log("fcoin.asset fcoin.chainid", fcoin.asset, fcoin.foreign_chain_id);
+            const erc20 = new foreignWeb3.eth.Contract(this.ZRC20ABI, fcoin.asset);
+            const r = await erc20.methods.balanceOf(erc20CustodyAddress).call();
+            console.log("erc20 balance", r);
+            assets = r / Math.pow(10, decimals);
         }
         const zrc20 = new this.web3zevm.eth.Contract(this.ZRC20ABI, fcoin.zrc20_contract_address);
         liabilities = await zrc20.methods.totalSupply().call();
@@ -140,6 +168,8 @@ class AuditPage {
             const poolAddress = this.systemPoolAddresses[chainID];
             poolBalance = await zrc20.methods.balanceOf(poolAddress).call();
             poolBalance = poolBalance / Math.pow(10, decimals);
+        } else if (fcoin.coin_type == "ERC20") {
+
         }
 
         console.log("address explorer", AddressExplorerByChainID[chainID]);
