@@ -163,6 +163,9 @@ class AuditPage {
         let fungibleBalance = await zrc20.methods.balanceOf(fungibleModuleAddress).call();
         fungibleBalance = fungibleBalance / Math.pow(10, decimals);
 
+        liabilities -= fungibleBalance;
+        // assets += fungibleBalance;
+
         let poolBalance;
         if (fcoin.coin_type == "Gas") {
             const poolAddress = this.systemPoolAddresses[chainID];
@@ -181,7 +184,6 @@ class AuditPage {
             PRE(TEXT(`Chain ID: ${chainID}, Symbol: ${symbol}, Decimals: ${decimals}`)),
             PRE(
                 TEXT(`Liabilities (ZRC20 Supply):            ${liabilities}`), BR(),
-                TEXT(`  Fungile Module Balance:              ${fungibleBalance}`), BR(),
                 TEXT(`  System UniswapV2 Pool asset-wZETA:   ${poolBalance}`), BR(),
                 TEXT(`  Rest:                                ${liabilities - fungibleBalance - poolBalance}`), BR(),
             ),
@@ -193,6 +195,10 @@ class AuditPage {
             PRE(
                 TEXT(`Surplus:                               ${surplus}`), BR(),
             ),
+            PRE(
+                TEXT(`Fungile Module Balance:                ${fungibleBalance}`), BR(),
+            ),
+
         );
     }
 
