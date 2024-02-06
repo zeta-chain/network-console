@@ -606,7 +606,8 @@ export function renderHeader() {
     <a href="./params.html">Params</a><span class="flexible-filler"></span>
     <a href="./consensus.html">Consensus</a>       <span class="flexible-filler"></span>
     <a href="./wallet.html">Wallet</a>     <span class="flexible-filler"></span>
-    <a href="./audit.html">Audit</a>
+    <a href="./audit.html">Audit</a> <span class="flexible-filler"></span>
+    <a href="./staking.html">Staking</a>
 </div>
     `
     document.body.insertAdjacentHTML('afterbegin', headerHTML);

@@ -6,11 +6,12 @@ import {
     nodeURL,
     RPCByChainID,
     externalChainIDs,
-    makeTableElement2, makeTableElement
+    makeTableElement2, makeTableElement, renderHeader
 } from './common.js';
 import './web3.min.js';
 import {convertbits, decode, encode} from "./bech32.js";
 
+await renderHeader();
 
 class StakingPage {
     constructor() {
