@@ -106,7 +106,7 @@ if (network == "mockmain") {
     zetaclientIPs = ["50.16.78.24", "44.218.42.109","44.216.230.163"];
 } else if (network == "mainnet") {
     bitcoinChainID = 8332; 
-    zetaIP =  "100.71.167.102";
+    zetaIP =  "46.4.15.110";
     zetaChainID = 7000;
     RPCByChainID = {
         1: "https://eth.llamarpc.com",
