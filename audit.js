@@ -261,10 +261,14 @@ class AuditPage {
         for (const i in this.zrc20s) {
             const fcoin = this.zrc20s[i];
             console.log("foreign coin", fcoin);
-            entry.appendChild(await this.TSSReserveComponent(fcoin));
+            // entry.appendChild(await this.TSSReserveComponent(fcoin));
+            this.TSSReserveComponent(fcoin).then((v) => {
+                entry.appendChild(v);
+            });
         }
         entry.appendChild(H1("ZETA Supply"));
         entry.appendChild(await this.ZETASupplyComponent());
+
 
 
     }
