@@ -1,4 +1,13 @@
-import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
+import {
+	externalChainIDs,
+	addDetails,
+	nodeURL,
+	RPCByChainID,
+	corsProxyURL,
+	hashServerURL,
+	renderHeader
+} from './common.js';
+await renderHeader();
 
 (async () => {
     var connectorABI, zetaTokenABI, erc20CustodyABI;

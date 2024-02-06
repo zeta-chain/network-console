@@ -13,10 +13,11 @@ import {
     makeTableElement2,
     Chains,
     externalChainIDs,
-    network
+    network, renderHeader
 } from './common.js';
 import {encodings, decode, convertbits} from './bech32.js';
 
+await renderHeader();
 
 // console.log("Web3", Web3);
 let ZRC20ABI;

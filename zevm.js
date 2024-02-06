@@ -1,10 +1,21 @@
-import {evmURL, nodeURL, makeTableElementNew, externalChainIDs, getForegienCoins, Chains, network} from './common.js';
+import {
+	evmURL,
+	nodeURL,
+	makeTableElementNew,
+	externalChainIDs,
+	getForegienCoins,
+	Chains,
+	network,
+	renderHeader
+} from './common.js';
 
 // console.log("Web3", Web3);
 let ZRC20ABI;
 let UNISWAPV2FACTORYABI;
 let UNISWAPV2ROUTER02ABI;
 let UNISWAPV2PAIRABI;
+
+await renderHeader();
 
 async function read_abis() {
 	try {

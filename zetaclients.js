@@ -6,10 +6,12 @@ import {
     corsProxyURL,
     esploraAPIURL,
     externalChainIDs, makeTableElement2,
-    nodeURL,
+    nodeURL, renderHeader,
     RPCByChainID,
     zetaclientIPs
 } from './common.js';
+
+await renderHeader();
 
 // ---------------- zetaclients ------------------------------
 async function zetaclients_versions() {

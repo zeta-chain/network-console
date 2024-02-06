@@ -594,3 +594,21 @@ export function fromDecimals(amount, decimals) {
     return Number(BigInt(amount)) / Math.pow(10, decimals);
 }
 
+
+export function renderHeader() {
+    var headerHTML = `
+<div id="links" style="text-align: center;font-size: 20px;display: flex;justify-content: space-between;">
+    <span class="flexible-filler"></span>
+    <a href="./index.html">Basics</a>  <span class="flexible-filler"></span>
+    <a href="./zevm.html">zEVM</a>  <span class="flexible-filler"></span>
+    <a href="./zetaclients.html">ZetaClients</a>  <span class="flexible-filler"></span>
+    <a href="./crosschain.html">Cross-Chain Module</a><span class="flexible-filler"></span>
+    <a href="./params.html">Params</a><span class="flexible-filler"></span>
+    <a href="./consensus.html">Consensus</a>       <span class="flexible-filler"></span>
+    <a href="./wallet.html">Wallet</a>     <span class="flexible-filler"></span>
+    <a href="./audit.html">Audit</a>
+</div>
+    `
+    document.body.insertAdjacentHTML('afterbegin', headerHTML);
+
+}

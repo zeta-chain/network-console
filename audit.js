@@ -1,5 +1,9 @@
-import {AddressExplorerByChainID, bitcoinChainID, esploraAPIURL, evmURL, nodeURL, RPCByChainID,externalChainIDs} from './common.js';
+import {AddressExplorerByChainID, bitcoinChainID, esploraAPIURL, evmURL,
+    nodeURL, RPCByChainID,externalChainIDs, renderHeader}
+    from './common.js';
 import './web3.min.js';
+
+await renderHeader();
 
 class AuditPage {
     constructor() {

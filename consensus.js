@@ -1,4 +1,5 @@
-import {tmURL, nodeURL, addDetails, makeTableElement2, addDetails2, timeSince} from './common.js';
+import {tmURL, nodeURL, addDetails, makeTableElement2, addDetails2, timeSince, renderHeader} from './common.js';
+await renderHeader();
 
 async function buildValidatorAddressArray(validators, tmValMap) {
     function bytesToHex(bytes) {

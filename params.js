@@ -1,5 +1,15 @@
-import {externalChainIDs, addDetails, nodeURL, RPCByChainID, corsProxyURL, hashServerURL} from './common.js';
+import {
+    externalChainIDs,
+    addDetails,
+    nodeURL,
+    RPCByChainID,
+    corsProxyURL,
+    hashServerURL,
+    renderHeader
+} from './common.js';
 // import {create} from "./secp256k1";
+
+await renderHeader();
 
 (async () => {
     async function renderChainParams() {

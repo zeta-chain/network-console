@@ -4,7 +4,7 @@ import './web3.min.js';
 
 import {
     bitcoinChainID, tmURL, nodeURL, corsProxyURL, makeTableElement, addDetails, network,
-    msToTime, makeTableElement2
+    msToTime, makeTableElement2, renderHeader
 } from './common.js';
 // import {decodeBech32Pubkey} from './cosmjs-amino.js';\
 import amino from 'https://cdn.jsdelivr.net/npm/@cosmjs/amino@0.32.2/+esm'
@@ -18,8 +18,8 @@ const ECPair = ecpair.ECPairFactory(ecc);
 
 const ec = new elliptic.ec('secp256k1');
 
-
 console.log("decodeBech32Pubkey", amino.decodeBech32Pubkey);
+await renderHeader();
 
 // Node info
 async function node_info() {
