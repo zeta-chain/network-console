@@ -176,7 +176,7 @@ if (network == "mockmain") {
 } else { // default to athens3
     bitcoinChainID = 18332; 
     network = "athens3";
-    zetaIP = '46.4.15.110';
+    zetaIP = '100.88.13.140';
     zetaChainID = 7001
     RPCByChainID = {
         5: "https://rpc.ankr.com/eth_goerli",
