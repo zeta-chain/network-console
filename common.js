@@ -109,7 +109,7 @@ if (network == "mockmain") {
     zetaIP =  "46.4.15.110";
     zetaChainID = 7000;
     RPCByChainID = {
-        1: "https://eth.llamarpc.com",
+        1: "https://rpc.ankr.com/eth",
         56: "https://bsc-dataseed1.bnbchain.org",
         8332: "https://blockstream.info/api",
         7000: evmURL,
