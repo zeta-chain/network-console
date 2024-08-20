@@ -256,13 +256,16 @@ if (network == "mockmain") {
         "18.143.71.236",
         "54.254.133.239",
     ];
+    nodeURL = "https://athens.rpc.zetachain.com/D0608595-63FF-4EA9-91FC-0587BB0D968A/internal";
+    evmURL =  "https://athens.rpc.zetachain.com/D0608595-63FF-4EA9-91FC-0587BB0D968A/evm";
+    tmURL =   "https://athens.rpc.zetachain.com/D0608595-63FF-4EA9-91FC-0587BB0D968A/rpc";
 }
 
-nodeURL = `http://${zetaIP}:1317`;
-evmURL = `http://${zetaIP}:8545`;
+nodeURL = nodeURL ?? `http://${zetaIP}:1317`;
+evmURL = evmURL ?? `http://${zetaIP}:8545`;
 corsProxyURL = `http://${auxIP}:8088`;
 checkURL = `http://${auxIP}:8888`; // remote server that tests port 6668 p2p nodes
-tmURL = `http://${zetaIP}:26657`;
+tmURL = tmURL && `http://${zetaIP}:26657`;
 hashServerURL = `http://${auxIP}:9001`;
 RPCByChainID[zetaChainID] = evmURL;
 
