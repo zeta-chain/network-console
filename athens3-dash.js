@@ -99,11 +99,15 @@ async function keygen() {
         // div2.textContent = JSON.stringify(data2, null, 2);
 
         resource = "zeta-chain/observer/get_tss_address";
-        var p3 = await fetch(`${nodeURL}/${resource}?bitcoin_chain_id=${bitcoinChainID}`, {
-            method: 'GET',
-        });
-        let data3 = await p3.json();
-
+        try {
+            var p3 = await fetch(`${nodeURL}/${resource}/${bitcoinChainID}`, {
+                method: 'GET',
+            });
+            let data3 = await p3.json();
+            console.log(`data3`, data3);
+        } catch (e) {
+            console.log("error", e);
+        }
         let pkBech32 = data2.TSS.tss_pubkey;
         let pkDecoded = decode(pkBech32, "bech32");
         let pkDecodedBytes = convertbits(pkDecoded.data, 5, 8, false);
