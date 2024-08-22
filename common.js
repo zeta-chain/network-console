@@ -265,7 +265,7 @@ nodeURL = nodeURL ?? `http://${zetaIP}:1317`;
 evmURL = evmURL ?? `http://${zetaIP}:8545`;
 corsProxyURL = `http://${auxIP}:8088`;
 checkURL = `http://${auxIP}:8888`; // remote server that tests port 6668 p2p nodes
-tmURL = tmURL && `http://${zetaIP}:26657`;
+tmURL = tmURL ?? `http://${zetaIP}:26657`;
 hashServerURL = `http://${auxIP}:9001`;
 RPCByChainID[zetaChainID] = evmURL;
 
