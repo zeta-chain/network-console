@@ -17,7 +17,7 @@ await renderHeader();
 async function zetaclients_versions() {
     let IPs = zetaclientIPs;
     let ChainIDs = externalChainIDs;
-    let ipAPI = "http://ip-api.com/json";
+    let ipAPI = "${corsProxyURL}http://ip-api.com/json";
     try {
         let div = document.getElementById('zetaclients-summary');
         console.log(div);
@@ -123,12 +123,12 @@ async function zetaclients_versions() {
 
         let lastscannedPromises = [];
         for (let i = 0; i < IPs.length; i++) {
-            const res = await fetch(`${corsProxyURL}/http://${IPs[i]}:8123/ping`);
+            const res = await fetch(`${corsProxyURL}http://${IPs[i]}:8123/ping`);
             if (!res.ok) {
                 console.log(`IP or 8123 port not availableError: ${IPs[i]} ${res.status}` );
                 continue;
             }
-            fetch(`${corsProxyURL}/http://${IPs[i]}:8123/ip`, {method: 'GET'})
+            fetch(`${corsProxyURL}http://${IPs[i]}:8123/ip`, {method: 'GET'})
                 .then(response => {
                     if (response.ok) {
                         return response.text();
@@ -142,7 +142,7 @@ async function zetaclients_versions() {
             }).catch(err => {
                 console.log(err);
             });
-            fetch(`${corsProxyURL}/http://${IPs[i]}:8123/status`, {method: 'GET'})
+            fetch(`${corsProxyURL}http://${IPs[i]}:8123/status`, {method: 'GET'})
                 .then(response => {
                     if (response.ok) {
                         return response.json();
@@ -158,7 +158,7 @@ async function zetaclients_versions() {
                 console.log(err);
             });
 
-            fetch(`${corsProxyURL}/http://${IPs[i]}:8123/version`, {method: 'GET'})
+            fetch(`${corsProxyURL}http://${IPs[i]}:8123/version`, {method: 'GET'})
                 .then(response => {
                     if (response.ok) {
                         return response.text();
@@ -172,7 +172,7 @@ async function zetaclients_versions() {
                 console.log(err);
             });
 
-            // p2pPromises.push(fetch(`${corsProxyURL}/http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
+            p2pPromises.push(fetch(`${corsProxyURL}http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
             fetch(`${ipAPI}/${IPs[i]}`, {method: 'GET'})
                 .then(response => {
                     if (response.ok) {
@@ -201,7 +201,7 @@ async function zetaclients_versions() {
             }).catch(err => {
                 console.log(err);
             });
-            fetch(`${corsProxyURL}/http://${IPs[i]}:8123/laststarttimestamp`, {method: 'GET'})
+            fetch(`${corsProxyURL}http://${IPs[i]}:8123/laststarttimestamp`, {method: 'GET'})
                 .then(response => {
                     if (response.ok) {
                         return response.text();
@@ -215,7 +215,7 @@ async function zetaclients_versions() {
             }).catch(err => {
                 console.log(err);
             });
-            fetch(`${corsProxyURL}/http://${IPs[i]}:8123/lastscannedblock`, {method: 'GET'})
+            fetch(`${corsProxyURL}http://${IPs[i]}:8123/lastscannedblock`, {method: 'GET'})
                 .then(response => {
                     if (response.ok) {
                         return response.json();

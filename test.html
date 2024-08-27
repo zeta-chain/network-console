@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Proxy Test</title>
+</head>
+<body>
+    <h1>CORS Proxy Test</h1>
+    <button id="testButton">Test CORS Proxy</button>
+    <pre id="result"></pre>
+
+    <script>
+        document.getElementById('testButton').addEventListener('click', async () => {
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = 'Loading...';
+
+            try {
+                const proxyUrl = 'https://cors-proxy.zetachain.workers.dev/?url=';
+                const targetUrl = 'http://52.42.64.63:8123/ping'; // Replace with the HTTP URL you want to test
+                const encodedUrl = encodeURIComponent(targetUrl);
+                const response = await fetch(proxyUrl + encodedUrl, {
+                    method: 'GET',
+                    headers: {
+                        'x-cors-headers': JSON.stringify({
+                            'Custom-Header': 'CustomHeaderValue'
+                        })
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultElement.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultElement.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

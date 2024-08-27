@@ -110,6 +110,10 @@ if (network == "mockmain") {
     };
     zetaclientIPs = ["50.16.78.24", "44.218.42.109","44.216.230.163"];
 } else if (network == "mainnet") {
+    nodeURL = "https://zetachain-mainnet.g.allthatnode.com/archive/rest/ba2b12e90e6241b083db5a6f97261210";
+    evmURL =  "https://zetachain-mainnet.g.allthatnode.com/archive/evm/ba2b12e90e6241b083db5a6f97261210";
+    tmURL =   "https://zetachain-mainnet.g.allthatnode.com/archive/tendermint/ba2b12e90e6241b083db5a6f97261210";
+
     bitcoinChainID = 8332; 
     zetaIP =  "46.4.15.110";
     zetaChainID = 7000;
@@ -134,6 +138,8 @@ if (network == "mockmain") {
         "Validator Admin": "zeta1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqzgjegn",
         "Validator Operations": "zeta17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps03v8vg",
     };
+
+
 
     Chains = {
         1: {
@@ -185,18 +191,18 @@ if (network == "mockmain") {
         "208.91.106.108",
         "15.235.10.84"
     ];
-    evmTxURL = "https://zetachain-evm.blockpi.network:443/v1/rpc/public";
-} else { // default to athens3
+}
+
+else { // default to athens3
     bitcoinChainID = 18332; 
     network = "athens3";
     zetaIP = '100.88.13.140';
     zetaChainID = 7001
     RPCByChainID = {
-        // 5: "https://rpc.ankr.com/eth_goerli",
-        11155111: "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
+        5: "https://rpc.ankr.com/eth_goerli",
+        11155111: "https://rpc.ankr.com/eth_sepolia",
         97: "https://data-seed-prebsc-1-s1.binance.org:8545",
-        // 80001: "https://rpc.ankr.com/polygon_mumbai",
-        80002: "https://rpc.ankr.com/polygon_amoy",
+        80001: "https://rpc.ankr.com/polygon_amoy",
         18332: "https://blockstream.info/testnet/api",
         7001: evmURL,
     };
@@ -259,12 +265,20 @@ if (network == "mockmain") {
                 "symbol": "tBTC",
                 "decimals": 8
             },
+        11155111: {
+            "chainId": "11155111",
+            "chainName": "Sepolia Testnet",
+            "nativeCurrency": {
+                "name": "Sepolia Ether",
+                "symbol": "sETH",
+                "decimals": 18
+            },
+        },
         }
     };
-    zetaclientIPs = ["52.42.64.63", "150.136.176.81",
-        // "202.8.10.137",
-        // "35.210.142.91",
-        "bd-validator-01.testnet.zetachain.bdnodes.net",
+    zetaclientIPs = [
+        "52.42.64.63", 
+        "150.136.176.81",
         "54.39.18.86",
         "34.239.99.239",
         "3.218.170.198",
@@ -275,19 +289,20 @@ if (network == "mockmain") {
         "34.253.137.241",
         "18.143.71.236",
         "54.254.133.239",
+        "bd-validator-01.testnet.zetachain.bdnodes.net",
     ];
-    nodeURL = "https://athens.rpc.zetachain.com/D0608595-63FF-4EA9-91FC-0587BB0D968A/internal";
-    evmURL =  "https://athens.rpc.zetachain.com/D0608595-63FF-4EA9-91FC-0587BB0D968A/evm";
-    tmURL =   "https://athens.rpc.zetachain.com/D0608595-63FF-4EA9-91FC-0587BB0D968A/rpc";
+    nodeURL = "https://zetachain-athens.g.allthatnode.com/archive/rest/ba2b12e90e6241b083db5a6f97261210";
+    evmURL =  "https://zetachain-athens.g.allthatnode.com/archive/evm/ca13956db6b4450d83c840e55565e0a7";
+    tmURL =   "https://zetachain-athens.g.allthatnode.com/archive/tendermint/ba2b12e90e6241b083db5a6f97261210";
 }
 
-nodeURL = nodeURL ?? `http://${zetaIP}:1317`;
-evmURL = evmURL ?? `http://${zetaIP}:8545`;
-evmTxURL = evmTxURL ?? `http://${zetaIP}:8545`;
-corsProxyURL = `http://${auxIP}:8088`;
-checkURL = `http://${auxIP}:8888`; // remote server that tests port 6668 p2p nodes
-tmURL = tmURL ?? `http://${zetaIP}:26657`;
-hashServerURL = `http://${auxIP}:9001`;
+nodeURL = nodeURL ?? `${corsProxyURL}http://${zetaIP}:1317`;
+evmURL = evmURL ?? `${corsProxyURL}http://${zetaIP}:8545`;
+corsProxyURL = `https://pancors-f5ku3asrrq-uc.a.run.app/?url=`;
+evmTxURL = evmTxURL ?? `${corsProxyURL}http://${zetaIP}:8545`;
+checkURL = `${corsProxyURL}http://${auxIP}:8888`; // remote server that tests port 6668 p2p nodes
+tmURL = tmURL && `${corsProxyURL}http://${zetaIP}:26657`;
+hashServerURL = `${corsProxyURL}http://${auxIP}:9001`;
 RPCByChainID[zetaChainID] = evmURL;
 
 
@@ -302,9 +317,9 @@ export async function getForegienCoins() {
 }
 
 
-if (window.location.protocol === 'https:') {
-    alert('HTTPS does not work; force your browser to use HTTP instead.');
-}
+// if (window.location.protocol === 'https:') {
+//     alert('HTTPS does not work; force your browser to use HTTP instead.');
+// }
 
 
 
