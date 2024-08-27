@@ -11,6 +11,7 @@ export var externalChainIDs;
 export var Chains;
 export var zetaclientIPs;
 export var bitcoinChainID; 
+export var groupAdminAddresses;
 var zetaIP;
 var auxIP = "46.4.15.110";
 var zetaChainID;
@@ -64,6 +65,9 @@ if (network == "mockmain") {
     };
     esploraAPIURL = "https://blockstream.info/api";
     externalChainIDs = [1,56,8332];
+    groupAdminAddresses = {
+        "Network Admin": "zeta1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsxn0x73",
+    };
 
     Chains = {
         1: {
@@ -121,6 +125,12 @@ if (network == "mockmain") {
     };
     esploraAPIURL = "https://blockstream.info/api";
     externalChainIDs = [1,56,8332];
+    groupAdminAddresses = {
+        "Network Operations": "zeta1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsxn0x73",
+        "Network Admin": "zeta1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvs5wguxq",
+        "Validator Admin": "zeta1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqzgjegn",
+        "Validator Operations": "zeta17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps03v8vg",
+    };
 
     Chains = {
         1: {
@@ -193,6 +203,11 @@ if (network == "mockmain") {
     };
     esploraAPIURL = "https://blockstream.info/testnet/api";
     externalChainIDs = [5, 97, 80001, 18332];
+    groupAdminAddresses = {
+        "Network Admin": "zeta1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsxn0x73",
+        "Network Operations": "zeta1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsxn0x73",
+        "Validator Admin": "zeta1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvs5wguxq",
+    };
 
     Chains = {
         5: {
@@ -611,6 +626,7 @@ export function renderHeader() {
     <a href="./wallet.html">Wallet</a>     <span class="flexible-filler"></span>
     <a href="./audit.html">Audit</a> <span class="flexible-filler"></span>
     <a href="./staking.html">Staking</a>
+    <a href="./group-proposals.html">Admin Proposals</a>
 </div>
     `
     document.body.insertAdjacentHTML('afterbegin', headerHTML);
