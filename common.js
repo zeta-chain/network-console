@@ -115,12 +115,14 @@ if (network == "mockmain") {
     RPCByChainID = {
         1: "https://rpc.ankr.com/eth",
         56: "https://bsc-dataseed1.bnbchain.org",
+        137: "https://polygon.llamarpc.com",
         8332: "https://blockstream.info/api",
         7000: evmURL,
     };
     AddressExplorerByChainID = {
         1: "https://www.etherscan.io/address",
         56: "https://www.bscscan.com/address",
+        137: "https://polygonscan.com/address",
         8332: "https://blockstream.info/address",
     };
     esploraAPIURL = "https://blockstream.info/api";
