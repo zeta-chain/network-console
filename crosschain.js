@@ -521,7 +521,7 @@ await renderHeader();
 	const div = document.getElementById("pending");
 	for (let i = 0; i < externalChainIDs.length; i++) {
 	    let chainID = externalChainIDs[i];
-	    let resource = `${nodeURL}/zeta-chain/crosschain/cctxPending?chainId=${chainID}&pagination.limit=1`;
+	    let resource = `${nodeURL}/zeta-chain/crosschain/pendingCctx?chainId=${chainID}&pagination.limit=1`;
 	    let p = await fetch(resource, {method: 'GET'});
 	    const pendingNonces = []; 
 	    if (p.ok) {
