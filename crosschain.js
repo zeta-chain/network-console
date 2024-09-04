@@ -544,7 +544,8 @@ await renderHeader();
                 let data = await p.json();
                 for (let j = 0; j < data.CrossChainTx.length; j++) {
                     let cctx = data.CrossChainTx[j];
-                    const outs = cctx.outbound_tx_params;
+					console.log("cctx", cctx);
+                    const outs = cctx.outbound_params;
                     const out = outs[outs.length - 1];
                     pendingNonces.push(out.outbound_tx_tss_nonce);
                 }
