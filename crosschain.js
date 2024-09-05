@@ -547,7 +547,7 @@ await renderHeader();
 					console.log("cctx", cctx);
                     const outs = cctx.outbound_params;
                     const out = outs[outs.length - 1];
-                    pendingNonces.push(out.outbound_tx_tss_nonce);
+                    pendingNonces.push(out.tss_nonce);
                 }
                 console.log(`pending cctx chain id ${chainID}`, data);
                 div.appendChild(addDetails(`pending cctx chainID ${chainID}; #nonces: ${data.CrossChainTx.length}; nonces: ${pendingNonces}`, JSON.stringify(data.CrossChainTx, null, 2)));
