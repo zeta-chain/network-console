@@ -172,7 +172,7 @@ async function zetaclients_versions() {
                 console.log(err);
             });
 
-            p2pPromises.push(fetch(`${corsProxyURL}http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
+            // p2pPromises.push(fetch(`${corsProxyURL}http://${IPs[i]}:8123/p2p`, {method: 'GET'}));
             fetch(`${ipAPI}/${IPs[i]}`, {method: 'GET'})
                 .then(response => {
                     if (response.ok) {
