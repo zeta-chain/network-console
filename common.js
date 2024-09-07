@@ -191,20 +191,22 @@ if (network == "mockmain") {
     zetaIP = '100.88.13.140';
     zetaChainID = 7001
     RPCByChainID = {
-        5: "https://rpc.ankr.com/eth_goerli",
+        // 5: "https://rpc.ankr.com/eth_goerli",
+        11155111: "https://ethereum-sepolia.blockpi.network/v1/rpc/public",
         97: "https://data-seed-prebsc-1-s1.binance.org:8545",
-        80001: "https://rpc.ankr.com/polygon_mumbai",
+        // 80001: "https://rpc.ankr.com/polygon_mumbai",
+        80002: "https://rpc.ankr.com/polygon_amoy",
         18332: "https://blockstream.info/testnet/api",
         7001: evmURL,
     };
     AddressExplorerByChainID = {
-        5: "https://goerli.etherscan.io/address",
+        11155111: "https://sepolia.etherscan.io/address",
         97: "https://testnet.bscscan.com/address",
-        80001: "https://mumbai.polygonscan.com/address",
+        80002: "https://amoy.polygonscan.com/address",
         18332: "https://blockstream.info/testnet/address",
     };
     esploraAPIURL = "https://blockstream.info/testnet/api";
-    externalChainIDs = [5, 97, 80001, 18332];
+    externalChainIDs = [11155111, 97, 80002, 18332];
     groupAdminAddresses = {
         "Network Admin": "zeta1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsxn0x73",
         "Network Operations": "zeta1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsxn0x73",
