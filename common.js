@@ -206,7 +206,7 @@ if (network == "mockmain") {
         18332: "https://blockstream.info/testnet/address",
     };
     esploraAPIURL = "https://blockstream.info/testnet/api";
-    externalChainIDs = [11155111, 97, 80002, 18332];
+    externalChainIDs = [11155111, 97, 80002, 18332, 901];
     groupAdminAddresses = {
         "Network Admin": "zeta1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsxn0x73",
         "Network Operations": "zeta1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsxn0x73",
