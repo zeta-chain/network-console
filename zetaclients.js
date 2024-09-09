@@ -17,7 +17,7 @@ await renderHeader();
 async function zetaclients_versions() {
     let IPs = zetaclientIPs;
     let ChainIDs = externalChainIDs;
-    let ipAPI = "${corsProxyURL}http://ip-api.com/json";
+    let ipAPI = `${corsProxyURL}http://ip-api.com/json`;
     try {
         let div = document.getElementById('zetaclients-summary');
         console.log(div);

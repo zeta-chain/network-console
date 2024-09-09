@@ -296,6 +296,7 @@ else { // default to athens3
     tmURL =   "https://zetachain-athens.g.allthatnode.com/archive/tendermint/ba2b12e90e6241b083db5a6f97261210";
 }
 
+corsProxyURL = `https://pancors-f5ku3asrrq-uc.a.run.app/?url=`;
 nodeURL = nodeURL ?? `${corsProxyURL}http://${zetaIP}:1317`;
 evmURL = evmURL ?? `${corsProxyURL}http://${zetaIP}:8545`;
 corsProxyURL = `https://pancors-f5ku3asrrq-uc.a.run.app/?url=`;
