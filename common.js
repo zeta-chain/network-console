@@ -1,5 +1,6 @@
 export var nodeURL;
 export var evmURL;
+export var evmTxURL;
 export var corsProxyURL;
 export var checkURL;
 export var tmURL;
@@ -184,7 +185,7 @@ if (network == "mockmain") {
         "208.91.106.108",
         "15.235.10.84"
     ];
-
+    evmTxURL = "https://zetachain-evm.blockpi.network:443/v1/rpc/public";
 } else { // default to athens3
     bitcoinChainID = 18332; 
     network = "athens3";
@@ -282,6 +283,7 @@ if (network == "mockmain") {
 
 nodeURL = nodeURL ?? `http://${zetaIP}:1317`;
 evmURL = evmURL ?? `http://${zetaIP}:8545`;
+evmTxURL = evmTxURL ?? `http://${zetaIP}:8545`;
 corsProxyURL = `http://${auxIP}:8088`;
 checkURL = `http://${auxIP}:8888`; // remote server that tests port 6668 p2p nodes
 tmURL = tmURL ?? `http://${zetaIP}:26657`;

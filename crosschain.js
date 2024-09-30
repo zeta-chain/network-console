@@ -5,10 +5,12 @@ import {
     RPCByChainID,
     corsProxyURL,
     hashServerURL,
-    renderHeader
+    renderHeader, evmURL, evmTxURL
 } from './common.js';
 
 await renderHeader();
+var web3 = new Web3(`${evmTxURL}`);
+
 
 (async () => {
     var connectorABI, zetaTokenABI, erc20CustodyABI;
@@ -55,6 +57,7 @@ await renderHeader();
     }
 
     async function pendingOutboundQueue() {
+
         try {
             let resource = "zeta-chain/observer/TSS";
             let p1 = await fetch(`${nodeURL}/${resource}`, {
@@ -70,6 +73,31 @@ await renderHeader();
             let pending = data2.pending_nonces;
             pending = pending.filter((x) => (x.tss == TSS && x.chain_id != "7001"));
             console.log("PENDING", pending);
+            const t1 = Date.now()
+            for (let i=0; i<pending.length; i++) {
+                let p = pending[i]
+                try {
+                    resource = `zeta-chain/crosschain/cctx/${p.chain_id}/${p.nonce_low}`;
+                    let p3 = await fetch(`${nodeURL}/${resource}`, {method: 'GET'});
+                    let data3 = await p3.json();
+                    console.log("chain data8", data3);
+                    const in_params = data3.CrossChainTx.inbound_params;
+                    console.log("in_params", in_params);
+                    const in_bn = in_params.observed_external_height;
+                    console.log("in_bn", in_bn);
+                    const block = await web3.eth.getBlock(in_bn);
+                    console.log("block timestamp", block.timestamp);
+                    const t2 = new Date(block.timestamp * 1000);
+                    console.log("t2", t2);
+                    const diff_time = t1 - t2;
+                    let differenceInMinutes = diff_time / 1000 / 60;
+                    console.log("diff_time_minutes", differenceInMinutes);
+                    p.first_pending_time_minutes = differenceInMinutes;
+                } catch (error) {
+                    console.log('error', error);
+                }
+            }
+
 
             let p = [];
             // for (let i = 0; i < pending.length; i++) {
@@ -91,7 +119,7 @@ await renderHeader();
             pre.textContent = JSON.stringify(data2, null, 2);
 
             let div = document.getElementById("pending-outbound-queues-summary");
-            div.appendChild(makeTableElement2(pending, ["chain_id", "nonce_low", "nonce_high"]));
+            div.appendChild(makeTableElement2(pending, ["chain_id", "nonce_low", "nonce_high", "first_pending_time_minutes"]));
 
         } catch (error) {
             console.log('error', error);
