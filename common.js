@@ -43,10 +43,17 @@ if (savedNetwork) {
 // Step 3: Add event listener for when the selection changes
 networkSelector.addEventListener("change", function() {
     const selectedNetwork = networkSelector.value;
+    const oldNetwork = localStorage.getItem("network");
 
     // Step 4: Save the selection to localStorage
-    localStorage.setItem("network", selectedNetwork);
-    alert("refresh your page to take effect");
+    // Compare the new selection with the old value
+    if (selectedNetwork !== oldNetwork) {
+        console.log(`Network changed from ${oldNetwork} to ${selectedNetwork}`);
+        localStorage.setItem("network", selectedNetwork);
+        location.reload();
+    } else {
+        console.log(`Network selection unchanged: ${selectedNetwork}`);
+    }
 });
 export var network = localStorage.getItem("network");
 if (network == "mockmain") {
