@@ -25,6 +25,7 @@ const selectHTML = `
     <option value="athens3">Athens 3</option>
     <option value="mockmain">Mock Main</option>
     <option value="mainnet">Mainnet</option>
+    <option value="developnet">Developnet</option>
   </select>
 `;
 widgetContainer.innerHTML = selectHTML;
@@ -186,21 +187,37 @@ if (network == "mockmain") {
             },
         }
     };
-    // zetaclientIPs = ["50.16.78.24", "44.218.42.109","44.216.230.163"];
-    zetaclientIPs = [
-        "34.225.36.174",
-        "52.45.59.77",
-        "52.35.128.130",
-        "35.87.167.186",
-        "54.212.38.135",
-        "108.171.216.154",
-        "192.69.210.202",
-        "208.91.106.108",
-        "15.235.10.84"
-    ];
-}
+    zetaclientIPs = ["50.16.78.24", "44.218.42.109","44.216.230.163"];
+} else if (network == "developnet") {
+    bitcoinChainID = 18332; 
+    network = "developnet";
+    zetaChainID = 7001
+    RPCByChainID = {
+        1337: "https://develop-eth.zetachain.network",
+    };
+    AddressExplorerByChainID = {
+    };
+    esploraAPIURL = "";
+    externalChainIDs = [1337];
+    groupAdminAddresses = {};
 
-else { // default to athens3
+    Chains = {
+        1337: {
+            "chainId": "1337",
+            "chainName": "Goerli Localnet",
+            "nativeCurrency": {
+                "name": "Goerli Ether",
+                "symbol": "gETH",
+                "decimals": 18
+            },
+        },
+    }
+    // can't talk directly to zetaclient on developnet
+    zetaclientIPs = [];
+    nodeURL = "https://develop-cosmos-api-0.zetachain.network";
+    evmURL =  "https://develop-zevm-0.zetachain.network";
+    tmURL =   "https://develop-cometbft-0.zetachain.network";
+} else { // default to athens3
     bitcoinChainID = 18332; 
     network = "athens3";
     zetaIP = '100.88.13.140';
@@ -309,7 +326,7 @@ evmURL = evmURL ?? `${corsProxyURL}http://${zetaIP}:8545`;
 corsProxyURL = `https://pancors-f5ku3asrrq-uc.a.run.app/?url=`;
 evmTxURL = evmTxURL ?? `${corsProxyURL}http://${zetaIP}:8545`;
 checkURL = `${corsProxyURL}http://${auxIP}:8888`; // remote server that tests port 6668 p2p nodes
-tmURL = tmURL && `${corsProxyURL}http://${zetaIP}:26657`;
+tmURL = `${corsProxyURL}${tmURL}`;
 hashServerURL = `${corsProxyURL}http://${auxIP}:9001`;
 RPCByChainID[zetaChainID] = evmURL;
 
