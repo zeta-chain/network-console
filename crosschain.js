@@ -148,7 +148,7 @@ var web3 = new Web3(`${evmTxURL}`);
         div.appendChild(makeTableElement2(states, ["chain_id", "earliest_height", "latest_height"]));
     }
 
-    blockHeaderState();
+    // blockHeaderState();
 
 
     async function externalContractAddress() {
@@ -284,7 +284,7 @@ var web3 = new Web3(`${evmTxURL}`);
         await validateContracts(80001);
     }
 
-    document.getElementById("validate-contracts").onclick = validate;
+    // document.getElementById("validate-contracts").onclick = validate;
 
     // validate();
 
@@ -317,113 +317,113 @@ var web3 = new Web3(`${evmTxURL}`);
         return data;
     }
 
-    document.getElementById("input-debug-intx").onchange = async function () {
-        let intxHash = document.getElementById("input-debug-intx").value;
-        const cctxIndex = await inTxHashToCCTXIndex(intxHash);
-        console.log("cctxIndex", cctxIndex);
-        if (cctxIndex) {
-            document.getElementById("input-debug-cctx").value = cctxIndex.inTxHashToCctx.cctx_index;
-        }
-    };
-    document.getElementById("button-debug-intx").onclick = document.getElementById("input-debug-intx").onchange;
+    // document.getElementById("input-debug-intx").onchange = async function () {
+    //     let intxHash = document.getElementById("input-debug-intx").value;
+    //     const cctxIndex = await inTxHashToCCTXIndex(intxHash);
+    //     console.log("cctxIndex", cctxIndex);
+    //     if (cctxIndex) {
+    //         document.getElementById("input-debug-cctx").value = cctxIndex.inTxHashToCctx.cctx_index;
+    //     }
+    // };
+    // document.getElementById("button-debug-intx").onclick = document.getElementById("input-debug-intx").onchange;
 
-    async function debugCCTX() {
-        function append(message) {
-            appendMessage(message, "console-debug-cctx");
-        }
+    // async function debugCCTX() {
+    //     function append(message) {
+    //         appendMessage(message, "console-debug-cctx");
+    //     }
+    //
+    //     clearConsole("console-debug-cctx");
+    //     let input = document.getElementById("input-debug-cctx").value;
+    //     if (input.length != 66) {
+    //         append("ERROR: input.length != 66");
+    //         return;
+    //     }
+    //     append("Querying CCTX by hash...");
+    //     let cctx = await cctxByHash(input);
+    //     let pre = document.getElementById("cctx-json");
+    //     pre.innerText = JSON.stringify(cctx, null, 2);
+    //     append(`OK: found CCTX ${input}`);
+    //     append(`Checking CCTX status...`);
+    //     // debug session
+    //     const status = cctx.CrossChainTx.cctx_status;
+    //     const outParams = cctx.CrossChainTx.outbound_tx_params;
+    //     const curOutParam = outParams[outParams.length - 1];
+    //     console.log(curOutParam);
+    //     const cc = cctx.CrossChainTx;
+    //
+    //     if (status.status == "OutboundMined") {
+    //         append("OK: CCTX status is OutboundMined");
+    //         append("  Checking outbound tx confirmation votes...");
+    //         const chainID = curOutParam.receiver_chainId;
+    //         const txhash = curOutParam.outbound_tx_hash;
+    //         append("  outbound chainID: " + chainID);
+    //         if (txhash.length == 66) {
+    //             const receipt = await getReceipt(chainID, txhash);
+    //             append("  txhash: " + txhash);
+    //             append("  receipt: " + JSON.stringify(receipt, null, 2));
+    //         }
+    //         // const ballotIndex = await getOutTxBallot(cc.index, curOutParam.outbound_tx_hash, outBlockHeight, amount, chainId, nonce, coinType);
+    //     } else if (status.status == "Aborted") {
+    //         append("OK: CCTX status is Aborted");
+    //         append(`  Aborted reason: ${status.status_message}`);
+    //     } else if (status.status == "PendingOutbound") {
+    //         append("PENDING: CCTX status is PendingOutbound");
+    //         append("  Is it OK to be in PENDING at this time?");
+    //
+    //         const finalizedBlock = cctx.CrossChainTx.inbound_tx_params.inbound_tx_finalized_zeta_height;
+    //         append("    inTx finalized at Zeta block " + finalizedBlock);
+    //
+    //         let currentBlock = await getCurrentBlock();
+    //         append(`    current block is ${currentBlock}`);
+    //         const passedBlocks = currentBlock - finalizedBlock;
+    //         append(`    ${passedBlocks} blocks has passed; roughly ${passedBlocks * 5} seconds`);
+    //         if (passedBlocks > 100) {
+    //             append("    ERROR: CCTX has been in PendingOutbound for too long");
+    //         } else {
+    //             append("    OK: CCTX has been in PendingOutbound for a reasonable time; please wait.");
+    //         }
+    //         append(`  Why was it in PENDING for so long?`);
+    //         append(`    Has outbound tx been keysigned and broadcasted? Checking txtracker...`);
+    //         const outChainID = curOutParam.receiver_chainId;
+    //         const outNonce = curOutParam.outbound_tx_tss_nonce;
+    //         console.log("outChainID", outChainID);
+    //         console.log("outNonce", outNonce);
+    //         let txtracker = await getTxTracker(outChainID, outNonce);
+    //         if (txtracker == 404) {
+    //             append("    ERROR: txtracker not found");
+    //             append("");
+    //             append("This likely suggest that keysign failure and no outbound tx has been signed/broadcasted");
+    //         } else {
+    //             const txhash = txtracker.outTxTracker.hash_list[0].tx_hash;
+    //             const chainId = outChainID;
+    //             append("    OK: txtracker found: ");
+    //             append(`      txhash: ${txtracker.outTxTracker.hash_list[0].tx_hash}`);
+    //             append(`    verifying this txhash on external chain...`);
+    //             const receipt = getReceipt(chainId, txhash);
+    //             if (receipt) {
+    //                 append(`      OK: found txhash receipt on external chain`);
+    //                 append(`      Getting the outtx confirmation ballot...`);
+    //                 const ballotIndex = await getOutTxBallot(cc.index, curOutParam.outbound_tx_tss_nonce, curOutParam.outbound_tx_params.outbound_tx_amount, chainId, curOutParam.outbound_tx_params.outbound_tx_nonce, curOutParam.outbound_tx_params.outbound_tx_coin_type);
+    //                 if (ballotIndex == 404) {
+    //                     append(`      ERROR: ballot not found`);
+    //                 } else {
+    //                     append(`      OK: ballot found: ${ballotIndex}`);
+    //                 }
+    //
+    //                 append("");
+    //                 append("Diagnosis: Failure to observe and report outbound tx on external chain");
+    //             } else {
+    //                 append(`      ERROR: cannot find txhash`);
+    //                 append("");
+    //                 append(`Diagnosis: txtrack may have contained invalid txhash; check ${txhash} on chain ${chainId} manually to verify`);
+    //             }
+    //
+    //         }
+    //
+    //     }
+    // }
 
-        clearConsole("console-debug-cctx");
-        let input = document.getElementById("input-debug-cctx").value;
-        if (input.length != 66) {
-            append("ERROR: input.length != 66");
-            return;
-        }
-        append("Querying CCTX by hash...");
-        let cctx = await cctxByHash(input);
-        let pre = document.getElementById("cctx-json");
-        pre.innerText = JSON.stringify(cctx, null, 2);
-        append(`OK: found CCTX ${input}`);
-        append(`Checking CCTX status...`);
-        // debug session
-        const status = cctx.CrossChainTx.cctx_status;
-        const outParams = cctx.CrossChainTx.outbound_tx_params;
-        const curOutParam = outParams[outParams.length - 1];
-        console.log(curOutParam);
-        const cc = cctx.CrossChainTx;
-
-        if (status.status == "OutboundMined") {
-            append("OK: CCTX status is OutboundMined");
-            append("  Checking outbound tx confirmation votes...");
-            const chainID = curOutParam.receiver_chainId;
-            const txhash = curOutParam.outbound_tx_hash;
-            append("  outbound chainID: " + chainID);
-            if (txhash.length == 66) {
-                const receipt = await getReceipt(chainID, txhash);
-                append("  txhash: " + txhash);
-                append("  receipt: " + JSON.stringify(receipt, null, 2));
-            }
-            // const ballotIndex = await getOutTxBallot(cc.index, curOutParam.outbound_tx_hash, outBlockHeight, amount, chainId, nonce, coinType);
-        } else if (status.status == "Aborted") {
-            append("OK: CCTX status is Aborted");
-            append(`  Aborted reason: ${status.status_message}`);
-        } else if (status.status == "PendingOutbound") {
-            append("PENDING: CCTX status is PendingOutbound");
-            append("  Is it OK to be in PENDING at this time?");
-
-            const finalizedBlock = cctx.CrossChainTx.inbound_tx_params.inbound_tx_finalized_zeta_height;
-            append("    inTx finalized at Zeta block " + finalizedBlock);
-
-            let currentBlock = await getCurrentBlock();
-            append(`    current block is ${currentBlock}`);
-            const passedBlocks = currentBlock - finalizedBlock;
-            append(`    ${passedBlocks} blocks has passed; roughly ${passedBlocks * 5} seconds`);
-            if (passedBlocks > 100) {
-                append("    ERROR: CCTX has been in PendingOutbound for too long");
-            } else {
-                append("    OK: CCTX has been in PendingOutbound for a reasonable time; please wait.");
-            }
-            append(`  Why was it in PENDING for so long?`);
-            append(`    Has outbound tx been keysigned and broadcasted? Checking txtracker...`);
-            const outChainID = curOutParam.receiver_chainId;
-            const outNonce = curOutParam.outbound_tx_tss_nonce;
-            console.log("outChainID", outChainID);
-            console.log("outNonce", outNonce);
-            let txtracker = await getTxTracker(outChainID, outNonce);
-            if (txtracker == 404) {
-                append("    ERROR: txtracker not found");
-                append("");
-                append("This likely suggest that keysign failure and no outbound tx has been signed/broadcasted");
-            } else {
-                const txhash = txtracker.outTxTracker.hash_list[0].tx_hash;
-                const chainId = outChainID;
-                append("    OK: txtracker found: ");
-                append(`      txhash: ${txtracker.outTxTracker.hash_list[0].tx_hash}`);
-                append(`    verifying this txhash on external chain...`);
-                const receipt = getReceipt(chainId, txhash);
-                if (receipt) {
-                    append(`      OK: found txhash receipt on external chain`);
-                    append(`      Getting the outtx confirmation ballot...`);
-                    const ballotIndex = await getOutTxBallot(cc.index, curOutParam.outbound_tx_tss_nonce, curOutParam.outbound_tx_params.outbound_tx_amount, chainId, curOutParam.outbound_tx_params.outbound_tx_nonce, curOutParam.outbound_tx_params.outbound_tx_coin_type);
-                    if (ballotIndex == 404) {
-                        append(`      ERROR: ballot not found`);
-                    } else {
-                        append(`      OK: ballot found: ${ballotIndex}`);
-                    }
-
-                    append("");
-                    append("Diagnosis: Failure to observe and report outbound tx on external chain");
-                } else {
-                    append(`      ERROR: cannot find txhash`);
-                    append("");
-                    append(`Diagnosis: txtrack may have contained invalid txhash; check ${txhash} on chain ${chainId} manually to verify`);
-                }
-
-            }
-
-        }
-    }
-
-    document.getElementById("button-debug-cctx").addEventListener("click", debugCCTX);
+    // document.getElementById("button-debug-cctx").addEventListener("click", debugCCTX);
 
     async function getReceipt(chainId, txhash) {
         const rpcEndpoint = RPCByChainID[chainId];
@@ -520,32 +520,32 @@ var web3 = new Web3(`${evmTxURL}`);
         return data.result.digest;
     }
 
-    // self test
-    let d = await getOutTxBallot("0x598fdd00ef3e0c62f65b388095c7e1f87795908da002962e0a27a2113e10ce32",
-        "0xb8c8707dc8e90673dcde2c4799a2c0d35acc1b43a8b3f93c9d9661b715cac193",
-        30635730,
-        "0",
-        97,
-        0,
-        "Zeta");
-    const expectedHash = "0x3bc920a14e8fa9885a0940c084dd5c921c191d81bf018e7e7ed9cf342e0008bc";
-    if (d != expectedHash) {
-        console.log(`ballot test: hash mismatch: wanted ${expectedHash}; got ${d}`);
-    } else {
-        console.log("OK: ballot test: hash match");
-    }
+    // // self test
+    // let d = await getOutTxBallot("0x598fdd00ef3e0c62f65b388095c7e1f87795908da002962e0a27a2113e10ce32",
+    //     "0xb8c8707dc8e90673dcde2c4799a2c0d35acc1b43a8b3f93c9d9661b715cac193",
+    //     30635730,
+    //     "0",
+    //     97,
+    //     0,
+    //     "Zeta");
+    // const expectedHash = "0x3bc920a14e8fa9885a0940c084dd5c921c191d81bf018e7e7ed9cf342e0008bc";
+    // if (d != expectedHash) {
+    //     console.log(`ballot test: hash mismatch: wanted ${expectedHash}; got ${d}`);
+    // } else {
+    //     console.log("OK: ballot test: hash match");
+    // }
 
-    async function getOutTxBallotFromCctx(cctx) {
-        const sendHash = cctx.Crosschain.index;
-        for (let i = 0; i < cctx.CrossChainTx.outbound_tx_params.length; i++) {
-            const outTxParam = cctx.CrossChainTx.outbound_tx_params[i];
-            const txhash = outTxParam.outbound_tx_hash;
-
-        }
-    }
+    // async function getOutTxBallotFromCctx(cctx) {
+    //     const sendHash = cctx.Crosschain.index;
+    //     for (let i = 0; i < cctx.CrossChainTx.outbound_tx_params.length; i++) {
+    //         const outTxParam = cctx.CrossChainTx.outbound_tx_params[i];
+    //         const txhash = outTxParam.outbound_tx_hash;
+    //
+    //     }
+    // }
 
     // tx tracker stuff
-    (async () => {
+    await (async () => {
         const resource = `${nodeURL}/zeta-chain/crosschain/outTxTracker`;
         let p1 = await fetch(resource, {method: 'GET'});
         let data = await p1.json();
@@ -561,8 +561,9 @@ var web3 = new Web3(`${evmTxURL}`);
     })();
 
     // pending cctxs
-    (async () => {
+    await (async () => {
         const div = document.getElementById("pending");
+        console.log("XXXX: externalChainIDs", externalChainIDs);
         for (let i = 0; i < externalChainIDs.length; i++) {
             let chainID = externalChainIDs[i];
             let resource = `${nodeURL}/zeta-chain/crosschain/pendingCctx?chainId=${chainID}&pagination.limit=1`;
@@ -572,7 +573,7 @@ var web3 = new Web3(`${evmTxURL}`);
                 let data = await p.json();
                 for (let j = 0; j < data.CrossChainTx.length; j++) {
                     let cctx = data.CrossChainTx[j];
-					console.log("cctx", cctx);
+                    console.log("cctx", cctx);
                     const outs = cctx.outbound_params;
                     const out = outs[outs.length - 1];
                     pendingNonces.push(out.tss_nonce);

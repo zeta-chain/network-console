@@ -129,6 +129,7 @@ if (network == "mockmain") {
         56: "https://bsc-dataseed1.bnbchain.org",
         137: "https://polygon.llamarpc.com",
         8332: "https://blockstream.info/api",
+        8453: "https://base.llamarpc.com",
         7000: evmURL,
     };
     AddressExplorerByChainID = {
@@ -136,9 +137,10 @@ if (network == "mockmain") {
         56: "https://www.bscscan.com/address",
         137: "https://polygonscan.com/address",
         8332: "https://blockstream.info/address",
+        8453: "https://www.basescan.com/address",
     };
     esploraAPIURL = "https://blockstream.info/api";
-    externalChainIDs = [1,56,137,8332];
+    externalChainIDs = [1,56,137,8332,8453];
     groupAdminAddresses = {
         "Network Operations": "zeta1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsxn0x73",
         "Network Admin": "zeta1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvs5wguxq",
