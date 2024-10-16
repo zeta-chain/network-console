@@ -9,7 +9,7 @@ import {
 } from './common.js';
 
 await renderHeader();
-var web3 = new Web3(`${evmTxURL}`);
+var web3 = new Web3(`${evmURL}`);
 
 
 (async () => {
